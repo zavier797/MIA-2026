@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "description": "AksiWarga - Platform Transparansi Publik untuk WIA 2026",
   "main": "server.js",
+  "type": "commonjs",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": "20.x"
   },
   "keywords": [
     "civic-tech",
@@ -16,5 +17,6 @@
     "wia-2026"
   ],
   "author": "Muhammad Zavier Rizkayanto",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {}
 }

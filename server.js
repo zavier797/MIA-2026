@@ -404,6 +404,6 @@ const server = http.createServer(async (request, response) => {
 });
 
 server.listen(PORT, '0.0.0.0', () => {
-    console.log(`AksiWarga berjalan di http://127.0.0.1:${PORT}`);
-    console.log(`Network: http://192.168.1.210:${PORT}`);
+    console.log(`AksiWarga berjalan di http://0.0.0.0:${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });

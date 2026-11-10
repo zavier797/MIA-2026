@@ -1,0 +1,13 @@
+version: 2
+services:
+  - type: web
+    name: aksiwarga-backend
+    env: node
+    region: singapore
+    plan: free
+    branch: master
+    buildCommand: echo "No build needed"
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production

@@ -120,10 +120,10 @@ function Island({ hidden, onNavigate }) {
 
 /* corner = sudut kotak yang menghadap titik tengah blok */
 const STATS = [
-    { label: 'Total Laporan', value: '1.405', strong: '+12 hari ini', note: ' dari seluruh wilayah', corner: 'br' },
-    { label: 'Berhasil diselesaikan', value: '1.405', strong: '89%', note: ' tingkat penyelesaian total', corner: 'bl', valueColor: '#15803d' },
-    { label: 'Rata-rata respon', value: '1.405', note: 'Waktu tanggap awal oleh instansi', corner: 'tr' },
-    { label: 'Belum ditanggapi', value: '1.405', strong: 'Melewati batas SLA', note: ' (transparan)', corner: 'tl', valueColor: '#dc2626' },
+    { label: 'Total Laporan', value: 'loading', strong: '+12 hari ini', note: ' dari seluruh wilayah', corner: 'br' },
+    { label: 'Berhasil diselesaikan', value: 'loading', strong: '89%', note: ' tingkat penyelesaian total', corner: 'bl', valueColor: '#15803d' },
+    { label: 'Rata-rata respon', value: 'loading', note: 'Waktu tanggap awal oleh instansi', corner: 'tr' },
+    { label: 'Belum ditanggapi', value: 'loading', note: 'Melewati batas SLA (transparan)', corner: 'tl', valueColor: '#dc2626' }
 ];
 
 /* ===== HOOK: apakah header sedang berada di atas section terang? ===== */
@@ -368,12 +368,46 @@ function Stat({ label, value, strong, note, corner, valueColor }) {
 }
 
 function Stats() {
+    const [stats, setStats] = useState(STATS);
+    
+    useEffect(() => {
+        fetch('/api/reports')
+            .then(res => res.json())
+            .then(data => {
+                const total = data.total || 0;
+                const selesai = data.reports.filter(r => r.status === 'Selesai').length;
+                const pending = data.reports.filter(r => r.status === 'Menunggu Verifikasi').length;
+                const resolutionRate = total > 0 ? Math.round((selesai / total) * 100) : 0;
+                
+                // Calculate average SLA in days
+                const completed = data.reports.filter(r => r.status === 'Selesai');
+                let avgSLA = 0;
+                if (completed.length > 0) {
+                    const totalDays = completed.reduce((sum, r) => {
+                        const created = new Date(r.createdAt);
+                        const updated = new Date(r.updatedAt);
+                        const days = (updated - created) / (1000 * 60 * 60 * 24);
+                        return sum + days;
+                    }, 0);
+                    avgSLA = (totalDays / completed.length).toFixed(1);
+                }
+                
+                setStats([
+                    { label: 'Total Laporan', value: total.toLocaleString('id-ID'), strong: '+12 hari ini', note: ' dari seluruh wilayah', corner: 'br' },
+                    { label: 'Berhasil diselesaikan', value: selesai.toLocaleString('id-ID'), strong: `${resolutionRate}%`, note: ' tingkat penyelesaian total', corner: 'bl', valueColor: '#15803d' },
+                    { label: 'Rata-rata respon', value: `${avgSLA} hari`, note: 'Waktu tanggap awal oleh instansi', corner: 'tr' },
+                    { label: 'Belum ditanggapi', value: pending.toLocaleString('id-ID'), note: 'Melewati batas SLA (transparan)', corner: 'tl', valueColor: '#dc2626' }
+                ]);
+            })
+            .catch(err => console.error('Failed to load stats:', err));
+    }, []);
+    
     return h('section', { id: 'laporan', 'data-light': '', className: 'flex min-h-screen items-center justify-center bg-paper px-6 py-20' },
         h('div', { className: 'mx-auto w-full max-w-4xl' },
             h('div', { className: 'stats-heading mb-10 text-left' },
                 h('h2', { className: 'text-4xl font-semibold tracking-[-0.035em] md:text-5xl' }, 'Rekam Jejak Pengaduan'),
                 h('p', { className: 'mt-4 max-w-2xl text-muted' }, 'Sejauh mana suara warga didengar dan ditindaklanjuti oleh pihak berwenang.')),
-            h('div', { className: 'grid grid-cols-2' }, STATS.map((s) => h(Stat, { key: s.label, ...s }))), h(Actions)));
+            h('div', { className: 'grid grid-cols-2' }, stats.map((s) => h(Stat, { key: s.label, ...s }))), h(Actions)));
 }
 
 /* ===== IKON (inline SVG, ikut warna teks) ===== */

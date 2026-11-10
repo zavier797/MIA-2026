@@ -23,6 +23,46 @@
       "email": "final@aksiwarga.com",
       "passwordSalt": "3648ed20e80a58826d5df6f8b2a89e9b",
       "passwordHash": "f585ce541f973d0b3a435e8f5609b9020bc49df04e4b7084d0cdeacbc42b685d"
+    },
+    {
+      "name": "GitHub Demo User",
+      "email": "github.demo.1794348664240@aksiwarga.com",
+      "passwordSalt": "a7350713f79800dcb1bbc3f2068a0afd",
+      "passwordHash": "2250ab85f4dd18d97f417a45aab78003b72901f6823847655dc746725d4eca97",
+      "oauthProvider": "github-demo",
+      "oauthId": "demo-1794348664268"
+    },
+    {
+      "name": "GitHub Demo User",
+      "email": "github.demo.1794348665358@aksiwarga.com",
+      "passwordSalt": "891c790cfd38faba364fd3af390e26eb",
+      "passwordHash": "13b0b0b6b0937395ea7fc6ff59335fee9bf4a0a4300b40ea7eb6fcd515d7dc40",
+      "oauthProvider": "github-demo",
+      "oauthId": "demo-1794348665386"
+    },
+    {
+      "name": "Google Demo User",
+      "email": "google.demo.1794348665980@aksiwarga.com",
+      "passwordSalt": "60a709be1f5fb725e24dd1c4745c265a",
+      "passwordHash": "09b27895091cc6a1a29fb1804a156614881a8a93cbd41c82284d54d18e8b26b3",
+      "oauthProvider": "google-demo",
+      "oauthId": "demo-1794348666008"
+    },
+    {
+      "name": "Facebook Demo User",
+      "email": "facebook.demo.1794348666842@aksiwarga.com",
+      "passwordSalt": "4cacc36b2d899ee21401ab57baf2d002",
+      "passwordHash": "802d1929203201f3ce5932cc4fd147da92920e6cae8674136c20f21ecdd40550",
+      "oauthProvider": "facebook-demo",
+      "oauthId": "demo-1794348666870"
+    },
+    {
+      "name": "Google Demo User",
+      "email": "google.demo.1794349365911@aksiwarga.com",
+      "passwordSalt": "13a393ecc4e7c8aab392daed310872ab",
+      "passwordHash": "7dd807b89da66ba8cb774dc173f63594ba877ea98ab13c76e4e1b4473d3f0ead",
+      "oauthProvider": "google-demo",
+      "oauthId": "demo-1794349365939"
     }
   ]
 }

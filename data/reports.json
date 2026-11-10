@@ -1,302 +1,308 @@
 {
   "reports": [
     {
-      "id": "TW-2026-0894",
-      "title": "Test Submit Form dari Frontend",
-      "category": "Infrastruktur Jalan",
-      "description": "Testing integrasi frontend dengan backend API",
-      "location": "Jl. Test No. 123, Jakarta Pusat",
+      "id": "TW-2026-null",
+      "title": "Testing Final Integration",
+      "category": "Infrastruktur",
+      "description": "Full auth + data test WIA 2026",
+      "location": "Jakarta Pusat",
       "province": "DKI Jakarta",
-      "agency": "Dinas Bina Marga",
+      "agency": "Dinas Terkait",
       "status": "pending",
       "priority": "medium",
-      "reporterName": "User Testing",
-      "reporterEmail": "test@example.com",
-      "reporterPhone": "081234567890",
+      "reporterName": "Akun Testing",
+      "reporterEmail": "akuncoba@gmail.com",
+      "reporterPhone": "",
       "photoUrl": null,
-      "createdAt": "2026-11-10T20:25:32+07:00",
-      "slaDeadline": "2026-11-17T20:25:32+07:00",
+      "createdAt": "2026-11-10T20:46:12.799Z",
+      "slaDeadline": "2026-11-17T20:46:12.799Z",
       "budget": null,
       "estimatedCost": null,
       "logs": [
         {
-          "timestamp": "2026-11-10T20:25:32+07:00",
+          "timestamp": "2026-11-10T20:46:12.799Z",
           "actor": "Sistem",
           "message": "Laporan diterima dan terdaftar. Menunggu verifikasi dinas terkait."
         }
       ]
     },
     {
-      "id": "TW-2026-0893",
-      "title": "Test Jalan Rusak di Menteng",
-      "category": "Infrastruktur Jalan",
-      "description": "Jalan berlubang besar sangat berbahaya untuk kendaraan",
-      "location": "Jl. Menteng Raya No. 10, Jakarta Pusat",
+      "id": "TW-2026-undefined",
+      "title": "Test Laporan Baru Real-time",
+      "category": "Infrastruktur",
+      "description": "Testing complete auth flow dengan data fix",
+      "location": "Jakarta Pusat",
       "province": "DKI Jakarta",
-      "agency": "Dinas Bina Marga",
+      "agency": "Dinas Terkait",
       "status": "pending",
       "priority": "medium",
-      "reporterName": "Budi Testing",
-      "reporterEmail": "budi@test.com",
-      "reporterPhone": "081234567890",
+      "reporterName": "Akun Testing",
+      "reporterEmail": "akuncoba@gmail.com",
+      "reporterPhone": "",
       "photoUrl": null,
-      "createdAt": "2026-11-10T20:19:32+07:00",
-      "slaDeadline": "2026-11-17T20:19:32+07:00",
+      "createdAt": "2026-11-10T20:38:15.345Z",
+      "slaDeadline": "2026-11-17T20:38:15.345Z",
       "budget": null,
       "estimatedCost": null,
       "logs": [
         {
-          "timestamp": "2026-11-10T20:19:32+07:00",
+          "timestamp": "2026-11-10T20:38:15.345Z",
           "actor": "Sistem",
           "message": "Laporan diterima dan terdaftar. Menunggu verifikasi dinas terkait."
         }
       ]
     },
     {
-      "id": "TW-2026-0892",
-      "title": "Perbaikan Jalan Berlubang Parah di Jl. Fatmawati",
-      "category": "Infrastruktur Jalan",
-      "description": "Terdapat lubang besar (diameter ~1.5m, kedalaman 15cm) di Jl. Fatmawati yang sangat berbahaya bagi pengendara motor dan mobil. Sudah menyebabkan beberapa kecelakaan ringan.",
-      "location": "Jl. Fatmawati No. 12, RT 02/RW 05, Cilandak Barat, Jakarta Selatan",
+      "id": "TW-2026-0001",
+      "title": "Jalan Berlubang di Sudirman",
+      "category": "Infrastruktur",
+      "description": "Jalan berlubang besar di depan Wisma 46, berbahaya untuk pengendara motor",
+      "location": "Jl. Jend. Sudirman, Jakarta Pusat",
       "province": "DKI Jakarta",
-      "agency": "Dinas Bina Marga",
-      "status": "in_progress",
-      "priority": "high",
-      "reporterName": "Ahmad Fauzi",
-      "reporterEmail": "ahmad.fauzi@email.com",
-      "reporterPhone": "081234567890",
-      "photoUrl": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=500&q=80",
-      "createdAt": "2026-11-10T20:13:32+07:00",
-      "slaDeadline": "2026-11-17T20:13:32+07:00",
-      "budget": "APBD DPA Dinas Bina Marga 2026",
-      "estimatedCost": 8500000,
-      "logs": [
-        {
-          "timestamp": "2026-11-10T20:13:32+07:00",
-          "actor": "Tim TRC Regu B - Dinas Bina Marga",
-          "message": "Material hotmix dan alat pemadat tiba di lokasi. Proses pembersihan permukaan lubang dan pengerjaan penambalan dimulai."
-        },
-        {
-          "timestamp": "2026-11-10T20:23:32+07:00",
-          "actor": "Verifikator Dinas",
-          "message": "Jadwal eksekusi diterbitkan. Penanganan dialokasikan pada anggaran operasional pemeliharaan rutin Maret 2026."
-        },
-        {
-          "timestamp": "2026-11-10T20:33:32+07:00",
-          "actor": "Sistem",
-          "message": "Laporan diterima dan terdaftar. Menunggu verifikasi dinas terkait."
-        }
-      ]
-    },
-    {
-      "id": "TW-2026-0891",
-      "title": "Lampu PJU Mati Total di Kawasan Perumahan",
-      "category": "Penerangan Jalan",
-      "description": "Lampu PJU di sepanjang Jl. Raya Condet tidak menyala sejak 3 hari terakhir. Kawasan menjadi sangat gelap dan rawan kejahatan.",
-      "location": "Jl. Raya Condet, Batu Ampar, Jakarta Timur",
-      "province": "DKI Jakarta",
-      "agency": "Dinas PUPR",
-      "status": "completed",
-      "priority": "high",
-      "reporterName": "Siti Nurhaliza",
-      "reporterEmail": "siti.nur@email.com",
-      "reporterPhone": "082198765432",
-      "photoUrl": null,
-      "createdAt": "2026-11-10T20:07:32+07:00",
-      "slaDeadline": "2026-11-17T20:07:32+07:00",
-      "completedAt": "2026-03-11T16:20:00Z",
-      "budget": "APBD Pemeliharaan Fasilitas Umum 2026",
-      "estimatedCost": 12000000,
-      "logs": [
-        {
-          "timestamp": "2026-11-10T20:07:32+07:00",
-          "actor": "Supervisor Teknis",
-          "message": "Pekerjaan selesai 100%. Seluruh 18 titik lampu PJU telah menyala normal. Laporan ditutup."
-        },
-        {
-          "timestamp": "2026-11-10T20:17:32+07:00",
-          "actor": "Teknisi Lapangan",
-          "message": "Penggantian MCB dan kabel rusak di gardu induk selesai. Uji coba sistem berjalan baik."
-        },
-        {
-          "timestamp": "2026-11-10T20:27:32+07:00",
-          "actor": "Verifikator Dinas",
-          "message": "Survei lapangan mengidentifikasi kerusakan pada panel MCB gardu induk. Material pengganti telah disiapkan."
-        }
-      ]
-    },
-    {
-      "id": "TW-2026-0890",
-      "title": "Sampah Menumpuk di TPS Kelurahan Cipete",
-      "category": "Kebersihan & Sanitasi",
-      "description": "TPS di Jl. Cipete Raya tidak diangkut selama 5 hari. Sampah menumpuk hingga ke jalan dan menimbulkan bau tidak sedap.",
-      "location": "TPS Jl. Cipete Raya, Cipete Selatan, Jakarta Selatan",
-      "province": "DKI Jakarta",
-      "agency": "Dinas Lingkungan Hidup",
-      "status": "pending",
-      "priority": "medium",
       "reporterName": "Budi Santoso",
-      "reporterEmail": "budi.santoso@email.com",
-      "reporterPhone": "085612345678",
-      "photoUrl": null,
-      "createdAt": "2026-11-10T20:01:32+07:00",
-      "slaDeadline": "2026-11-17T20:01:32+07:00",
-      "budget": null,
-      "estimatedCost": null,
-      "logs": [
+      "reporterEmail": "budi.s@gmail.com",
+      "status": "Dalam Proses",
+      "statusHistory": [
         {
-          "timestamp": "2026-11-10T20:01:32+07:00",
-          "actor": "Sistem",
-          "message": "Laporan diterima dan terdaftar. Menunggu verifikasi dinas terkait."
-        }
-      ]
-    },
-    {
-      "id": "TW-2026-0889",
-      "title": "Pohon Tumbang Menghalangi Jalan",
-      "category": "Keamanan Lingkungan",
-      "description": "Pohon besar tumbang akibat hujan deras semalam. Menutup separuh badan jalan dan mengganggu lalu lintas.",
-      "location": "Jl. TB Simatupang KM 8, Kebagusan, Jakarta Selatan",
-      "province": "DKI Jakarta",
-      "agency": "Dinas Kehutanan",
-      "status": "in_progress",
-      "priority": "critical",
-      "reporterName": "Rina Kusuma",
-      "reporterEmail": "rina.k@email.com",
-      "reporterPhone": "081298765432",
-      "photoUrl": null,
-      "createdAt": "2026-11-10T19:55:32+07:00",
-      "slaDeadline": "2026-11-17T19:55:32+07:00",
-      "budget": "Dana Darurat Penanganan Bencana",
-      "estimatedCost": 5000000,
-      "logs": [
-        {
-          "timestamp": "2026-11-10T19:55:32+07:00",
-          "actor": "Tim Tanggap Darurat",
-          "message": "Unit chainsaw dan crane sedang dalam perjalanan ke lokasi. Estimasi tiba 30 menit."
+          "status": "Menunggu Verifikasi",
+          "timestamp": "2026-11-08T20:36:00+07:00",
+          "note": "Laporan diterima"
         },
         {
-          "timestamp": "2026-11-10T20:05:32+07:00",
-          "actor": "Verifikator Dinas",
-          "message": "Laporan terverifikasi sebagai URGENT. Dispatch unit tanggap darurat telah diaktifkan."
+          "status": "Sedang Ditinjau",
+          "timestamp": "2026-11-09T08:36:00+07:00",
+          "note": "Tim lapangan sedang meninjau lokasi"
+        },
+        {
+          "status": "Dalam Proses",
+          "timestamp": "2026-11-10T08:36:00+07:00",
+          "note": "Perbaikan dijadwalkan minggu depan"
         }
-      ]
+      ],
+      "createdAt": "2026-11-08T20:36:00+07:00",
+      "updatedAt": "2026-11-10T08:36:00+07:00"
     },
     {
-      "id": "TW-2026-0888",
-      "title": "Gorong-gorong Tersumbat Menyebabkan Banjir",
-      "category": "Drainase & Banjir",
-      "description": "Saluran air di depan SDN 01 tersumbat sampah. Setiap hujan area ini banjir setinggi 30-40cm.",
-      "location": "Jl. Raya Pasar Minggu, Pancoran, Jakarta Selatan",
+      "id": "TW-2026-0002",
+      "title": "Sampah Menumpuk di TPS Kelurahan",
+      "category": "Lingkungan",
+      "description": "TPS di Kelurahan Menteng penuh, sampah berserakan ke jalan",
+      "location": "Kelurahan Menteng, Jakarta Pusat",
       "province": "DKI Jakarta",
-      "agency": "Dinas Sumber Daya Air",
-      "status": "completed",
-      "priority": "medium",
+      "reporterName": "Siti Nurhaliza",
+      "reporterEmail": "siti.n@yahoo.com",
+      "status": "Selesai",
+      "statusHistory": [
+        {
+          "status": "Menunggu Verifikasi",
+          "timestamp": "2026-11-06T20:36:00+07:00",
+          "note": "Laporan diterima"
+        },
+        {
+          "status": "Dalam Proses",
+          "timestamp": "2026-11-07T20:36:00+07:00",
+          "note": "Truk sampah dikirim"
+        },
+        {
+          "status": "Selesai",
+          "timestamp": "2026-11-09T20:36:00+07:00",
+          "note": "Sampah telah diangkut, lokasi dibersihkan"
+        }
+      ],
+      "createdAt": "2026-11-06T20:36:00+07:00",
+      "updatedAt": "2026-11-09T20:36:00+07:00"
+    },
+    {
+      "id": "TW-2026-0003",
+      "title": "Lampu Jalan Mati Sepanjang Rasuna Said",
+      "category": "Infrastruktur",
+      "description": "20+ lampu jalan mati dari Kuningan sampai Setiabudi, sangat gelap malam hari",
+      "location": "Jl. HR Rasuna Said, Jakarta Selatan",
+      "province": "DKI Jakarta",
+      "reporterName": "Ahmad Hidayat",
+      "reporterEmail": "ahmad.h@gmail.com",
+      "status": "Sedang Ditinjau",
+      "statusHistory": [
+        {
+          "status": "Menunggu Verifikasi",
+          "timestamp": "2026-11-10T02:36:00+07:00",
+          "note": "Laporan diterima"
+        },
+        {
+          "status": "Sedang Ditinjau",
+          "timestamp": "2026-11-10T14:36:00+07:00",
+          "note": "Teknisi PLN meninjau lokasi"
+        }
+      ],
+      "createdAt": "2026-11-10T02:36:00+07:00",
+      "updatedAt": "2026-11-10T14:36:00+07:00"
+    },
+    {
+      "id": "TW-2026-0004",
+      "title": "Puskesmas Tutup Tanpa Pemberitahuan",
+      "category": "Kesehatan",
+      "description": "Puskesmas Cempaka Putih tiba-tiba tutup sejak Senin tanpa informasi",
+      "location": "Cempaka Putih Timur, Jakarta Pusat",
+      "province": "DKI Jakarta",
+      "reporterName": "Ratna Sari",
+      "reporterEmail": "ratna.s@outlook.com",
+      "status": "Dalam Proses",
+      "statusHistory": [
+        {
+          "status": "Menunggu Verifikasi",
+          "timestamp": "2026-11-09T14:36:00+07:00",
+          "note": "Laporan diterima"
+        },
+        {
+          "status": "Dalam Proses",
+          "timestamp": "2026-11-10T00:36:00+07:00",
+          "note": "Dinas Kesehatan sedang menghubungi kepala puskesmas"
+        }
+      ],
+      "createdAt": "2026-11-09T14:36:00+07:00",
+      "updatedAt": "2026-11-10T00:36:00+07:00"
+    },
+    {
+      "id": "TW-2026-0005",
+      "title": "Bus TransJakarta Sering Telat",
+      "category": "Transportasi",
+      "description": "Koridor 1 Blok M-Kota jadwal tidak tepat, sering telat 30+ menit",
+      "location": "Halte Bundaran HI, Jakarta Pusat",
+      "province": "DKI Jakarta",
+      "reporterName": "Dedi Kurniawan",
+      "reporterEmail": "dedi.k@gmail.com",
+      "status": "Menunggu Verifikasi",
+      "statusHistory": [
+        {
+          "status": "Menunggu Verifikasi",
+          "timestamp": "2026-11-10T15:36:00+07:00",
+          "note": "Laporan diterima"
+        }
+      ],
+      "createdAt": "2026-11-10T15:36:00+07:00",
+      "updatedAt": "2026-11-10T15:36:00+07:00"
+    },
+    {
+      "id": "TW-2026-0006",
+      "title": "Fasilitas Sekolah Rusak Parah",
+      "category": "Pendidikan",
+      "description": "SDN 05 Pagi atap bocor, bangku rusak, papan tulis retak",
+      "location": "Tanah Abang, Jakarta Pusat",
+      "province": "DKI Jakarta",
+      "reporterName": "Komite Sekolah",
+      "reporterEmail": "komite.sdn05@gmail.com",
+      "status": "Sedang Ditinjau",
+      "statusHistory": [
+        {
+          "status": "Menunggu Verifikasi",
+          "timestamp": "2026-11-08T08:36:00+07:00",
+          "note": "Laporan diterima"
+        },
+        {
+          "status": "Sedang Ditinjau",
+          "timestamp": "2026-11-09T04:36:00+07:00",
+          "note": "Dinas Pendidikan akan meninjau kondisi sekolah"
+        }
+      ],
+      "createdAt": "2026-11-08T08:36:00+07:00",
+      "updatedAt": "2026-11-09T04:36:00+07:00"
+    },
+    {
+      "id": "TW-2026-0007",
+      "title": "Banjir Rutin di Underpass Kemayoran",
+      "category": "Infrastruktur",
+      "description": "Setiap hujan underpass Kemayoran banjir 50cm+, pompa tidak berfungsi",
+      "location": "Underpass Kemayoran, Jakarta Pusat",
+      "province": "DKI Jakarta",
       "reporterName": "Hendra Wijaya",
-      "reporterEmail": "hendra.w@email.com",
-      "reporterPhone": "087712345678",
-      "photoUrl": null,
-      "createdAt": "2026-11-10T19:49:32+07:00",
-      "slaDeadline": "2026-11-17T19:49:32+07:00",
-      "completedAt": "2026-03-10T15:45:00Z",
-      "budget": "APBD Pengelolaan Drainase 2026",
-      "estimatedCost": 6500000,
-      "logs": [
+      "reporterEmail": "hendra.w@yahoo.com",
+      "status": "Dalam Proses",
+      "statusHistory": [
         {
-          "timestamp": "2026-11-10T19:49:32+07:00",
-          "actor": "Supervisor Proyek",
-          "message": "Pembersihan gorong-gorong selesai. Total 2 truk sampah diangkut. Aliran air lancar kembali."
+          "status": "Menunggu Verifikasi",
+          "timestamp": "2026-11-07T12:36:00+07:00",
+          "note": "Laporan diterima"
         },
         {
-          "timestamp": "2026-11-10T19:59:32+07:00",
-          "actor": "Tim Kebersihan Drainase",
-          "message": "Proses pengerukan dan pembersihan dimulai. Ditemukan sampah plastik dan endapan lumpur tebal."
+          "status": "Dalam Proses",
+          "timestamp": "2026-11-08T18:36:00+07:00",
+          "note": "Dinas PU memperbaiki sistem pompa"
         }
-      ]
+      ],
+      "createdAt": "2026-11-07T12:36:00+07:00",
+      "updatedAt": "2026-11-08T18:36:00+07:00"
     },
     {
-      "id": "TW-2026-0887",
-      "title": "Trotoar Rusak dan Berbahaya Bagi Pejalan Kaki",
-      "category": "Infrastruktur Jalan",
-      "description": "Trotoar di depan Pasar Minggu retak dan berlubang. Sangat berbahaya terutama bagi lansia dan anak-anak.",
-      "location": "Jl. Raya Pasar Minggu No. 45, Jakarta Selatan",
-      "province": "DKI Jakarta",
-      "agency": "Dinas Bina Marga",
-      "status": "pending",
-      "priority": "low",
-      "reporterName": "Dewi Lestari",
-      "reporterEmail": "dewi.l@email.com",
-      "reporterPhone": "082187654321",
-      "photoUrl": null,
-      "createdAt": "2026-11-10T19:43:32+07:00",
-      "slaDeadline": "2026-11-17T19:43:32+07:00",
-      "budget": null,
-      "estimatedCost": null,
-      "logs": [
-        {
-          "timestamp": "2026-11-10T19:43:32+07:00",
-          "actor": "Sistem",
-          "message": "Laporan diterima dan terdaftar. Menunggu verifikasi dinas terkait."
-        }
-      ]
-    },
-    {
-      "id": "TW-2026-0886",
-      "title": "CCTV Rusak di Area Publik",
-      "category": "Keamanan Lingkungan",
-      "description": "CCTV pemantau di taman kelurahan tidak berfungsi sejak 2 minggu lalu. Perlu perbaikan untuk keamanan warga.",
-      "location": "Taman Kelurahan Tebet Timur, Jakarta Selatan",
-      "province": "DKI Jakarta",
-      "agency": "Dinas Komunikasi dan Informatika",
-      "status": "in_progress",
-      "priority": "medium",
-      "reporterName": "Agus Prasetyo",
-      "reporterEmail": "agus.p@email.com",
-      "reporterPhone": "081987654321",
-      "photoUrl": null,
-      "createdAt": "2026-11-10T19:37:32+07:00",
-      "slaDeadline": "2026-11-17T19:37:32+07:00",
-      "budget": "APBD Pemeliharaan Smart City 2026",
-      "estimatedCost": 3500000,
-      "logs": [
-        {
-          "timestamp": "2026-11-10T19:37:32+07:00",
-          "actor": "Teknisi IT",
-          "message": "Pemeriksaan awal menunjukkan kerusakan pada power supply dan kabel jaringan. Spare part dalam pengadaan."
-        },
-        {
-          "timestamp": "2026-11-10T19:47:32+07:00",
-          "actor": "Verifikator Dinas",
-          "message": "Survei lokasi telah dilakukan. Menunggu jadwal teknisi dan ketersediaan spare part."
-        }
-      ]
-    },
-    {
-      "id": "TW-2026-0885",
-      "title": "Fasilitas MCK Umum Tidak Terawat",
-      "category": "Kebersihan & Sanitasi",
-      "description": "MCK umum di terminal Kampung Rambutan kotor dan bau. Tidak ada air bersih dan tidak ada petugas kebersihan.",
+      "id": "TW-2026-0008",
+      "title": "Premanisme di Terminal Kampung Rambutan",
+      "category": "Keamanan",
+      "description": "Preman memeras penumpang bus di Terminal Kampung Rambutan",
       "location": "Terminal Kampung Rambutan, Jakarta Timur",
       "province": "DKI Jakarta",
-      "agency": "Dinas Lingkungan Hidup",
-      "status": "pending",
-      "priority": "medium",
-      "reporterName": "Sari Mulyani",
-      "reporterEmail": "sari.m@email.com",
-      "reporterPhone": "085698765432",
-      "photoUrl": null,
-      "createdAt": "2026-11-10T19:31:32+07:00",
-      "slaDeadline": "2026-11-17T19:31:32+07:00",
-      "budget": null,
-      "estimatedCost": null,
-      "logs": [
+      "reporterName": "Anonim",
+      "reporterEmail": "lapor@protonmail.com",
+      "status": "Sedang Ditinjau",
+      "statusHistory": [
         {
-          "timestamp": "2026-11-10T19:31:32+07:00",
-          "actor": "Sistem",
-          "message": "Laporan diterima dan terdaftar. Menunggu verifikasi dinas terkait."
+          "status": "Menunggu Verifikasi",
+          "timestamp": "2026-11-10T05:36:00+07:00",
+          "note": "Laporan diterima"
+        },
+        {
+          "status": "Sedang Ditinjau",
+          "timestamp": "2026-11-10T12:36:00+07:00",
+          "note": "Polsek Ciracas menindaklanjuti"
         }
-      ]
+      ],
+      "createdAt": "2026-11-10T05:36:00+07:00",
+      "updatedAt": "2026-11-10T12:36:00+07:00"
+    },
+    {
+      "id": "TW-2026-0009",
+      "title": "Air PDAM Berbau dan Keruh",
+      "category": "Kesehatan",
+      "description": "Air PDAM di Kelurahan Gondangdia berbau kaporit kuat dan keruh 3 hari terakhir",
+      "location": "Gondangdia, Jakarta Pusat",
+      "province": "DKI Jakarta",
+      "reporterName": "Rina Marlina",
+      "reporterEmail": "rina.m@gmail.com",
+      "status": "Dalam Proses",
+      "statusHistory": [
+        {
+          "status": "Menunggu Verifikasi",
+          "timestamp": "2026-11-07T20:36:00+07:00",
+          "note": "Laporan diterima"
+        },
+        {
+          "status": "Dalam Proses",
+          "timestamp": "2026-11-08T20:36:00+07:00",
+          "note": "PDAM sedang membersihkan pipa distribusi"
+        }
+      ],
+      "createdAt": "2026-11-07T20:36:00+07:00",
+      "updatedAt": "2026-11-08T20:36:00+07:00"
+    },
+    {
+      "id": "TW-2026-0010",
+      "title": "Trotoar Rusak Membahayakan Pejalan Kaki",
+      "category": "Infrastruktur",
+      "description": "Trotoar di Jl. MH Thamrin pecah-pecah dan berlubang, bahaya bagi difabel",
+      "location": "Jl. MH Thamrin, Jakarta Pusat",
+      "province": "DKI Jakarta",
+      "reporterName": "Agus Setiawan",
+      "reporterEmail": "agus.s@gmail.com",
+      "status": "Menunggu Verifikasi",
+      "statusHistory": [
+        {
+          "status": "Menunggu Verifikasi",
+          "timestamp": "2026-11-10T18:36:00+07:00",
+          "note": "Laporan diterima"
+        }
+      ],
+      "createdAt": "2026-11-10T18:36:00+07:00",
+      "updatedAt": "2026-11-10T18:36:00+07:00"
     }
   ],
-  "nextId": 895
+  "total": 10,
+  "nextId": 1
 }

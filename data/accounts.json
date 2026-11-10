@@ -1,34 +1,28 @@
 {
   "users": [
     {
-      "name": "Health",
+      "name": "Akun Testing",
       "email": "akuncoba@gmail.com",
       "passwordSalt": "994f6f147e6dffcd0a080c53b5b472df",
-      "passwordHash": "b51800b670d609577e62ec3cbb1e0b987543e2d2360b7f5341ba4202a353d731"
+      "passwordHash": "149f4c7b977599c4c824b0a28134e19d9adb12e91a37806f35789b2a49729bfd"
     },
     {
-      "name": "Health",
-      "email": "akuncoba1@gmail.com",
-      "passwordSalt": "edc23ccf86f41463365e5a3e882fbbfa",
-      "passwordHash": "b44b5ddc11fdfb27e86391a431acc56e257982e0bb4ccddcbd53ba1544e41e7a"
+      "name": "Muhammad Zavier",
+      "email": "zavier@aksiwarga.com",
+      "passwordSalt": "9c4bd657003df6a2fdcc32cbd8fdb39a",
+      "passwordHash": "6468950e1080b5f323ca6fd2c0d9ebc0d0e7d7f2175a13ecff9690c27108c95c"
     },
     {
-      "name": "Health",
-      "email": "akuncob1a@gmail.com",
-      "passwordSalt": "5a4a99c78f57ea81f4eaa502bbc4cac5",
-      "passwordHash": "c225560e7c359e68ec89ce67638361240032a24c00c262fe2a63847985a45902"
+      "name": "Admin Demo",
+      "email": "admin@aksiwarga.com",
+      "passwordSalt": "98bf8a4cacb9398a58bf2d7c0926e168",
+      "passwordHash": "7b07c9b8cbe888f887ee228248a7929c67709e404e4dc16693a6bc0dad37bb0f"
     },
     {
-      "name": "Health",
-      "email": "akunc1oba@gmail.com",
-      "passwordSalt": "16bdf6dc2a2c04373cf43e71cb719f0b",
-      "passwordHash": "0f2595b40afa14c9b0650d28d8c8aa1c94476320fdc95b84d471b60f5ddf51c0"
-    },
-    {
-      "name": "teskeun",
-      "email": "akuncob2a@gmail.com",
-      "passwordSalt": "f2914d5e656f411a5d716e636659d4e8",
-      "passwordHash": "b9e7025f07220c131ab0d6359f0ecf1e9ec9d553eaa44de34620d47290760fd1"
+      "name": "Final Test",
+      "email": "final@aksiwarga.com",
+      "passwordSalt": "3648ed20e80a58826d5df6f8b2a89e9b",
+      "passwordHash": "f585ce541f973d0b3a435e8f5609b9020bc49df04e4b7084d0cdeacbc42b685d"
     }
   ]
 }

@@ -214,8 +214,8 @@ function App() {
     }
   };
 
-  const social = (name, Logo, label) => (
-    <button type="button" className="soc" onClick={() => alert('Fitur login sosial sedang dalam pengembangan. Silakan gunakan email untuk login.')}>
+  const social = (provider, Logo, label) => (
+    <button type="button" className="soc" onClick={() => window.location.href = `/api/auth/${provider}`}>
       <Logo /> {label}
     </button>
   );

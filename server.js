@@ -14,6 +14,15 @@ const SESSION_COOKIE = 'aksiwarga_session';
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const sessions = new Map();
 const otpStore = new Map(); // email -> {otp, expires, attempts, resetToken}
+
+// OAuth Config
+const OAUTH_CALLBACK_URL = process.env.OAUTH_CALLBACK_URL || `http://localhost:${PORT}`;
+const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID || 'demo';
+const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET || 'demo';
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || 'demo';
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || 'demo';
+const OAUTH_DEMO_MODE = !process.env.GITHUB_CLIENT_SECRET || process.env.GITHUB_CLIENT_SECRET === 'demo';
+const oauthState = new Map(); // CSRF protection
 const MIME_TYPES = {
     '.css': 'text/css; charset=utf-8',
     '.html': 'text/html; charset=utf-8',
@@ -171,7 +180,233 @@ async function handleApi(request, response, url) {
         return sendJson(response, 200, { ok: true });
     }
 
-    // Forgot Password: Request OTP
+    // OAuth: GitHub Login
+    if (request.method === 'GET' && url.pathname === '/api/auth/github') {
+        if (OAUTH_DEMO_MODE) {
+            // Demo mode: auto-create account tanpa real GitHub OAuth
+            const demoEmail = `github.demo.${Date.now()}@aksiwarga.com`;
+            const users = readAccounts();
+            const salt = crypto.randomBytes(16).toString('hex');
+            const randomPassword = crypto.randomBytes(32).toString('hex');
+            const passwordHash = crypto.pbkdf2Sync(randomPassword, salt, 120000, 32, 'sha256').toString('hex');
+            const account = {
+                name: 'GitHub Demo User',
+                email: demoEmail,
+                passwordSalt: salt,
+                passwordHash,
+                oauthProvider: 'github-demo',
+                oauthId: 'demo-' + Date.now()
+            };
+            writeAccounts([...users, account]);
+            setSession(response, account);
+            response.writeHead(302, { Location: '/?oauth=success&provider=github' });
+            return response.end();
+        }
+        
+        const state = crypto.randomBytes(16).toString('hex');
+        oauthState.set(state, { createdAt: Date.now(), provider: 'github' });
+        const redirectUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(OAUTH_CALLBACK_URL + '/api/auth/github/callback')}&state=${state}&scope=user:email`;
+        response.writeHead(302, { Location: redirectUrl });
+        return response.end();
+    }
+
+    // OAuth: GitHub Callback
+    if (request.method === 'GET' && url.pathname === '/api/auth/github/callback') {
+        const code = url.searchParams.get('code');
+        const state = url.searchParams.get('state');
+        
+        if (!oauthState.has(state)) {
+            response.writeHead(302, { Location: '/login.html?error=invalid_state' });
+            return response.end();
+        }
+        oauthState.delete(state);
+
+        try {
+            // Exchange code for token
+            const tokenResp = await fetch('https://github.com/login/oauth/access_token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({
+                    client_id: GITHUB_CLIENT_ID,
+                    client_secret: GITHUB_CLIENT_SECRET,
+                    code,
+                    redirect_uri: OAUTH_CALLBACK_URL + '/api/auth/github/callback'
+                })
+            });
+            const tokenData = await tokenResp.json();
+            
+            if (!tokenData.access_token) {
+                response.writeHead(302, { Location: '/login.html?error=token_failed' });
+                return response.end();
+            }
+
+            // Fetch user profile
+            const userResp = await fetch('https://api.github.com/user', {
+                headers: { 'Authorization': `Bearer ${tokenData.access_token}` }
+            });
+            const userData = await userResp.json();
+
+            // Fetch primary email
+            const emailResp = await fetch('https://api.github.com/user/emails', {
+                headers: { 'Authorization': `Bearer ${tokenData.access_token}` }
+            });
+            const emails = await emailResp.json();
+            const primaryEmail = emails.find(e => e.primary)?.email || userData.email;
+
+            if (!primaryEmail) {
+                response.writeHead(302, { Location: '/login.html?error=no_email' });
+                return response.end();
+            }
+
+            // Find or create account
+            const users = readAccounts();
+            let account = users.find(u => u.email === primaryEmail.toLowerCase());
+            
+            if (!account) {
+                // Create new account with OAuth
+                const salt = crypto.randomBytes(16).toString('hex');
+                const randomPassword = crypto.randomBytes(32).toString('hex');
+                const passwordHash = crypto.pbkdf2Sync(randomPassword, salt, 120000, 32, 'sha256').toString('hex');
+                account = {
+                    name: userData.name || userData.login,
+                    email: primaryEmail.toLowerCase(),
+                    passwordSalt: salt,
+                    passwordHash,
+                    oauthProvider: 'github',
+                    oauthId: userData.id.toString()
+                };
+                writeAccounts([...users, account]);
+            }
+
+            setSession(response, account);
+            response.writeHead(302, { Location: '/' });
+            return response.end();
+        } catch (error) {
+            response.writeHead(302, { Location: '/login.html?error=oauth_failed' });
+            return response.end();
+        }
+    }
+
+    // OAuth: Google Login
+    if (request.method === 'GET' && url.pathname === '/api/auth/google') {
+        if (OAUTH_DEMO_MODE) {
+            // Demo mode: auto-create account tanpa real Google OAuth
+            const demoEmail = `google.demo.${Date.now()}@aksiwarga.com`;
+            const users = readAccounts();
+            const salt = crypto.randomBytes(16).toString('hex');
+            const randomPassword = crypto.randomBytes(32).toString('hex');
+            const passwordHash = crypto.pbkdf2Sync(randomPassword, salt, 120000, 32, 'sha256').toString('hex');
+            const account = {
+                name: 'Google Demo User',
+                email: demoEmail,
+                passwordSalt: salt,
+                passwordHash,
+                oauthProvider: 'google-demo',
+                oauthId: 'demo-' + Date.now()
+            };
+            writeAccounts([...users, account]);
+            setSession(response, account);
+            response.writeHead(302, { Location: '/?oauth=success&provider=google' });
+            return response.end();
+        }
+        
+        const state = crypto.randomBytes(16).toString('hex');
+        oauthState.set(state, { createdAt: Date.now(), provider: 'google' });
+        const redirectUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(OAUTH_CALLBACK_URL + '/api/auth/google/callback')}&response_type=code&scope=email%20profile&state=${state}`;
+        response.writeHead(302, { Location: redirectUrl });
+        return response.end();
+    }
+
+    // OAuth: Google Callback
+    if (request.method === 'GET' && url.pathname === '/api/auth/google/callback') {
+        const code = url.searchParams.get('code');
+        const state = url.searchParams.get('state');
+        
+        if (!oauthState.has(state)) {
+            response.writeHead(302, { Location: '/login.html?error=invalid_state' });
+            return response.end();
+        }
+        oauthState.delete(state);
+
+        try {
+            // Exchange code for token
+            const tokenResp = await fetch('https://oauth2.googleapis.com/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    client_id: GOOGLE_CLIENT_ID,
+                    client_secret: GOOGLE_CLIENT_SECRET,
+                    code,
+                    grant_type: 'authorization_code',
+                    redirect_uri: OAUTH_CALLBACK_URL + '/api/auth/google/callback'
+                })
+            });
+            const tokenData = await tokenResp.json();
+            
+            if (!tokenData.access_token) {
+                response.writeHead(302, { Location: '/login.html?error=token_failed' });
+                return response.end();
+            }
+
+            // Fetch user profile
+            const userResp = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+                headers: { 'Authorization': `Bearer ${tokenData.access_token}` }
+            });
+            const userData = await userResp.json();
+
+            if (!userData.email) {
+                response.writeHead(302, { Location: '/login.html?error=no_email' });
+                return response.end();
+            }
+
+            // Find or create account
+            const users = readAccounts();
+            let account = users.find(u => u.email === userData.email.toLowerCase());
+            
+            if (!account) {
+                const salt = crypto.randomBytes(16).toString('hex');
+                const randomPassword = crypto.randomBytes(32).toString('hex');
+                const passwordHash = crypto.pbkdf2Sync(randomPassword, salt, 120000, 32, 'sha256').toString('hex');
+                account = {
+                    name: userData.name,
+                    email: userData.email.toLowerCase(),
+                    passwordSalt: salt,
+                    passwordHash,
+                    oauthProvider: 'google',
+                    oauthId: userData.id
+                };
+                writeAccounts([...users, account]);
+            }
+
+            setSession(response, account);
+            response.writeHead(302, { Location: '/' });
+            return response.end();
+        } catch (error) {
+            response.writeHead(302, { Location: '/login.html?error=oauth_failed' });
+            return response.end();
+        }
+    }
+
+    // OAuth: Facebook Login (Demo mode only - Facebook OAuth requires business verification)
+    if (request.method === 'GET' && url.pathname === '/api/auth/facebook') {
+        const demoEmail = `facebook.demo.${Date.now()}@aksiwarga.com`;
+        const users = readAccounts();
+        const salt = crypto.randomBytes(16).toString('hex');
+        const randomPassword = crypto.randomBytes(32).toString('hex');
+        const passwordHash = crypto.pbkdf2Sync(randomPassword, salt, 120000, 32, 'sha256').toString('hex');
+        const account = {
+            name: 'Facebook Demo User',
+            email: demoEmail,
+            passwordSalt: salt,
+            passwordHash,
+            oauthProvider: 'facebook-demo',
+            oauthId: 'demo-' + Date.now()
+        };
+        writeAccounts([...users, account]);
+        setSession(response, account);
+        response.writeHead(302, { Location: '/?oauth=success&provider=facebook' });
+        return response.end();
+    }
     if (request.method === 'POST' && url.pathname === '/api/auth/forgot-password') {
         const body = await readJsonBody(request);
         const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';

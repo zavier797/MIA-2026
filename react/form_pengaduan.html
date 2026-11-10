@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Pengaduan Warga - AksiWarga</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        warm: {
+                            50: '#fbf7f0',
+                            100: '#f5eee2',
+                            200: '#eadfcc',
+                            300: '#d9c8ae',
+                            400: '#ad9a82',
+                            500: '#80705c',
+                            600: '#66574a',
+                            700: '#4d4036',
+                            800: '#3a2f27',
+                            900: '#261e18',
+                            950: '#1a140f',
+                        },
+                        amberAccent: {
+                            DEFAULT: '#d97706',
+                            hover: '#b45309',
+                            light: '#fef3c7',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="bg-warm-50 text-warm-800 font-sans antialiased min-h-screen flex flex-col selection:bg-amber-200 selection:text-warm-900">
+
+    <!-- MAIN CONTAINER (SPLIT SCREEN LAYOUT) -->
+    <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 min-h-screen">
+        
+        <!-- LEFT PANEL: BRANDING & GUIDELINES SHOWCASE -->
+        <div class="hidden lg:flex lg:col-span-5 bg-warm-100 border-r border-warm-200 p-12 flex-col justify-between relative overflow-hidden">
+            
+            <!-- Soft Glow Accents -->
+
+            <!-- Top Header & Brand Identity -->
+            <div class="relative z-10">
+                <a href="index.html" class="flex items-center gap-3 group inline-flex">
+                    <div><img src="../asset/logo web.jpg" alt="AksiWarga Logo" class="w-10 h-10 rounded"></div>
+                    <div>
+                        <span class="text-warm-900 font-bold text-xl tracking-tight block">AksiWarga</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Middle Core Info -->
+            <div class="relative z-10 my-auto py-10">
+                <span class="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 px-3.5 py-1.5 rounded-full text-xs font-semibold mb-6">
+                     Buat Laporan Pengaduan
+                </span>
+                
+                <h1 class="text-3xl font-bold text-warm-900 leading-tight">
+                    Suarakan Masalah Publik Tanpa Ragu.
+                </h1>
+                
+                <p class="mt-4 text-warm-700 text-sm leading-relaxed">
+                    Setiap aduan yang masuk secara otomatis terdaftar dengan nomor resi unik dan dilacak berdasarkan batas waktu pengerjaan dinas (*SLA*) secara akuntabel.
+                </p>
+
+                <!-- 3 Fast Check Rules -->
+                <div class="mt-8 space-y-4 text-xs text-warm-700">
+                    <div class="flex items-start gap-3 bg-warm-50 p-3.5 rounded-xl border border-warm-200">
+                        <div class="w-6 h-6 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
+                            <i class="fa-solid fa-check text-xs"></i>
+                        </div>
+                        <div>
+                            <strong class="text-warm-900 block font-semibold">Presisi Lokasi Kejadian</strong>
+                            <p class="text-[11px] text-warm-600 mt-0.5">Sebutkan nama jalan atau patokan wilayah agar petugas mudah menjangkau titik kerusakan.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 bg-warm-50 p-3.5 rounded-xl border border-warm-200">
+                        <div class="w-6 h-6 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
+                            <i class="fa-solid fa-check text-xs"></i>
+                        </div>
+                        <div>
+                            <strong class="text-warm-900 block font-semibold">Bukti Visual Opsional</strong>
+                            <p class="text-[11px] text-warm-600 mt-0.5">Melampirkan foto mempercepat proses verifikasi tim di lapangan.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Note -->
+            <div class="relative z-10 pt-6 border-t border-warm-200 flex items-center justify-between text-xs text-warm-600">
+                <span>&copy; 2026 TransparansiWarga</span>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: CLEAN REPORT FORM -->
+        <div class="lg:col-span-7 bg-warm-50 p-6 sm:p-10 lg:p-14 flex flex-col justify-between items-center relative">
+            
+            <!-- Top Navigation Back Link -->
+            <div class="w-full max-w-lg flex items-center justify-between mb-6">
+                <a href="index.html" class="flex lg:hidden items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-700">
+                        <i class="fa-solid fa-scale-balanced text-sm"></i>
+                    </div>
+                    <span class="text-warm-900 font-bold text-sm">AksiWarga</span>
+                </a>
+
+                <a href="index.html" class="inline-flex items-center gap-2 text-xs font-semibold text-warm-600 hover:text-amber-800 transition-colors ml-auto">
+                    <span>Kembali ke Beranda</span>
+                </a>
+            </div>
+
+            <!-- FORM CARD CONTAINER -->
+            <div class="w-full max-w-lg my-auto animate-fade-in">
+                
+                <!-- Title Header -->
+                <div class="mb-8">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-warm-900 tracking-tight">Form Pengaduan Warga</h2>
+                    <p class="text-warm-600 text-xs sm:text-sm mt-1.5">Lengkapi 5 kolom detail pengaduan di bawah ini untuk memulai pelaporan.</p>
+                </div>
+
+                <!-- MAIN FORM -->
+                <form id="reportForm" onsubmit="handleReportSubmit(event)" class="space-y-5">
+                    
+                    <!-- 1. JUDUL LAPORAN -->
+                    <div>
+                        <label for="judul" class="block text-xs font-semibold text-warm-700 mb-1.5">
+                            1. Judul Laporan <span class="text-amber-700">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="text" id="judul" name="title" required placeholder="misal: Jalan Berlubang Parah di Perempatan Fatmawati" class="w-full bg-white border border-warm-200 text-warm-900 placeholder-warm-400 text-xs sm:text-sm rounded-xl pl-4 pr-4 py-3 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 focus:outline-none transition">
+                        </div>
+                    </div>
+
+                    <!-- 2. PENJELASAN LAPORAN -->
+                    <div>
+                        <label for="penjelasan" class="block text-xs font-semibold text-warm-700 mb-1.5">
+                            2. Penjelasan Laporan <span class="text-amber-700">*</span>
+                        </label>
+                        <div class="relative">
+                            <textarea id="penjelasan" name="description" rows="4" required placeholder="Jelaskan detail masalah, kondisi fisik, dan dampak yang dirasakan warga..." class="w-full bg-white border border-warm-200 text-warm-900 placeholder-warm-400 text-xs sm:text-sm rounded-xl p-3.5 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 focus:outline-none transition"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 3. KATEGORI -->
+                    <div>
+                        <label for="kategori" class="block text-xs font-semibold text-warm-700 mb-1.5">
+                            3. Kategori Pengaduan <span class="text-amber-700">*</span>
+                        </label>
+                        <div class="relative">
+                            <select id="kategori" name="category" required class="w-full bg-white border border-warm-200 text-warm-900 text-xs sm:text-sm rounded-xl pl-4 pr-8 py-3 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 focus:outline-none transition appearance-none cursor-pointer">
+                                <option value="" disabled selected class="text-warm-500">Pilih Kategori Masalah...</option>
+                                <option value="Infrastruktur Jalan">Jalan & Infrastruktur</option>
+                                <option value="Kebersihan & Sanitasi">Kebersihan & Sampah</option>
+                                <option value="Penerangan Jalan">Fasilitas Umum & PJU</option>
+                                <option value="Keamanan Lingkungan">Keamanan & Ketertiban</option>
+                                <option value="Drainase & Banjir">Drainase & Banjir</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-warm-500 text-xs pointer-events-none"></i>
+                        </div>
+                    </div>
+
+                    <!-- 4. LOKASI KEJADIAN -->
+                    <div>
+                        <label for="lokasi" class="block text-xs font-semibold text-warm-700 mb-1.5">
+                            4. Lokasi Kejadian <span class="text-amber-700">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="text" id="lokasi" name="location" required placeholder="misal: Jl. Raden Fatah No. 12, RT 02/RW 05" class="w-full bg-white border border-warm-200 text-warm-900 placeholder-warm-400 text-xs sm:text-sm rounded-xl pl-4 pr-4 py-3 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 focus:outline-none transition">
+                        </div>
+                    </div>
+
+                    <!-- 5. BUKTI PENDUKUNG (FOTO - OPSIONAL) -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label for="fileUpload" class="block text-xs font-semibold text-warm-700">
+                                5. Bukti Pendukung Foto
+                            </label>
+                            <span class="text-[11px] font-medium text-warm-500 bg-white border border-warm-200 px-2 py-0.5 rounded">Opsional</span>
+                        </div>
+                        
+                        <div onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-warm-200 hover:border-amber-400 bg-white/70 hover:bg-white rounded-2xl p-5 text-center cursor-pointer transition duration-200 group">
+                            <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+                            
+                            <div id="uploadPlaceholder" class="space-y-2">
+                                <div class="w-10 h-10 rounded-xl bg-warm-100 text-amber-700 flex items-center justify-center mx-auto transition-transform">
+                                    <i class="fa-solid fa-camera text-base"></i>
+                                </div>
+                                <p class="text-xs text-warm-700 font-medium">Klik untuk memilih foto kerusakan</p>
+                                <p class="text-[11px] text-warm-500">Format JPG, PNG, WEBP (Maks. 5MB)</p>
+                            </div>
+
+                            <div id="uploadPreview" class="hidden flex items-center justify-between bg-warm-50 p-3 rounded-xl border border-warm-200">
+                                <div class="flex items-center gap-3 overflow-hidden">
+                                    <i class="fa-solid fa-image text-amber-700 text-lg shrink-0"></i>
+                                    <span id="fileName" class="text-xs text-warm-800 font-medium truncate">foto_bukti.jpg</span>
+                                </div>
+                                <button type="button" onclick="event.stopPropagation(); removeFile();" class="text-warm-600 hover:text-rose-700 p-1.5 transition">
+                                    <i class="fa-solid fa-xmark text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DATA PELAPOR -->
+                    <div class="pt-4 border-t border-warm-200">
+                        <h3 class="text-xs font-bold text-warm-800 mb-3">Data Pelapor</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label for="namaLengkap" class="block text-xs font-semibold text-warm-700 mb-1.5">
+                                    Nama Lengkap <span class="text-amber-700">*</span>
+                                </label>
+                                <input type="text" id="namaLengkap" name="reporterName" required placeholder="Nama lengkap Anda" class="w-full bg-white border border-warm-200 text-warm-900 placeholder-warm-400 text-xs sm:text-sm rounded-xl px-4 py-3 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 focus:outline-none transition">
+                            </div>
+
+                            <div>
+                                <label for="emailPelapor" class="block text-xs font-semibold text-warm-700 mb-1.5">
+                                    Email <span class="text-warm-500 font-normal">(Opsional)</span>
+                                </label>
+                                <input type="email" id="emailPelapor" name="reporterEmail" placeholder="email@contoh.com" class="w-full bg-white border border-warm-200 text-warm-900 placeholder-warm-400 text-xs sm:text-sm rounded-xl px-4 py-3 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 focus:outline-none transition">
+                            </div>
+
+                            <div>
+                                <label for="nomorHP" class="block text-xs font-semibold text-warm-700 mb-1.5">
+                                    Nomor Telepon <span class="text-warm-500 font-normal">(Opsional)</span>
+                                </label>
+                                <input type="tel" id="nomorHP" name="reporterPhone" placeholder="08xxxxxxxxxx" class="w-full bg-white border border-warm-200 text-warm-900 placeholder-warm-400 text-xs sm:text-sm rounded-xl px-4 py-3 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 focus:outline-none transition">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUBMIT BUTTON -->
+                    <div class="pt-3">
+                        <button type="submit" id="submitBtn" class="w-full bg-amber-700 hover:bg-amber-800 text-white font-bold py-3.5 px-4 rounded-xl transition duration-200 shadow-sm flex items-center justify-center gap-2.5 text-xs sm:text-sm">
+                            <span>Kirim Pengaduan Warga</span>
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+            <!-- Footer Note -->
+            <div class="w-full max-w-lg pt-6 text-center text-[11px] text-warm-500 border-t border-warm-200 mt-6">
+                <span>Data aduan dijamin kerahasiaan pelapornya sesuai standar privasi TransparansiWarga.</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 hidden transition-all duration-300 transform translate-y-4">
+        <div class="bg-white border border-emerald-200 text-warm-900 px-5 py-4 rounded-2xl shadow-lg flex items-center gap-3.5 text-xs max-w-md">
+            <div class="w-8 h-8 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700 shrink-0">
+                <i class="fa-solid fa-circle-check text-sm"></i>
+            </div>
+            <div>
+                <span class="font-bold text-warm-900 block">Laporan Berhasil Terkirim!</span>
+                <span class="text-warm-700 text-[11px]" id="toastMsg">Nomor Resi Unik Anda: #TRW-2026-991</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // File Upload Handler
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('uploadPlaceholder').classList.add('hidden');
+                document.getElementById('uploadPreview').classList.remove('hidden');
+            }
+        }
+
+        function removeFile() {
+            document.getElementById('fileInput').value = '';
+            document.getElementById('uploadPlaceholder').classList.remove('hidden');
+            document.getElementById('uploadPreview').classList.add('hidden');
+        }
+
+        // Submit Form Handler
+        async function handleReportSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin text-xs"></i><span>Memproses Pengaduan...</span>`;
+
+            const data = {
+                title: form.querySelector('[name="title"]').value,
+                category: form.querySelector('[name="category"]').value,
+                description: form.querySelector('[name="description"]').value,
+                location: form.querySelector('[name="location"]').value,
+                province: form.querySelector('[name="province"]')?.value || 'DKI Jakarta',
+                reporterName: form.querySelector('[name="reporterName"]').value,
+                reporterEmail: form.querySelector('[name="reporterEmail"]').value,
+                reporterPhone: form.querySelector('[name="reporterPhone"]').value
+            };
+
+            try {
+                const response = await fetch('/api/reports', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showToast(`Nomor Resi Unik Anda: ${result.report.id}`);
+                    btn.innerHTML = `<span>Laporan Terkirim!</span>`;
+                    setTimeout(() => {
+                        window.location.href = `lacak_progress.html?id=${result.report.id}`;
+                    }, 1800);
+                } else {
+                    alert(result.error || 'Gagal mengirim laporan. Coba lagi.');
+                    btn.disabled = false;
+                    btn.innerHTML = `<span>Kirim Pengaduan Warga</span>`;
+                }
+            } catch (err) {
+                alert('Koneksi gagal. Pastikan server berjalan.');
+                btn.disabled = false;
+                btn.innerHTML = `<span>Kirim Pengaduan Warga</span>`;
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = message;
+            toast.classList.remove('hidden', 'translate-y-4');
+            toast.classList.add('translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-4', 'hidden');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>

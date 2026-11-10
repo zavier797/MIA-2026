@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Kategori Pengaduan - AksiWarga</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        warm: {
+                            50: '#fbf7f0',
+                            100: '#f5eee2',
+                            200: '#eadfcc',
+                            300: '#d9c8ae',
+                            400: '#ad9a82',
+                            500: '#80705c',
+                            600: '#66574a',
+                            700: '#4d4036',
+                            800: '#3a2f27',
+                            900: '#261e18',
+                            950: '#1a140f',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        html[data-theme="dark"] body { background-color: #171411 !important; color: #f5eee2 !important; }
+        html[data-theme="dark"] header, html[data-theme="dark"] footer, html[data-theme="dark"] .bg-white {
+            background-color: #24201b !important;
+        }
+        html[data-theme="dark"] .bg-warm-50 { background-color: #1c1915 !important; }
+        html[data-theme="dark"] .bg-warm-100 { background-color: #302920 !important; }
+        html[data-theme="dark"] .text-warm-900, html[data-theme="dark"] .text-warm-800 {
+            color: #f5eee2 !important;
+        }
+        html[data-theme="dark"] .text-warm-700 { color: #e0d4c3 !important; }
+        html[data-theme="dark"] .text-warm-600, html[data-theme="dark"] .text-warm-500 {
+            color: #b6a894 !important;
+        }
+        html[data-theme="dark"] .border-warm-200, html[data-theme="dark"] .border-warm-300 {
+            border-color: #494034 !important;
+        }
+        html[data-theme="dark"] select { color-scheme: dark; }
+        @media (max-width: 420px) {
+            #themeToggleLabel { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-warm-50 text-warm-800 font-sans antialiased min-h-screen flex flex-col selection:bg-amber-200 selection:text-warm-900">
+
+    <!-- TOP NAVBAR -->
+    <header class="bg-white border-b border-warm-200 sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div>
+                    <img src="../asset/logo web.jpg" alt="AksiWarga" class="h-8 w-8 rounded">
+                </div>
+                <div>
+                    <span class="text-warm-900 font-bold text-base tracking-tight block">AksiWarga</span>
+                </div>
+            </a>
+
+            <div class="flex items-center gap-3">
+                <button id="themeToggle" type="button" aria-label="Aktifkan mode gelap" aria-pressed="false" class="inline-flex items-center gap-2 rounded-full border border-warm-200 bg-warm-50 px-3 py-2 text-xs font-semibold text-warm-700 transition hover:border-amber-600">
+                    <i id="themeToggleIcon" class="fa-solid fa-moon" aria-hidden="true"></i>
+                    <span id="themeToggleLabel">Mode Gelap</span>
+                </button>
+                <a href="index.html" class="inline-flex items-center gap-2 text-xs font-semibold text-warm-600 hover:text-amber-800 transition-colors">
+                    <span>Kembali ke Beranda</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in space-y-8">
+        
+        <!-- 1. HEADER KATEGORI DENGAN DROPDOWN SELECTOR -->
+        <div class="bg-white border border-warm-200 rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+            <!-- Ambient Glow -->
+
+            <div class="space-y-4 relative z-10 pb-6 border-b border-warm-200">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    
+                    <!-- DROPDOWN SELECTOR -->
+                    <div class="relative min-w-[260px]">
+                        <label for="categorySelect" class="text-[11px] font-semibold text-warm-600 block mb-1">Pilih Kategori Masalah:</label>
+                        <div class="relative">
+                            <select id="categorySelect" onchange="changeCategory(this.value)" class="w-full bg-warm-50 border border-warm-300 text-warm-900 font-bold text-sm sm:text-base rounded-xl px-4 py-2.5 pr-10 focus:border-amber-600 focus:outline-none appearance-none cursor-pointer transition">
+                                <option value="infrastruktur" selected>Infrastruktur &amp; Jalan</option>
+                                <option value="lingkungan">Lingkungan &amp; Sampah</option>
+                                <option value="bansos">Bantuan Sosial (Bansos)</option>
+                                <option value="fasilitas">Fasilitas Umum &amp; Lainnya</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-amber-700 text-xs pointer-events-none"></i>
+                        </div>
+                    </div>
+
+                    <div class="text-xs text-warm-600 flex items-center gap-2 self-start sm:self-auto">
+                        <span>Penanggung Jawab Utama:</span>
+                        <strong id="agencyBadge" class="text-warm-900 bg-warm-50 px-3 py-1.5 rounded-lg border border-warm-200 font-semibold">
+                            Dinas Bina Marga &amp; Sumber Daya Air
+                        </strong>
+                    </div>
+                </div>
+
+                <div>
+                    <p id="categoryDescription" class="text-warm-700 text-xs sm:text-sm mt-2 max-w-2xl leading-relaxed">
+                        Pemantauan transparansi perbaikan jalan berlubang, jembatan rusak, drainase, dan fasilitas umum jalan di seluruh wilayah kota.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 4 SUMMARY STAT CARDS -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6">
+                <!-- Stat 1: Total Laporan dengan Rasio & Persentase -->
+                <div class="bg-warm-50 border border-warm-200 rounded-2xl p-4 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl font-bold shrink-0">
+                        <i class="fa-solid fa-folder-open"></i>
+                    </div>
+                    <div>
+                        <span class="text-warm-600 text-[11px] font-medium block">Total Laporan Masuk</span>
+                        <div class="flex items-baseline gap-2">
+                            <strong id="totalCount" class="text-warm-900 text-base sm:text-lg font-bold">340 dari 1,354</strong>
+                            <span id="percentageBadge" class="text-[10px] bg-amber-100 text-amber-700 border border-amber-200 font-bold px-1.5 py-0.5 rounded">25.1%</span>
+                        </div>
+                        <span class="text-[10px] text-warm-500">Porsi dari seluruh aduan kota</span>
+                    </div>
+                </div>
+
+                <!-- Stat 2: Selesai Ditangani -->
+                <div class="bg-warm-50 border border-warm-200 rounded-2xl p-4 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center text-xl font-bold shrink-0">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div>
+                        <span class="text-warm-600 text-[11px] font-medium block">Selesai Ditangani</span>
+                        <strong id="completedCount" class="text-emerald-700 text-base sm:text-lg font-bold">280 Laporan (82.3%)</strong>
+                        <span class="text-[10px] text-warm-500 block">Tingkat keberhasilan tuntas</span>
+                    </div>
+                </div>
+
+                <!-- Stat 3: Rata-rata SLA -->
+                <div class="bg-warm-50 border border-warm-200 rounded-2xl p-4 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl font-bold shrink-0">
+                        <i class="fa-solid fa-stopwatch"></i>
+                    </div>
+                    <div>
+                        <span class="text-warm-600 text-[11px] font-medium block">Rata-rata Respon SLA</span>
+                        <strong id="slaTime" class="text-amber-700 text-base sm:text-lg font-bold">&plusmn; 3 Hari Kerja</strong>
+                        <span class="text-[10px] text-warm-500 block">Kecepatan tindak lanjut</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. MONTHLY RESOLUTION TREND (INLINE SVG CHART) -->
+        <div class="bg-white border border-warm-200 rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-lg font-bold text-warm-900 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-amber-700 text-xs"></i>
+                        <span>Tren Penanganan Bulanan (2026)</span>
+                    </h2>
+                    <p class="text-warm-600 text-xs mt-0.5">Perbandingan aduan masuk vs penanganan yang diselesaikan per bulan.</p>
+                </div>
+
+                <!-- Chart Legend -->
+                <div class="flex items-center gap-4 text-xs">
+                    <span class="flex items-center gap-1.5 text-amber-700">
+                        <span class="w-3 h-3 rounded-full bg-amber-600"></span>
+                        <span>Masuk</span>
+                    </span>
+                    <span class="flex items-center gap-1.5 text-emerald-700">
+                        <span class="w-3 h-3 rounded-full bg-emerald-600"></span>
+                        <span>Selesai</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- SVG Graph Container -->
+            <div class="bg-warm-50 p-6 rounded-2xl border border-warm-200 overflow-hidden">
+                <svg viewBox="0 0 500 160" class="w-full h-44">
+                    <!-- Grid Lines -->
+                    <line x1="40" y1="20" x2="480" y2="20" stroke="#3a2d24" stroke-dasharray="4,4" stroke-width="1"/>
+                    <line x1="40" y1="60" x2="480" y2="60" stroke="#3a2d24" stroke-dasharray="4,4" stroke-width="1"/>
+                    <line x1="40" y1="100" x2="480" y2="100" stroke="#3a2d24" stroke-dasharray="4,4" stroke-width="1"/>
+                    <line x1="40" y1="140" x2="480" y2="140" stroke="#704f3a" stroke-width="1"/>
+
+                    <!-- Y-Axis Labels -->
+                    <text x="30" y="24" fill="#bf9e7f" font-size="10" text-anchor="end">150</text>
+                    <text x="30" y="64" fill="#bf9e7f" font-size="10" text-anchor="end">100</text>
+                    <text x="30" y="104" fill="#bf9e7f" font-size="10" text-anchor="end">50</text>
+                    <text x="30" y="144" fill="#bf9e7f" font-size="10" text-anchor="end">0</text>
+
+                    <!-- Bar Group: Jan (Januari) -->
+                    <rect x="90" y="50" width="22" height="90" fill="#f59e0b" rx="4"/>
+                    <rect x="116" y="65" width="22" height="75" fill="#10b981" rx="4"/>
+                    <text x="114" y="156" fill="#bf9e7f" font-size="11" text-anchor="middle" font-weight="600">Januari</text>
+
+                    <!-- Bar Group: Feb (Februari) -->
+                    <rect x="230" y="35" width="22" height="105" fill="#f59e0b" rx="4"/>
+                    <rect x="256" y="45" width="22" height="95" fill="#10b981" rx="4"/>
+                    <text x="254" y="156" fill="#bf9e7f" font-size="11" text-anchor="middle" font-weight="600">Februari</text>
+
+                    <!-- Bar Group: Mar (Maret) -->
+                    <rect x="370" y="30" width="22" height="110" fill="#f59e0b" rx="4"/>
+                    <rect x="396" y="40" width="22" height="100" fill="#10b981" rx="4"/>
+                    <text x="394" y="156" fill="#bf9e7f" font-size="11" text-anchor="middle" font-weight="600">Maret</text>
+                </svg>
+            </div>
+        </div>
+
+        <!-- 3. FILTERED REPORT CARDS -->
+        <div class="bg-white border border-warm-200 rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-warm-200 pb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-warm-900">Daftar Pengaduan Masuk</h2>
+                    <p class="text-warm-600 text-xs">Arsip aduan warga berdasarkan kategori terpilih.</p>
+                </div>
+
+                <!-- FILTER BUTTONS -->
+                <div class="flex items-center gap-2 bg-warm-50 p-1.5 rounded-2xl border border-warm-200">
+                    <button onclick="filterReports('all', this)" class="filter-btn active bg-amber-700 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs transition">
+                        Semua
+                    </button>
+                    <button onclick="filterReports('proses', this)" class="filter-btn text-warm-600 hover:text-warm-900 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition">
+                        Dalam Proses
+                    </button>
+                    <button onclick="filterReports('selesai', this)" class="filter-btn text-warm-600 hover:text-warm-900 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition">
+                        Selesai
+                    </button>
+                </div>
+            </div>
+
+            <!-- CARDS LIST -->
+            <div id="reportList" class="space-y-4">
+                
+                <!-- CARD 1: PROSES -->
+                <div class="report-card proses bg-warm-50 border border-warm-200 hover:border-amber-400 rounded-2xl p-5 transition duration-200">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                        <div class="flex items-center gap-2.5">
+                            <span class="font-mono text-amber-700 font-bold text-xs bg-white px-2.5 py-1 rounded-lg border border-warm-200">#TW-2026-0892</span>
+                            <span class="bg-amber-50 border border-amber-200 text-amber-700 font-semibold px-2.5 py-0.5 rounded-full text-[10px]">Diproses</span>
+                        </div>
+                        <span class="text-warm-500 text-[11px] font-mono">06 Maret 2026</span>
+                    </div>
+                    <h3 class="text-base font-bold text-warm-900 hover:text-amber-800 transition cursor-pointer">Perbaikan Jalan Berlubang Parah di Jl. Fatmawati</h3>
+                    <p class="text-warm-700 text-xs mt-1.5 line-clamp-2 leading-relaxed">
+                        Terdapat lubang jalan cukup dalam dan lebar di lajur kiri dekat lampu merah yang sangat membahayakan pengendara motor saat malam hari.
+                    </p>
+                    <div class="flex items-center gap-2 mt-4 pt-3 border-t border-warm-200 text-xs text-warm-600">
+                        <i class="fa-solid fa-location-dot text-amber-700 text-xs"></i>
+                        <span>Cilandak Barat, Jakarta Selatan</span>
+                    </div>
+                </div>
+
+                <!-- CARD 2: PROSES -->
+                <div class="report-card proses bg-warm-50 border border-warm-200 hover:border-amber-400 rounded-2xl p-5 transition duration-200">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                        <div class="flex items-center gap-2.5">
+                            <span class="font-mono text-amber-700 font-bold text-xs bg-white px-2.5 py-1 rounded-lg border border-warm-200">#TW-2026-0741</span>
+                            <span class="bg-amber-50 border border-amber-200 text-amber-700 font-semibold px-2.5 py-0.5 rounded-full text-[10px]">Diproses</span>
+                        </div>
+                        <span class="text-warm-500 text-[11px] font-mono">01 Maret 2026</span>
+                    </div>
+                    <h3 class="text-base font-bold text-warm-900 hover:text-amber-800 transition cursor-pointer">Trotoar Rusak dan Ambles Dekat Halte Bus</h3>
+                    <p class="text-warm-700 text-xs mt-1.5 line-clamp-2 leading-relaxed">
+                        Ubin pejalan kaki amblas sepanjang 2 meter membuat pejalan kaki terpaksa berjalan di bahu jalan raya.
+                    </p>
+                    <div class="flex items-center gap-2 mt-4 pt-3 border-t border-warm-200 text-xs text-warm-600">
+                        <i class="fa-solid fa-location-dot text-amber-700 text-xs"></i>
+                        <span>Kebayoran Baru, Jakarta Selatan</span>
+                    </div>
+                </div>
+
+                <!-- CARD 3: SELESAI -->
+                <div class="report-card selesai bg-warm-50 border border-warm-200 hover:border-amber-400 rounded-2xl p-5 transition duration-200">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                        <div class="flex items-center gap-2.5">
+                            <span class="font-mono text-amber-700 font-bold text-xs bg-white px-2.5 py-1 rounded-lg border border-warm-200">#TW-2026-0610</span>
+                            <span class="bg-emerald-50 border border-emerald-200 text-emerald-700 font-semibold px-2.5 py-0.5 rounded-full text-[10px]">Selesai</span>
+                        </div>
+                        <span class="text-warm-500 text-[11px] font-mono">20 Februari 2026</span>
+                    </div>
+                    <h3 class="text-base font-bold text-warm-900 hover:text-amber-800 transition cursor-pointer">Genangan Air Akibat Drainase Tersumbat</h3>
+                    <p class="text-warm-700 text-xs mt-1.5 line-clamp-2 leading-relaxed">
+                        Pembersihan gorong-gorong dan pemeliharaan saluran air telah tuntas dilaksanakan oleh tim regu Bina Marga.
+                    </p>
+                    <div class="flex items-center gap-2 mt-4 pt-3 border-t border-warm-200 text-xs text-warm-600">
+                        <i class="fa-solid fa-location-dot text-amber-700 text-xs"></i>
+                        <span>Pancoran, Jakarta Selatan</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER INFORMASI SINGKAT -->
+    <footer class="bg-white border-t border-warm-200 py-6 px-4 text-center text-warm-600 text-xs">
+        <div class="max-w-4xl mx-auto space-y-1.5">
+            <p class="font-bold text-amber-700">AksiWarga</p>
+            <p class="text-warm-600 text-[11px]">Wadah pengaduan publik yang cepat, akuntabel, dan transparan untuk lingkungan kita.</p>
+            <p class="text-warm-500 text-[10px] pt-2 border-t border-warm-200">&copy; 2026 AksiWarga. Hak cipta dilindungi.</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT CONTROLLER -->
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const themeToggleIcon = document.getElementById('themeToggleIcon');
+        const themeToggleLabel = document.getElementById('themeToggleLabel');
+        const savedTheme = localStorage.getItem('aksiwarga-theme');
+        let isDarkTheme = savedTheme === 'dark';
+
+        function applyTheme() {
+            document.documentElement.dataset.theme = isDarkTheme ? 'dark' : 'light';
+            themeToggle.setAttribute('aria-pressed', String(isDarkTheme));
+            themeToggle.setAttribute('aria-label', isDarkTheme ? 'Aktifkan mode terang' : 'Aktifkan mode gelap');
+            themeToggleIcon.className = `fa-solid ${isDarkTheme ? 'fa-sun' : 'fa-moon'}`;
+            themeToggleLabel.textContent = isDarkTheme ? 'Mode Terang' : 'Mode Gelap';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            isDarkTheme = !isDarkTheme;
+            localStorage.setItem('aksiwarga-theme', isDarkTheme ? 'dark' : 'light');
+            applyTheme();
+        });
+        applyTheme();
+
+        const categoryData = {
+            infrastruktur: {
+                agency: "Dinas Bina Marga & Sumber Daya Air",
+                desc: "Pemantauan transparansi perbaikan jalan berlubang, jembatan rusak, drainase, dan fasilitas umum jalan di seluruh wilayah kota.",
+                total: "340 dari 1,354",
+                percentage: "25.1%",
+                completed: "280 Laporan (82.3%)",
+                sla: "± 3 Hari Kerja"
+            },
+            lingkungan: {
+                agency: "Dinas Lingkungan Hidup",
+                desc: "Pengawasan pengelolaan tumpukan sampah liar, pembersihan bantaran sungai, pencemaran lingkungan, dan fasilitas kebersihan umum.",
+                total: "195 dari 1,354",
+                percentage: "14.4%",
+                completed: "160 Laporan (82.0%)",
+                sla: "± 2 Hari Kerja"
+            },
+            bansos: {
+                agency: "Dinas Sosial",
+                desc: "Transparansi pendataan, kelayakan penerima bantuan sosial, dan penyaluran bantuan dana masyarakat.",
+                total: "120 dari 1,354",
+                percentage: "8.8%",
+                completed: "95 Laporan (79.1%)",
+                sla: "± 5 Hari Kerja"
+            },
+            fasilitas: {
+                agency: "Dinas Perhubungan & Fasilitas Umum",
+                desc: "Laporan perbaikan lampu PJU mati, halte bus damaged, rambu lalu lintas, dan pemeliharaan taman publik.",
+                total: "85 dari 1,354",
+                percentage: "6.2%",
+                completed: "72 Laporan (84.7%)",
+                sla: "± 2 Hari Kerja"
+            }
+        };
+
+        function changeCategory(catKey) {
+            const data = categoryData[catKey];
+            if (!data) return;
+
+            document.getElementById('agencyBadge').innerText = data.agency;
+            document.getElementById('categoryDescription').innerText = data.desc;
+            document.getElementById('totalCount').innerText = data.total;
+            document.getElementById('percentageBadge').innerText = data.percentage;
+            document.getElementById('completedCount').innerText = data.completed;
+            document.getElementById('slaTime').innerText = data.sla;
+        }
+
+        function filterReports(status, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.className = "filter-btn text-warm-600 hover:text-warm-900 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition";
+            });
+            btn.className = "filter-btn active bg-amber-700 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs transition";
+
+            const cards = document.querySelectorAll('.report-card');
+            cards.forEach(card => {
+                if (status === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    if (card.classList.contains(status)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

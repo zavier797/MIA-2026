@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Warga & FAQ - AksiWarga</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        warm: {
+                            50: '#fbf7f0',
+                            100: '#f5eee2',
+                            200: '#eadfcc',
+                            300: '#d9c8ae',
+                            400: '#ad9a82',
+                            500: '#80705c',
+                            600: '#66574a',
+                            700: '#4d4036',
+                            800: '#3a2f27',
+                            900: '#261e18',
+                            950: '#1a140f',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .faq-answer {
+            transition: max-height 0.3s cubic-bezier(0, 1, 0, 1), opacity 0.25s ease-in-out;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+        .faq-answer.open {
+            max-height: 1000px;
+            opacity: 1;
+            transition: max-height 0.35s ease-in-out, opacity 0.3s ease-in-out;
+        }
+        html[data-theme="dark"] body { background-color: #171411 !important; color: #f5eee2 !important; }
+        html[data-theme="dark"] header, html[data-theme="dark"] footer, html[data-theme="dark"] .bg-white {
+            background-color: #24201b !important;
+        }
+        html[data-theme="dark"] .bg-warm-50 { background-color: #1c1915 !important; }
+        html[data-theme="dark"] .bg-warm-100 { background-color: #302920 !important; }
+        html[data-theme="dark"] .text-warm-900, html[data-theme="dark"] .text-warm-800,
+        html[data-theme="dark"] .text-warm-700 { color: #f5eee2 !important; }
+        html[data-theme="dark"] .text-warm-600, html[data-theme="dark"] .text-warm-500,
+        html[data-theme="dark"] .text-warm-400 { color: #b6a894 !important; }
+        html[data-theme="dark"] .border-warm-200, html[data-theme="dark"] .border-warm-300 {
+            border-color: #494034 !important;
+        }
+        html[data-theme="dark"] input { color-scheme: dark; }
+        html[data-theme="dark"] .bg-emerald-50 { background-color: #1e3025 !important; }
+        html[data-theme="dark"] .bg-rose-50 { background-color: #392323 !important; }
+        @media (max-width: 420px) { .theme-label { display: none; } }
+    </style>
+</head>
+<body class="bg-warm-50 text-warm-800 font-sans antialiased min-h-screen flex flex-col selection:bg-amber-200 selection:text-warm-900">
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="bg-warm-100 border-b border-warm-200 sticky top-0 z-40 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            
+            <!-- BRAND LOGO -->
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div>
+                    <img src="../asset/logo web.jpg" alt="AksiWarga Logo" class="w-8 h-8 rounded">
+                </div>
+                <div>
+                    <span class="text-warm-900 font-bold text-base tracking-tight block">AksiWarga</span>
+                </div>
+            </a>
+
+            <!-- SHORTCUT MENU DROPDOWN -->
+            <div class="relative flex items-center gap-2 sm:gap-3">
+                <button id="themeToggle" type="button" aria-label="Aktifkan mode gelap" aria-pressed="false" class="h-10 rounded-2xl bg-warm-50 hover:bg-warm-100 border border-warm-200 flex items-center justify-center gap-2 px-3 text-warm-700 hover:text-amber-800 transition">
+                    <i id="themeToggleIcon" class="fa-solid fa-moon" aria-hidden="true"></i>
+                    <span id="themeToggleLabel" class="theme-label text-xs font-semibold">Mode Gelap</span>
+                </button>
+                <button onclick="toggleDropdown()" class="w-10 h-10 rounded-2xl bg-warm-50 hover:bg-warm-100 border border-warm-200 flex items-center justify-center text-warm-700 hover:text-amber-800 transition">
+                    <i class="fa-solid fa-grip-vertical text-base"></i>
+                </button>
+
+                <!-- DROPDOWN CONTENT -->
+                <div id="shortcutMenu" class="hidden absolute right-0 top-14 w-64 bg-white border border-warm-200 rounded-2xl shadow-lg p-2 z-50 animate-fade-in space-y-1">
+                    <div class="px-3 py-2 border-b border-warm-200 mb-1">
+                        <span class="text-[10px] font-bold text-amber-700">Shortcut Akses Cepat</span>
+                    </div>
+                    <button type="button" onclick="handleProtectedShortcut(event, 'report')" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-warm-100 text-xs text-warm-800 hover:text-warm-900 transition group">
+                        <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center group-hover:bg-amber-700 group-hover:text-white transition">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold block">Buat Laporan</span>
+                            <span class="text-[10px] text-warm-600">Kirim aduan infrastruktur baru</span>
+                        </div>
+                    </button>
+                    <button type="button" onclick="handleProtectedShortcut(event, 'check')" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-warm-100 text-xs text-warm-800 hover:text-warm-900 transition group">
+                        <div class="w-7 h-7 rounded-lg bg-warm-100 text-warm-700 flex items-center justify-center group-hover:bg-amber-100 group-hover:text-amber-800 transition">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold block">Cek Laporan</span>
+                            <span class="text-[10px] text-warm-600">Lacak status tiket pengaduan</span>
+                        </div>
+                    </button>
+                    <a href="transparansi_anggaran_apbd.html" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-warm-100 text-xs text-warm-800 hover:text-warm-900 transition group">
+                        <div class="w-7 h-7 rounded-lg bg-warm-100 text-warm-700 flex items-center justify-center group-hover:bg-amber-100 group-hover:text-amber-800 transition">
+                            <i class="fa-solid fa-wallet text-xs"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold block">Transparansi Anggaran</span>
+                            <span class="text-[10px] text-warm-600">Realisasi APBD &amp; Proyek</span>
+                        </div>
+                    </a>
+                    <a href="faq.html" class="flex items-center gap-3 px-3 py-2 rounded-xl bg-amber-100 border border-amber-200 text-xs text-amber-700 font-bold transition">
+                        <div class="w-7 h-7 rounded-lg bg-amber-700 text-white flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-circle-question text-xs"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold block">Panduan Warga / FAQ</span>
+                            <span class="text-[10px] text-amber-700">SLA &amp; alur penanganan aduan</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
+        
+        <!-- HERO BANNER & SEARCH BAR -->
+        <div class="bg-white border border-warm-200 rounded-3xl p-6 sm:p-10 relative overflow-hidden text-center space-y-6">
+
+            <div class="relative z-10 max-w-2xl mx-auto space-y-3">
+                <div class="inline-flex items-center gap-2 bg-amber-100 border border-amber-200 text-amber-700 text-xs font-semibold px-3.5 py-1 rounded-full">
+                    <i class="fa-solid fa-book-bookmark"></i>
+                    <span>Pusat Informasi &amp; Bantuan Publik</span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-bold text-warm-900 tracking-tight">Panduan Warga &amp; FAQ</h1>
+                <p class="text-warm-600 text-xs sm:text-sm leading-relaxed">
+                    Pahami alur pengaduan, kriteria laporan valid, keamanan privasi pelapor, hingga standar waktu penanganan (SLA) dinas pemerintah daerah.
+                </p>
+            </div>
+
+            <!-- SEARCH INPUT -->
+            <div class="relative z-10 max-w-xl mx-auto">
+                <div class="relative">
+                    <input type="text" id="faqSearch" onkeyup="filterFAQ()" placeholder="Ketik kata kunci (misal: SLA, anonim, APBD, foto, dinas)..." class="w-full bg-warm-50 border border-warm-200 rounded-2xl pl-4 pr-4 py-3 text-xs sm:text-sm text-warm-900 placeholder-warm-400 focus:outline-none focus:border-amber-600 transition shadow-inner">
+                </div>
+            </div>
+        </div>
+
+        <!-- CATEGORY CHIPS / FILTER TABS -->
+        <div class="flex flex-wrap items-center justify-center gap-2">
+            <button onclick="filterCategory('ALL', this)" class="cat-chip active bg-amber-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition">
+                Semua Pertanyaan
+            </button>
+            <button onclick="filterCategory('ALUR', this)" class="cat-chip bg-white border border-warm-200 text-warm-700 hover:text-warm-900 hover:bg-warm-100 px-4 py-2 rounded-xl text-xs font-semibold transition">
+                <i class="fa-solid fa-diagram-project text-amber-700 mr-1.5"></i>Alur Laporan
+            </button>
+            <button onclick="filterCategory('KRITERIA', this)" class="cat-chip bg-white border border-warm-200 text-warm-700 hover:text-warm-900 hover:bg-warm-100 px-4 py-2 rounded-xl text-xs font-semibold transition">
+                <i class="fa-solid fa-shield-halved text-amber-700 mr-1.5"></i>Kriteria &amp; Keamanan
+            </button>
+            <button onclick="filterCategory('SLA', this)" class="cat-chip bg-white border border-warm-200 text-warm-700 hover:text-warm-900 hover:bg-warm-100 px-4 py-2 rounded-xl text-xs font-semibold transition">
+                <i class="fa-solid fa-clock-rotate-left text-amber-700 mr-1.5"></i>Estimasi SLA Dinas
+            </button>
+            <button onclick="filterCategory('ANGGARAN', this)" class="cat-chip bg-white border border-warm-200 text-warm-700 hover:text-warm-900 hover:bg-warm-100 px-4 py-2 rounded-xl text-xs font-semibold transition">
+                <i class="fa-solid fa-wallet text-amber-700 mr-1.5"></i>Transparansi APBD
+            </button>
+        </div>
+
+        <!-- CONTENT LAYOUT: ACCORDION LIST & SIDEBAR CONTACT -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- ACCORDION ITEMS CONTAINER -->
+            <div class="lg:col-span-2 space-y-4" id="faqAccordionContainer">
+
+                <!-- Q1: ALUR PENANGANAN -->
+                <div class="faq-item bg-white border border-warm-200 rounded-2xl overflow-hidden transition" data-category="ALUR">
+                    <button onclick="toggleFAQ(this)" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-warm-900 text-sm sm:text-base hover:text-amber-800 transition">
+                        <span class="flex items-center gap-3">
+                            <span class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 text-xs flex items-center justify-center font-mono">01</span>
+                            Bagaimana alur penanganan pengaduan dari warga hingga selesai?
+                        </span>
+                        <i class="fa-solid fa-chevron-down text-warm-500 text-xs transition-transform duration-200 icon-arrow"></i>
+                    </button>
+                    <div class="faq-answer px-5 pb-5 text-xs text-warm-700 space-y-4">
+                        <p class="leading-relaxed"> Setia laporan yang dikirimkan warga diproses melalui 4 tahapan transparan tanpa ada perantara yang memperlambat:</p>
+                        
+                        <!-- VISUAL STEPPER -->
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-2">
+                            <div class="bg-warm-50 p-3 rounded-xl border border-warm-200 space-y-1">
+                                <span class="text-amber-700 font-bold block text-[11px]">1. Pengiriman</span>
+                                <p class="text-[10px] text-warm-600">Warga mengisi formulir &amp; foto bukti lokasi.</p>
+                            </div>
+                            <div class="bg-warm-50 p-3 rounded-xl border border-warm-200 space-y-1">
+                                <span class="text-amber-700 font-bold block text-[11px]">2. Verifikasi</span>
+                                <p class="text-[10px] text-warm-600">Tim admin cek kejelasan data &amp; lokasi.</p>
+                            </div>
+                            <div class="bg-warm-50 p-3 rounded-xl border border-warm-200 space-y-1">
+                                <span class="text-blue-700 font-bold block text-[11px]">3. Penugasan Dinas</span>
+                                <p class="text-[10px] text-warm-600">Dinas teknis (PUPR/SDA/LH) turun ke lapangan.</p>
+                            </div>
+                            <div class="bg-warm-50 p-3 rounded-xl border border-warm-200 space-y-1">
+                                <span class="text-emerald-700 font-bold block text-[11px]">4. Penuntasan</span>
+                                <p class="text-[10px] text-warm-600">Upload bukti foto tuntas &amp; nota APBD.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q2: KRITERIA VALID -->
+                <div class="faq-item bg-white border border-warm-200 rounded-2xl overflow-hidden transition" data-category="KRITERIA">
+                    <button onclick="toggleFAQ(this)" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-warm-900 text-sm sm:text-base hover:text-amber-800 transition">
+                        <span class="flex items-center gap-3">
+                            <span class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 text-xs flex items-center justify-center font-mono">02</span>
+                            Kriteria apa saja yang membuat laporan dianggap valid &amp; diproses?
+                        </span>
+                        <i class="fa-solid fa-chevron-down text-warm-500 text-xs transition-transform duration-200 icon-arrow"></i>
+                    </button>
+                    <div class="faq-answer px-5 pb-5 text-xs text-warm-700 space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-xl space-y-1.5">
+                                <span class="text-emerald-700 font-bold flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-check"></i> Kriteria Laporan Valid (Diterima)
+                                </span>
+                                <ul class="list-disc list-inside text-warm-700 text-[11px] space-y-1">
+                                    <li>Lokasi jelas &amp; spesifik (nama jalan / RT / RW).</li>
+                                    <li>Melampirkan foto objektif kerusakan fisik.</li>
+                                    <li>Aduan terfokus pada fasilitas &amp; layanan umum.</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-rose-50 border border-rose-200 p-3.5 rounded-xl space-y-1.5">
+                                <span class="text-rose-700 font-bold flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-xmark"></i> Menyebabkan Ditolak / Dihapus
+                                </span>
+                                <ul class="list-disc list-inside text-warm-700 text-[11px] space-y-1">
+                                    <li>Mengandung SARA, ujaran kebencian, atau fitnah.</li>
+                                    <li>Sengketa lahan atau konflik pribadi antarwarga.</li>
+                                    <li>Foto buram tanpa petunjuk alamat yang jelas.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q3: KEAMANAN PRIVASI & ANONIM -->
+                <div class="faq-item bg-white border border-warm-200 rounded-2xl overflow-hidden transition" data-category="KRITERIA">
+                    <button onclick="toggleFAQ(this)" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-warm-900 text-sm sm:text-base hover:text-amber-800 transition">
+                        <span class="flex items-center gap-3">
+                            <span class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 text-xs flex items-center justify-center font-mono">03</span>
+                            Apakah identitas pelapor aman dan bisa disembunyikan (Anonim)?
+                        </span>
+                        <i class="fa-solid fa-chevron-down text-warm-500 text-xs transition-transform duration-200 icon-arrow"></i>
+                    </button>
+                    <div class="faq-answer px-5 pb-5 text-xs text-warm-700 space-y-3">
+                        <p class="leading-relaxed">
+                            <strong>Ya, 100% Aman.</strong> Sistem AksiWarga dilengkapi dengan fitur <span class="text-amber-700 font-semibold">"Kirim sebagai Anonim"</span>. Saat dicentang, nama asli, NIK, dan nomor kontak Anda tidak akan ditampilkan di papan publik maupun kepada pihak ketiga.
+                        </p>
+                        <div class="bg-warm-50 p-3 rounded-xl border border-warm-200 text-[11px] text-warm-600 flex items-center gap-2">
+                            <i class="fa-solid fa-lock text-emerald-700"></i>
+                            <span>Data kontak pelapor hanya digunakan oleh sistem internal untuk pengiriman notifikasi pembaruan status laporan.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q4: ESTIMASI SLA DINAS -->
+                <div class="faq-item bg-white border border-warm-200 rounded-2xl overflow-hidden transition" data-category="SLA">
+                    <button onclick="toggleFAQ(this)" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-warm-900 text-sm sm:text-base hover:text-amber-800 transition">
+                        <span class="flex items-center gap-3">
+                            <span class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 text-xs flex items-center justify-center font-mono">04</span>
+                            Berapa lama standar waktu penanganan (SLA) pengaduan?
+                        </span>
+                        <i class="fa-solid fa-chevron-down text-warm-500 text-xs transition-transform duration-200 icon-arrow"></i>
+                    </button>
+                    <div class="faq-answer px-5 pb-5 text-xs text-warm-700 space-y-3">
+                        <p class="leading-relaxed">Setiap jenis laporan memiliki target Standar Layanan Minimal (SLA) berdasarkan kewenangan dinas terkait:</p>
+                        
+                        <!-- TABLE SLA -->
+                        <div class="overflow-x-auto rounded-xl border border-warm-200">
+                            <table class="w-full text-left text-[11px]">
+                                <thead class="bg-warm-50 text-amber-700 border-b border-warm-200">
+                                    <tr>
+                                        <th class="py-2.5 px-3">Kategori Aduan</th>
+                                        <th class="py-2.5 px-3">Dinas Penanggung Jawab</th>
+                                        <th class="py-2.5 px-3">Target SLA Respon</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-warm-200 bg-white">
+                                    <tr>
+                                        <td class="py-2 px-3 font-semibold text-warm-900">Jalan Berlubang / Rusak</td>
+                                        <td class="py-2 px-3 text-warm-700">Dinas PUPR / Bina Marga</td>
+                                        <td class="py-2 px-3 font-mono font-bold text-emerald-700">24 - 48 Jam</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2 px-3 font-semibold text-warm-900">Penumpukan Sampah / TPS</td>
+                                        <td class="py-2 px-3 text-warm-700">Dinas Lingkungan Hidup</td>
+                                        <td class="py-2 px-3 font-mono font-bold text-emerald-700">12 - 24 Jam</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2 px-3 font-semibold text-warm-900">Lampu PJU Padam</td>
+                                        <td class="py-2 px-3 text-warm-700">Dinas Perhubungan</td>
+                                        <td class="py-2 px-3 font-mono font-bold text-emerald-700">24 Jam</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2 px-3 font-semibold text-warm-900">Drainase / Saluran Air Mampet</td>
+                                        <td class="py-2 px-3 text-warm-700">Dinas Sumber Daya Air</td>
+                                        <td class="py-2 px-3 font-mono font-bold text-emerald-700">24 - 48 Jam</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q5: MENGAPA TIDAK ADA LIKE/KOMENTAR -->
+                <div class="faq-item bg-white border border-warm-200 rounded-2xl overflow-hidden transition" data-category="ALUR">
+                    <button onclick="toggleFAQ(this)" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-warm-900 text-sm sm:text-base hover:text-amber-800 transition">
+                        <span class="flex items-center gap-3">
+                            <span class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 text-xs flex items-center justify-center font-mono">05</span>
+                            Mengapa platform AksiWarga tidak menyediakan fitur Komentar atau Like?
+                        </span>
+                        <i class="fa-solid fa-chevron-down text-warm-500 text-xs transition-transform duration-200 icon-arrow"></i>
+                    </button>
+                    <div class="faq-answer px-5 pb-5 text-xs text-warm-700 space-y-3">
+                        <p class="leading-relaxed">
+                            AksiWarga berfokus pada <span class="text-amber-700 font-semibold">solusi nyata dan transparansi pemerintah</span>, bukan kompetisi kepopuleran media sosial.
+                        </p>
+                        <ul class="list-disc list-inside space-y-1 text-warm-600 text-[11px]">
+                            <li>Mencegah debat kusir, perundungan siber (*cyberbullying*), dan opini subjektif antarwarga.</li>
+                            <li>Memastikan dinas bekerja berdasarkan tingkat urgensi kerusakan fisik, bukan jumlah *like*.</li>
+                            <li>Menjaga antarmuka tetap bersih, hangat, dan fokus pada akuntabilitas pengerjaan.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Q6: APBD MONITORING -->
+                <div class="faq-item bg-white border border-warm-200 rounded-2xl overflow-hidden transition" data-category="ANGGARAN">
+                    <button onclick="toggleFAQ(this)" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-warm-900 text-sm sm:text-base hover:text-amber-800 transition">
+                        <span class="flex items-center gap-3">
+                            <span class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 text-xs flex items-center justify-center font-mono">06</span>
+                            Bagaimana cara memantau penggunaan anggaran APBD pada laporan perbaikan?
+                        </span>
+                        <i class="fa-solid fa-chevron-down text-warm-500 text-xs transition-transform duration-200 icon-arrow"></i>
+                    </button>
+                    <div class="faq-answer px-5 pb-5 text-xs text-warm-700 space-y-3">
+                        <p class="leading-relaxed">
+                            Setiap laporan yang masuk ke tahap pengerjaan akan terhubung langsung dengan modul <strong class="text-warm-900">Transparansi Anggaran (APBD)</strong>.
+                        </p>
+                        <div class="bg-warm-50 p-3.5 rounded-xl border border-warm-200 space-y-1.5 text-[11px]">
+                            <span class="font-bold text-amber-700 block">Langkah Memeriksa Notasi Anggaran:</span>
+                            <ol class="list-decimal list-inside space-y-1 text-warm-700">
+                                <li>Klik pada kartu laporan yang berstatus <em>Selesai</em> atau <em>Dalam Proses</em>.</li>
+                                <li>Buka bagian <strong>Transparansi Anggaran &amp; SLA</strong> di dalam pop-up modal.</li>
+                                <li>Catat nomor resi DPA untuk mencocokkan rincian biaya di menu Transparansi APBD.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SIDEBAR: QUICK CONTACT & OPERATIONAL HOURS -->
+            <div class="space-y-6">
+                
+                <!-- CONTACT CARD -->
+                <div class="bg-white border border-warm-200 rounded-3xl p-6 space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-700">
+                            <i class="fa-solid fa-headset text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-warm-900">Butuh Bantuan Lain?</h3>
+                            <span class="text-[11px] text-warm-600">Layanan pengaduan darurat 24/7</span>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-warm-700 leading-relaxed">
+                        Jika Anda mengalami kendala teknis dalam pengiriman laporan, hubungi layanan bantuan resmi pemerintah daerah:
+                    </p>
+
+                    <div class="space-y-2.5 pt-2 text-xs">
+                        <div class="bg-warm-50 p-3 rounded-xl border border-warm-200 flex items-center gap-3">
+                            <i class="fa-solid fa-phone text-amber-700 text-sm"></i>
+                            <div>
+                                <span class="text-[10px] text-warm-500 block">Call Center Darurat</span>
+                                <strong class="text-warm-900 font-mono">112 / (021) 1500-112</strong>
+                            </div>
+                        </div>
+
+                        <div class="bg-warm-50 p-3 rounded-xl border border-warm-200 flex items-center gap-3">
+                            <i class="fa-solid fa-envelope text-amber-700 text-sm"></i>
+                            <div>
+                                <span class="text-[10px] text-warm-500 block">Email Bantuan Teknis</span>
+                                <strong class="text-warm-900 font-mono">bantuan@aksiwarga.go.id</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OPERATIONAL HOURS CARD -->
+                <div class="bg-white border border-warm-200 rounded-3xl p-6 space-y-3">
+                    <h4 class="text-xs font-bold text-amber-700 flex items-center gap-1.5">
+                        <i class="fa-solid fa-clock"></i> Jam Kerja Tim Verifikasi
+                    </h4>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex justify-between py-1 border-b border-warm-200">
+                            <span class="text-warm-600">Senin - Jumat:</span>
+                            <span class="text-warm-900 font-semibold">08:00 - 17:00 WIB</span>
+                        </div>
+                        <div class="flex justify-between py-1 border-b border-warm-200">
+                            <span class="text-warm-600">Sabtu - Minggu:</span>
+                            <span class="text-amber-700 font-semibold">Piket Tim TRC</span>
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-warm-500 pt-1">
+                        *Laporan aduan darurat kebencanaan tetap diproses 24 jam nonstop oleh BPBD.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <div id="loginPrompt" class="fixed inset-0 z-[60] hidden items-center justify-center bg-warm-900/50 backdrop-blur-sm p-4" role="dialog" aria-modal="true" aria-labelledby="loginPromptTitle">
+        <div class="w-full max-w-sm rounded-3xl border border-warm-200 bg-white p-6 text-center shadow-xl animate-fade-in">
+            <div class="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-amber-50 text-amber-700">
+                <i class="fa-solid fa-lock" aria-hidden="true"></i>
+            </div>
+            <h2 id="loginPromptTitle" class="text-lg font-bold text-warm-900">Silahkan Login Terlebih dahulu</h2>
+            <p class="mt-2 text-sm text-warm-600">Masuk ke akun AksiWarga untuk melanjutkan.</p>
+            <div class="mt-6 flex justify-center gap-3">
+                <button type="button" onclick="closeLoginPrompt()" class="rounded-xl border border-warm-200 bg-warm-50 px-4 py-2 text-sm font-semibold text-warm-700 transition hover:bg-warm-100">Batal</button>
+                <a href="login.html" class="rounded-xl bg-amber-700 px-5 py-2 text-sm font-semibold text-white transition hover:bg-amber-800">Sign in</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-warm-200 py-6 px-4 text-center text-warm-600 text-xs mt-12">
+        <div class="max-w-4xl mx-auto space-y-1.5">
+            <p class="font-bold text-amber-700">AksiWarga</p>
+            <p class="text-warm-600 text-[11px]">Pusat Informasi &amp; Panduan Warga untuk Transparansi Pengaduan Publik.</p>
+            <p class="text-warm-500 text-[10px] pt-2 border-t border-warm-200">&copy; 2026 AksiWarga. Hak cipta dilindungi undang-undang.</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT CONTROLLER FOR ACCORDION & SEARCH -->
+    <script>
+        let authRequest = null;
+        let isDarkTheme = localStorage.getItem('aksiwarga-theme') === 'dark';
+
+        function applyTheme() {
+            document.documentElement.dataset.theme = isDarkTheme ? 'dark' : 'light';
+            const toggle = document.getElementById('themeToggle');
+            toggle.setAttribute('aria-pressed', String(isDarkTheme));
+            toggle.setAttribute('aria-label', isDarkTheme ? 'Aktifkan mode terang' : 'Aktifkan mode gelap');
+            document.getElementById('themeToggleIcon').className = `fa-solid ${isDarkTheme ? 'fa-sun' : 'fa-moon'}`;
+            document.getElementById('themeToggleLabel').textContent = isDarkTheme ? 'Mode Terang' : 'Mode Gelap';
+        }
+
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            isDarkTheme = !isDarkTheme;
+            localStorage.setItem('aksiwarga-theme', isDarkTheme ? 'dark' : 'light');
+            applyTheme();
+        });
+        applyTheme();
+
+        // DROPDOWN TOGGLE LOGIC
+        function toggleDropdown() {
+            const menu = document.getElementById('shortcutMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        async function handleProtectedShortcut(event, action) {
+            event.preventDefault();
+            document.getElementById('shortcutMenu').classList.add('hidden');
+            try {
+                if (window.location.protocol === 'file:') {
+                    const prompt = document.getElementById('loginPrompt');
+                    prompt.classList.remove('hidden');
+                    prompt.classList.add('flex');
+                    return;
+                }
+                if (!authRequest) {
+                    authRequest = fetch('/api/auth/me').then(async (response) => {
+                        if (!response.ok) throw new Error(`Pemeriksaan sesi gagal (${response.status}).`);
+                        const result = await response.json();
+                        return result.user || null;
+                    }).catch((error) => {
+                        authRequest = null;
+                        throw error;
+                    });
+                }
+                const user = await authRequest;
+                if (!user) {
+                    const prompt = document.getElementById('loginPrompt');
+                    prompt.classList.remove('hidden');
+                    prompt.classList.add('flex');
+                    return;
+                }
+                window.location.href = action === 'report' ? 'form_pengaduan.html' : 'user_profile.html';
+            } catch (error) {
+                console.error('Gagal memeriksa status login:', error);
+                window.alert('Status login tidak dapat diperiksa. Periksa koneksi, lalu coba lagi.');
+            }
+        }
+
+        function closeLoginPrompt() {
+            const prompt = document.getElementById('loginPrompt');
+            prompt.classList.add('hidden');
+            prompt.classList.remove('flex');
+        }
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') closeLoginPrompt();
+        });
+
+        // ACCORDION TOGGLE
+        function toggleFAQ(btn) {
+            const answer = btn.nextElementSibling;
+            const arrow = btn.querySelector('.icon-arrow');
+            
+            const isOpen = answer.classList.contains('open');
+
+            // Close all items
+            document.querySelectorAll('.faq-answer').forEach(el => el.classList.remove('open'));
+            document.querySelectorAll('.icon-arrow').forEach(el => el.style.transform = 'rotate(0deg)');
+
+            // Open clicked item if it was not open
+            if (!isOpen) {
+                answer.classList.add('open');
+                arrow.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // CATEGORY FILTER CHIPS
+        function filterCategory(cat, btn) {
+            document.querySelectorAll('.cat-chip').forEach(c => {
+                c.className = "cat-chip bg-white border border-warm-200 text-warm-700 hover:text-warm-900 hover:bg-warm-100 px-4 py-2 rounded-xl text-xs font-semibold transition";
+            });
+            btn.className = "cat-chip active bg-amber-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition";
+
+            const items = document.querySelectorAll('.faq-item');
+            items.forEach(item => {
+                const itemCat = item.getAttribute('data-category');
+                if (cat === 'ALL' || itemCat === cat) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // LIVE SEARCH FILTER
+        function filterFAQ() {
+            const query = document.getElementById('faqSearch').value.toLowerCase();
+            const items = document.querySelectorAll('.faq-item');
+
+            items.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // CLOSE DROPDOWN ON OUTSIDE CLICK
+        window.onclick = function(e) {
+            const loginPrompt = document.getElementById('loginPrompt');
+            if (e.target === loginPrompt) closeLoginPrompt();
+            const menu = document.getElementById('shortcutMenu');
+            const btn = e.target.closest('button');
+            if (!btn || (btn.getAttribute('onclick') !== 'toggleDropdown()')) {
+                if (menu && !menu.contains(e.target) && !e.target.closest('.relative')) {
+                    menu.classList.add('hidden');
+                }
+            }
+        };
+    </script>
+</body>
+</html>

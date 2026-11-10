@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lacak Progress Tiket - TransparansiWarga (PublicPulse 2026)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } } }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="bg-[#faf8f4] text-[#2f1d10] font-sans antialiased min-h-screen flex flex-col selection:bg-[#c4833f] selection:text-white">
+
+    <!-- TOP NAVBAR -->
+    <header class="bg-white border-b border-[#efe6d8] sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div class="w-9 h-9 rounded-xl bg-[#fbeedd] border border-[#f0dcc0] flex items-center justify-center text-[#c4833f] group-hover:scale-105 transition duration-200">
+                    <i class="fa-solid fa-scale-balanced text-lg"></i>
+                </div>
+                <div>
+                    <span class="text-[#2f1d10] font-extrabold text-base tracking-tight block">TransparansiWarga</span>
+                    <span class="text-[#c4833f] text-[10px] font-semibold tracking-wider uppercase block">PublicPulse 2026</span>
+                </div>
+            </a>
+
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="inline-flex items-center gap-2 text-xs font-semibold text-[#8a7a6c] hover:text-[#c4833f] transition-colors">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                    <span>Kembali ke Beranda</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
+
+        <!-- SEARCH / TICKET INPUT FORM -->
+        <div class="bg-white border border-[#efe6d8] rounded-3xl p-6 mb-8 shadow-[0_4px_20px_rgba(80,50,20,.05)]">
+            <div class="max-w-xl mx-auto text-center space-y-3">
+                <h1 class="text-xl sm:text-2xl font-extrabold text-[#2f1d10] tracking-tight">Lacak Progress Pengaduan</h1>
+                <p class="text-[#8a7a6c] text-xs">Masukkan Kode Resi Unik / ID Pengaduan untuk memantau status terkini.</p>
+                
+                <form onsubmit="handleSearchTicket(event)" class="flex items-center gap-2 pt-2">
+                    <div class="relative flex-1">
+                        <i class="fa-solid fa-ticket absolute left-3.5 top-1/2 -translate-y-1/2 text-[#a89a8b] text-xs"></i>
+                        <input type="text" id="ticketInput" value="#TW-2026-0892" required placeholder="misal: #TW-2026-0892" class="w-full bg-[#faf8f4] border border-[#efe6d8] text-[#2f1d10] placeholder-[#b9ad9f] text-xs sm:text-sm rounded-xl pl-9 pr-4 py-3 focus:border-[#c4833f] focus:ring-1 focus:ring-[#c4833f] focus:outline-none transition font-mono uppercase">
+                    </div>
+                    <button type="submit" class="bg-[#c4833f] hover:bg-[#ad6f2f] text-white font-bold px-5 py-3 rounded-xl transition text-xs sm:text-sm shrink-0 flex items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        <span>Cari Resi</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- TICKET DETAILS CARD CONTAINER -->
+        <div class="space-y-6">
+            
+            <!-- 1. HEADER & METADATA BAR -->
+            <div class="bg-white border border-[#efe6d8] rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-[0_4px_20px_rgba(80,50,20,.05)]">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10 pb-6 border-b border-[#efe6d8]">
+                    <div>
+                        <div class="flex items-center gap-2.5 mb-1.5">
+                            <span class="font-mono text-[#c4833f] font-extrabold text-lg sm:text-xl">#TW-2026-0892</span>
+                            <!-- Status Badge -->
+                            <span class="inline-flex items-center gap-1.5 bg-[#fbeedd] border border-[#f0dcc0] text-[#b0702c] text-xs font-semibold px-3 py-0.5 rounded-full">
+                                <span class="w-2 h-2 rounded-full bg-[#c4833f]"></span>
+                                <span>Dalam Proses</span>
+                            </span>
+                        </div>
+                        <h2 class="text-xl font-bold text-[#2f1d10]">Perbaikan Jalan Berlubang Parah di Jl. Fatmawati</h2>
+                    </div>
+
+                    <div class="flex flex-col md:items-end text-xs text-[#8a7a6c] space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span>Instansi Penanggung Jawab:</span>
+                            <strong class="text-[#2f1d10] bg-[#faf8f4] px-2.5 py-1 rounded-lg border border-[#efe6d8]">Dinas Bina Marga</strong>
+                        </div>
+                        <span class="text-[11px]">Dikirim pada: <strong class="text-[#6f5f50]">12 Maret 2026, 09:15 WIB</strong></span>
+                    </div>
+                </div>
+
+                <!-- SLA & ESTIMATION TIMER BAR -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 text-xs">
+                    <div class="bg-[#faf8f4] border border-[#efe6d8] rounded-2xl p-4 flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-[#fbeedd] text-[#c4833f] flex items-center justify-center text-lg shrink-0">
+                            <i class="fa-regular fa-clock"></i>
+                        </div>
+                        <div>
+                            <span class="text-[#8a7a6c] text-[11px] block">Batas SLA Pengerjaan</span>
+                            <strong class="text-[#2f1d10] text-sm font-bold">2 Hari Kerja (48 Jam)</strong>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#faf8f4] border border-[#efe6d8] rounded-2xl p-4 flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-[#fbeedd] text-[#b0702c] flex items-center justify-center text-lg shrink-0">
+                            <i class="fa-solid fa-hourglass-half"></i>
+                        </div>
+                        <div>
+                            <span class="text-[#8a7a6c] text-[11px] block">Status Pengerjaan</span>
+                            <strong class="text-[#b0702c] text-sm font-bold">Langkah 4 dari 5</strong>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#faf8f4] border border-[#efe6d8] rounded-2xl p-4 flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-[#e3f1e7] text-[#3f7a52] border border-[#cfe5d5] flex items-center justify-center text-lg shrink-0">
+                            <i class="fa-solid fa-calendar-check"></i>
+                        </div>
+                        <div>
+                            <span class="text-[#8a7a6c] text-[11px] block">Target Penyelesaian</span>
+                            <strong class="text-[#3f7a52] text-sm font-bold">14 Maret 2026</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. SPLIT LAYOUT: STEPPER & LOG UPDATES -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- LEFT COLUMN: VERTICAL 5-STEP PROGRESS TRACKER (STEPPER) -->
+                <div class="lg:col-span-5 bg-white border border-[#efe6d8] rounded-3xl p-6 sm:p-8 space-y-6 shadow-[0_4px_20px_rgba(80,50,20,.05)]">
+                    <div>
+                        <h3 class="text-base font-bold text-[#2f1d10] flex items-center gap-2">
+                            <i class="fa-solid fa-bars-staggered text-[#c4833f] text-xs"></i>
+                            <span>Tahapan Perjalanan Tiket</span>
+                        </h3>
+                        <p class="text-[#8a7a6c] text-xs mt-1">Alur verifikasi dan tindakan di lapangan.</p>
+                    </div>
+
+                    <!-- VERTICAL STEPPER: ikon (h-7) dan judul (leading-7) setinggi sama agar sejajar -->
+                    <ol class="space-y-7">
+                        <li class="relative flex items-start gap-4  after:absolute after:left-[13px] after:top-[34px] after:bottom-[-22px] after:w-0.5 after:bg-[#5f8a64]/40 last:after:hidden">
+                            <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold bg-[#5f8a64] text-white"><i class="fa-solid fa-check text-[11px]"></i></span>
+                            <div class="min-w-0 flex-1">
+                                <strong class="block text-xs leading-7 font-bold text-[#2f1d10]">1. Laporan Dikirim Warga</strong>
+                                <span class="mt-0.5 block text-[11px] leading-relaxed text-[#8a7a6c]">Laporan berhasil terdaftar dalam sistem.</span>
+                                <span class="mt-1 block font-mono text-[10px] text-[#a89a8b]">12 Mar 2026, 09:15 WIB</span>
+                            </div>
+                        </li>
+                        <li class="relative flex items-start gap-4  after:absolute after:left-[13px] after:top-[34px] after:bottom-[-22px] after:w-0.5 after:bg-[#5f8a64]/40 last:after:hidden">
+                            <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold bg-[#5f8a64] text-white"><i class="fa-solid fa-check text-[11px]"></i></span>
+                            <div class="min-w-0 flex-1">
+                                <strong class="block text-xs leading-7 font-bold text-[#2f1d10]">2. Diverifikasi Admin</strong>
+                                <span class="mt-0.5 block text-[11px] leading-relaxed text-[#8a7a6c]">Berkas dan foto lokasi valid.</span>
+                                <span class="mt-1 block font-mono text-[10px] text-[#a89a8b]">12 Mar 2026, 10:30 WIB</span>
+                            </div>
+                        </li>
+                        <li class="relative flex items-start gap-4  after:absolute after:left-[13px] after:top-[34px] after:bottom-[-22px] after:w-0.5 after:bg-[#5f8a64]/40 last:after:hidden">
+                            <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold bg-[#5f8a64] text-white"><i class="fa-solid fa-check text-[11px]"></i></span>
+                            <div class="min-w-0 flex-1">
+                                <strong class="block text-xs leading-7 font-bold text-[#2f1d10]">3. Diteruskan ke Dinas</strong>
+                                <span class="mt-0.5 block text-[11px] leading-relaxed text-[#8a7a6c]">Disposisi ke Dinas Bina Marga.</span>
+                                <span class="mt-1 block font-mono text-[10px] text-[#a89a8b]">12 Mar 2026, 14:00 WIB</span>
+                            </div>
+                        </li>
+                        <li class="relative flex items-start gap-4  after:absolute after:left-[13px] after:top-[34px] after:bottom-[-22px] after:w-0.5 after:bg-[#e8dfd2] last:after:hidden">
+                            <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold bg-[#c4833f] text-white ring-4 ring-[#c4833f]/20"><i class="fa-solid fa-person-digging text-[11px]"></i></span>
+                            <div class="min-w-0 flex-1">
+                                <strong class="block text-xs leading-7 font-extrabold text-[#b0702c]">4. Sedang Dikerjakan</strong>
+                                <span class="mt-0.5 block text-[11px] leading-relaxed font-medium text-[#6f5f50]">Tim regu teknis lapangan sedang melakukan penambalan aspal.</span>
+                                <span class="mt-1 block font-mono text-[10px] text-[#c4833f]">13 Mar 2026, 08:30 WIB</span>
+                            </div>
+                        </li>
+                        <li class="relative flex items-start gap-4 opacity-60 after:absolute after:left-[13px] after:top-[34px] after:bottom-[-22px] after:w-0.5 after:bg-[#e8dfd2] last:after:hidden">
+                            <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold bg-[#efe6d8] text-[#a89a8b]">5</span>
+                            <div class="min-w-0 flex-1">
+                                <strong class="block text-xs leading-7 font-semibold text-[#8a7a6c]">5. Selesai Ditangani</strong>
+                                <span class="mt-0.5 block text-[11px] leading-relaxed text-[#a89a8b]">Pengunggahan bukti foto sebelum &amp; sesudah.</span>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+
+                <!-- RIGHT COLUMN: LOG UPDATE LAPANGAN & DETAIL TRANSPARANSI -->
+                <div class="lg:col-span-7 space-y-6">
+                    
+                    <!-- LOG UPDATE LAPANGAN FEED -->
+                    <div class="bg-white border border-[#efe6d8] rounded-3xl p-6 sm:p-8 space-y-5 shadow-[0_4px_20px_rgba(80,50,20,.05)]">
+                        <div>
+                            <h3 class="text-base font-bold text-[#2f1d10] flex items-center gap-2">
+                                <i class="fa-solid fa-clipboard-list text-[#c4833f] text-xs"></i>
+                                <span>Log Catatan Update Lapangan</span>
+                            </h3>
+                            <p class="text-[#8a7a6c] text-xs mt-1">Catatan pembaruan berkala dari tim teknis di lokasi.</p>
+                        </div>
+
+                        <div class="space-y-3.5">
+                            <!-- Log Item 1 -->
+                            <div class="bg-[#faf8f4] p-4 rounded-2xl border border-[#efe6d8] space-y-1.5">
+                                <div class="flex items-center justify-between text-[11px]">
+                                    <span class="font-bold text-[#b0702c] flex items-center gap-1.5">
+                                        <i class="fa-solid fa-truck-field"></i>
+                                        Tim TRC Regu B - Dinas Bina Marga
+                                    </span>
+                                    <span class="text-[#a89a8b] font-mono">13 Mar 2026, 08:30 WIB</span>
+                                </div>
+                                <p class="text-xs text-[#6f5f50] leading-relaxed">
+                                    "Material hotmix dan alat pemadat tiba di lokasi. Proses pembersihan permukaan lubang dan pengerjaan penambalan dimulai."
+                                </p>
+                            </div>
+
+                            <!-- Log Item 2 -->
+                            <div class="bg-[#faf8f4] p-4 rounded-2xl border border-[#efe6d8] space-y-1.5">
+                                <div class="flex items-center justify-between text-[11px]">
+                                    <span class="font-bold text-[#4a3728] flex items-center gap-1.5">
+                                        <i class="fa-solid fa-user-check"></i>
+                                        Verifikator Dinas
+                                    </span>
+                                    <span class="text-[#a89a8b] font-mono">12 Mar 2026, 14:00 WIB</span>
+                                </div>
+                                <p class="text-xs text-[#8a7a6c] leading-relaxed">
+                                    "Jadwal eksekusi diterbitkan. Penanganan dialokasikan pada anggaran operasional pemeliharaan rutin Maret 2026."
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DETAIL TRANSPARANSI & BUKTI BUKTI -->
+                    <div class="bg-white border border-[#efe6d8] rounded-3xl p-6 sm:p-8 space-y-5 shadow-[0_4px_20px_rgba(80,50,20,.05)]">
+                        <div>
+                            <h3 class="text-base font-bold text-[#2f1d10] flex items-center gap-2">
+                                <i class="fa-solid fa-shield-halved text-[#c4833f] text-xs"></i>
+                                <span>Detail Bukti & Transparansi Anggaran</span>
+                            </h3>
+                            <p class="text-[#8a7a6c] text-xs mt-1">Rincian lokasi, bukti awal, dan sumber dana pengerjaan.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Foto Awal Bukti Laporan -->
+                            <div class="space-y-1.5">
+                                <span class="text-xs font-semibold text-[#6f5f50] block">Foto Kondisi Awal (Pelapor)</span>
+                                <div class="relative rounded-2xl overflow-hidden border border-[#efe6d8] aspect-video bg-[#faf8f4]">
+                                    <img src="https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=500&q=80" 
+                                         alt="Foto Kerusakan Awal" 
+                                         class="w-full h-full object-cover"
+                                         onerror="this.src='https://placehold.co/600x400/efe6d8/a89a8b?text=Foto+Awal'">
+                                    <span class="absolute bottom-2 left-2 bg-[#faf8f4] text-[#6f5f50] text-[10px] px-2 py-0.5 rounded border border-[#efe6d8] font-mono">
+                                        12 Mar 2026
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Detail Ringkas Lokasi & Tim -->
+                            <div class="space-y-3 text-xs">
+                                <div>
+                                    <span class="text-[#8a7a6c] text-[11px] block">Lokasi Kejadian</span>
+                                    <p class="text-[#4a3728] font-medium">Jl. Fatmawati No. 12, RT 02/RW 05, Cilandak Barat, Jakarta Selatan</p>
+                                </div>
+
+                                <div>
+                                    <span class="text-[#8a7a6c] text-[11px] block">Sumber Dana Anggaran</span>
+                                    <p class="text-[#b0702c] font-semibold">APBD DPA Dinas Bina Marga 2026</p>
+                                </div>
+
+                                <div>
+                                    <span class="text-[#8a7a6c] text-[11px] block">Pelaksana Lapangan</span>
+                                    <p class="text-[#4a3728] font-medium">Tim Reaksi Cepat Regu B</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- FOOTER INFORMASI SINGKAT -->
+    <footer class="bg-white border-t border-[#efe6d8] py-6 px-4 text-center text-[#8a7a6c] text-xs mt-12">
+        <div class="max-w-4xl mx-auto space-y-1.5">
+            <p class="font-bold text-[#c4833f] tracking-wide">TransparansiWarga &bull; PublicPulse 2026</p>
+            <p class="text-[#8a7a6c] text-[11px]">Wadah pengaduan publik yang cepat, akuntabel, dan transparan untuk lingkungan kita.</p>
+            <p class="text-[#a89a8b] text-[10px] pt-2 border-t border-[#efe6d8]">&copy; 2026 TransparansiWarga. Hak cipta dilindungi.</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT CONTROLLER -->
+    <script>
+        async function handleSearchTicket(e) {
+            e.preventDefault();
+            const val = document.getElementById('ticketInput').value.trim().replace(/^#/, '');
+            if(!val) return;
+            
+            const searchBtn = e.target.querySelector('button');
+            searchBtn.disabled = true;
+            searchBtn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin text-xs"></i><span>Mencari...</span>`;
+            
+            try {
+                const response = await fetch(`/api/reports/${val}`);
+                if (response.ok) {
+                    window.location.href = `lacak_progress.html?id=${val}`;
+                } else {
+                    alert('Laporan tidak ditemukan. Periksa nomor resi.');
+                    searchBtn.disabled = false;
+                    searchBtn.innerHTML = `<i class="fa-solid fa-magnifying-glass text-xs"></i><span>Cari Resi</span>`;
+                }
+            } catch (err) {
+                alert('Koneksi gagal. Pastikan server berjalan.');
+                searchBtn.disabled = false;
+                searchBtn.innerHTML = `<i class="fa-solid fa-magnifying-glass text-xs"></i><span>Cari Resi</span>`;
+            }
+        }
+
+        // Load report data if ID in URL
+        window.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            if (id) {
+                try {
+                    const response = await fetch(`/api/reports/${id}`);
+                    if (response.ok) {
+                        const { report } = await response.json();
+                        renderReportData(report);
+                    } else {
+                        alert('Laporan tidak ditemukan.');
+                    }
+                } catch (err) {
+                    console.error('Failed to load report:', err);
+                    alert('Gagal memuat data laporan.');
+                }
+            }
+        });
+
+        function renderReportData(report) {
+            // Update ticket input
+            document.getElementById('ticketInput').value = report.id;
+
+            // Update header
+            const ticketId = document.querySelector('.font-mono.text-\\[\\#c4833f\\]');
+            if (ticketId) ticketId.textContent = `#${report.id}`;
+
+            const title = document.querySelector('h2.text-xl.font-bold');
+            if (title) title.textContent = report.title;
+
+            // Status badge
+            const statusBadge = document.querySelector('.inline-flex.items-center.gap-1\\.5');
+            if (statusBadge) {
+                const statusMap = {
+                    'pending': { text: 'Menunggu', color: 'bg-yellow-100 border-yellow-300 text-yellow-700' },
+                    'in_progress': { text: 'Dalam Proses', color: 'bg-orange-100 border-orange-300 text-orange-700' },
+                    'completed': { text: 'Selesai', color: 'bg-green-100 border-green-300 text-green-700' }
+                };
+                const status = statusMap[report.status] || statusMap.pending;
+                statusBadge.className = `inline-flex items-center gap-1.5 ${status.color} text-xs font-semibold px-3 py-0.5 rounded-full`;
+                statusBadge.querySelector('span:last-child').textContent = status.text;
+            }
+
+            // Agency
+            const agency = document.querySelector('strong.text-\\[\\#2f1d10\\].bg-\\[\\#faf8f4\\]');
+            if (agency) agency.textContent = report.assignedAgency || 'Belum Ditentukan';
+
+            // Created date
+            const createdDate = document.querySelector('span.text-\\[11px\\] strong');
+            if (createdDate) {
+                const date = new Date(report.createdAt);
+                createdDate.textContent = date.toLocaleDateString('id-ID', { 
+                    day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' 
+                }) + ' WIB';
+            }
+
+            // SLA deadline
+            const slaDeadline = document.querySelectorAll('strong.text-sm.font-bold')[2];
+            if (slaDeadline && report.slaDeadline) {
+                const deadline = new Date(report.slaDeadline);
+                slaDeadline.textContent = deadline.toLocaleDateString('id-ID', { 
+                    day: 'numeric', month: 'long', year: 'numeric' 
+                });
+            }
+
+            // Description (find section with "Penjelasan Masalah")
+            const descSection = Array.from(document.querySelectorAll('p.text-\\[\\#6f5f50\\]')).find(p => 
+                p.textContent.includes('lubang') || p.previousElementSibling?.textContent.includes('Penjelasan')
+            );
+            if (descSection) descSection.textContent = report.description;
+
+            // Location
+            const locationSection = Array.from(document.querySelectorAll('p.text-\\[\\#6f5f50\\]')).find(p => 
+                p.textContent.includes('Jl.') || p.previousElementSibling?.textContent.includes('Lokasi')
+            );
+            if (locationSection) locationSection.textContent = report.location;
+
+            // Reporter info
+            const reporterName = Array.from(document.querySelectorAll('span.text-\\[\\#6f5f50\\]')).find(s => 
+                s.textContent.includes('Ahmad') || s.parentElement?.textContent.includes('Pelapor')
+            );
+            if (reporterName && report.reporter) {
+                reporterName.textContent = report.reporter.name;
+            }
+        }
+    </script>
+</body>
+</html>

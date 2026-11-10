@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transparansi Anggaran APBD 38 Provinsi - AksiWarga</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        warm: {
+                            50: '#fbf7f0',
+                            100: '#f5eee2',
+                            200: '#eadfcc',
+                            300: '#d9c8ae',
+                            400: '#ad9a82',
+                            500: '#80705c',
+                            600: '#66574a',
+                            700: '#4d4036',
+                            800: '#3a2f27',
+                            900: '#261e18',
+                            950: '#1a140f',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes modalScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .animate-modal {
+            animation: modalScale 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        html[data-theme="dark"] body { background-color: #171411 !important; color: #f5eee2 !important; }
+        html[data-theme="dark"] header, html[data-theme="dark"] footer, html[data-theme="dark"] .bg-white {
+            background-color: #24201b !important;
+        }
+        html[data-theme="dark"] .bg-warm-50 { background-color: #1c1915 !important; }
+        html[data-theme="dark"] .bg-warm-100 { background-color: #302920 !important; }
+        html[data-theme="dark"] .text-warm-900, html[data-theme="dark"] .text-warm-800,
+        html[data-theme="dark"] .text-warm-700 { color: #f5eee2 !important; }
+        html[data-theme="dark"] .text-warm-600, html[data-theme="dark"] .text-warm-500,
+        html[data-theme="dark"] .text-warm-400 { color: #b6a894 !important; }
+        html[data-theme="dark"] .border-warm-200, html[data-theme="dark"] .border-warm-300 {
+            border-color: #494034 !important;
+        }
+        html[data-theme="dark"] select, html[data-theme="dark"] input { color-scheme: dark; }
+        @media (max-width: 420px) { .theme-label { display: none; } }
+    </style>
+</head>
+<body class="bg-warm-50 text-warm-800 font-sans antialiased min-h-screen flex flex-col selection:bg-amber-200 selection:text-warm-900">
+
+    <!-- TOP NAVIGATION BAR WITH CLEAN SHORTCUT DROPDOWN -->
+    <header class="bg-warm-100 border-b border-warm-200 sticky top-0 z-40 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            
+            <!-- BRAND LOGO -->
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div class="w-9 h-9 rounded-xl border border-amber-200 shadow-sm overflow-hidden transition duration-200">
+                    <img src="../asset/logo%20web.jpg" alt="Logo AksiWarga" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <span class="text-warm-900 font-bold text-base tracking-tight block">AksiWarga</span>
+                </div>
+            </a>
+
+            <!-- SHORTCUT MENU DROPDOWN (ONLY 4 CLEAN SHORTCUTS) -->
+            <div class="relative flex items-center gap-2 sm:gap-3">
+                <button id="themeToggle" type="button" aria-label="Aktifkan mode gelap" aria-pressed="false" class="h-10 rounded-2xl bg-warm-50 hover:bg-warm-100 border border-warm-200 flex items-center justify-center gap-2 px-3 text-warm-700 hover:text-amber-800 transition">
+                    <i id="themeToggleIcon" class="fa-solid fa-moon" aria-hidden="true"></i>
+                    <span id="themeToggleLabel" class="theme-label text-xs font-semibold">Mode Gelap</span>
+                </button>
+                <button onclick="toggleDropdown()" class="w-10 h-10 rounded-2xl bg-warm-50 hover:bg-warm-100 border border-warm-200 flex items-center justify-center text-warm-700 hover:text-amber-800 transition">
+                    <i class="fa-solid fa-grip-vertical text-base"></i>
+                </button>
+
+                <!-- DROPDOWN CONTENT -->
+                <div id="shortcutMenu" class="hidden absolute right-0 top-14 w-64 bg-white border border-warm-200 rounded-2xl shadow-lg p-2 z-50 animate-fade-in space-y-1">
+                    <div class="px-3 py-2 border-b border-warm-200 mb-1">
+                        <span class="text-[10px] font-bold text-amber-700">Shortcut Akses Cepat</span>
+                    </div>
+                    <button type="button" onclick="handleProtectedShortcut(event, 'report')" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-warm-100 text-xs text-warm-800 hover:text-warm-900 transition group">
+                        <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center group-hover:bg-amber-700 group-hover:text-white transition">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold block">Buat Laporan</span>
+                            <span class="text-[10px] text-warm-600">Kirim aduan infrastruktur baru</span>
+                        </div>
+                    </button>
+                    <button type="button" onclick="handleProtectedShortcut(event, 'check')" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-warm-100 text-xs text-warm-800 hover:text-warm-900 transition group">
+                        <div class="w-7 h-7 rounded-lg bg-warm-100 text-warm-700 flex items-center justify-center group-hover:bg-amber-100 group-hover:text-amber-800 transition">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold block">Cek Laporan</span>
+                            <span class="text-[10px] text-warm-600">Lacak status tiket pengaduan</span>
+                        </div>
+                    </button>
+                    <a href="transparansi_anggaran_apbd.html" class="flex items-center gap-3 px-3 py-2 rounded-xl bg-amber-100 border border-amber-200 text-xs text-amber-700 font-bold transition">
+                        <div class="w-7 h-7 rounded-lg bg-amber-700 text-white flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-wallet text-xs"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold block">Transparansi Anggaran</span>
+                            <span class="text-[10px] text-amber-700">Realisasi APBD &amp; Proyek</span>
+                        </div>
+                    </a>
+                    <a href="FAQ.html" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-warm-100 text-xs text-warm-800 hover:text-warm-900 transition group">
+                        <div class="w-7 h-7 rounded-lg bg-warm-100 text-warm-700 flex items-center justify-center group-hover:bg-amber-100 group-hover:text-amber-800 transition">
+                            <i class="fa-solid fa-circle-info text-xs"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold block">Panduan Warga / FAQ</span>
+                            <span class="text-[10px] text-warm-600">SLA &amp; alur penanganan aduan</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
+        
+        <!-- HEADER BANNER WITH ALL 38 PROVINCES SELECTOR -->
+        <div class="bg-white border border-warm-200 rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+
+            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div class="space-y-3">
+                    <div class="inline-flex items-center gap-2 bg-amber-100 border border-amber-200 text-amber-700 text-xs font-semibold px-3 py-1 rounded-full">
+                        <i class="fa-solid fa-vault"></i>
+                        <span>Akuntabilitas Anggaran Publik (T.A. 2026)</span>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-warm-900 tracking-tight">Transparansi Anggaran &amp; Realisasi Dana APBD</h1>
+                    <p class="text-warm-600 text-xs sm:text-sm max-w-2xl leading-relaxed">
+                        Pantau transparansi penggunaan alokasi APBD di 38 Provinsi Indonesia. Setiap rupiah anggaran untuk penyelesaian laporan warga tercatat secara terbuka hingga ke nomor DPA instansi.
+                    </p>
+                </div>
+
+                <!-- DROPDOWN 38 PROVINSI INDONESIA -->
+                <div class="bg-warm-50 p-4 rounded-2xl border border-warm-200 space-y-2 shrink-0 self-start lg:self-auto min-w-[260px]">
+                    <label for="provinceSelect" class="text-[11px] font-bold text-amber-700 block flex items-center gap-1.5">
+                        <i class="fa-solid fa-map-location-dot"></i> Pilih Provinsi (38 Provinsi)
+                    </label>
+                    <select id="provinceSelect" onchange="changeProvince(this.value)" class="w-full bg-white border border-warm-200 rounded-xl px-3 py-2 text-xs text-warm-900 font-semibold focus:outline-none focus:border-amber-600 cursor-pointer">
+                        <option value="aceh">Aceh</option>
+                        <option value="sumut">Sumatera Utara</option>
+                        <option value="sumbar">Sumatera Barat</option>
+                        <option value="riau">Riau</option>
+                        <option value="kepri">Kepulauan Riau</option>
+                        <option value="jambi">Jambi</option>
+                        <option value="sumsel">Sumatera Selatan</option>
+                        <option value="babel">Bangka Belitung</option>
+                        <option value="bengkulu">Bengkulu</option>
+                        <option value="lampung">Lampung</option>
+                        <option value="dkijakarta">DKI Jakarta</option>
+                        <option value="jabar">Jawa Barat</option>
+                        <option value="banten">Banten</option>
+                        <option value="jateng">Jawa Tengah</option>
+                        <option value="diy">DI Yogyakarta</option>
+                        <option value="jatim">Jawa Timur</option>
+                        <option value="bali">Bali</option>
+                        <option value="ntb">Nusa Tenggara Barat</option>
+                        <option value="ntt">Nusa Tenggara Timur</option>
+                        <option value="kalbar">Kalimantan Barat</option>
+                        <option value="kalteng">Kalimantan Tengah</option>
+                        <option value="kalsel">Kalimantan Selatan</option>
+                        <option value="kaltim">Kalimantan Timur</option>
+                        <option value="kaltara">Kalimantan Utara</option>
+                        <option value="sulut">Sulawesi Utara</option>
+                        <option value="gorontalo">Gorontalo</option>
+                        <option value="sulteng">Sulawesi Tengah</option>
+                        <option value="sulbar">Sulawesi Barat</option>
+                        <option value="sulsel">Sulawesi Selatan</option>
+                        <option value="sultra">Sulawesi Tenggara</option>
+                        <option value="maluku">Maluku</option>
+                        <option value="malut">Maluku Utara</option>
+                        <option value="papua">Papua</option>
+                        <option value="papuabarat">Papua Barat</option>
+                        <option value="papuaselatan">Papua Selatan</option>
+                        <option value="papuatengah">Papua Tengah</option>
+                        <option value="papuapegunungan">Papua Pegunungan</option>
+                        <option value="papuabaratdaya">Papua Barat Daya</option>
+                    </select>
+                    <span id="provinceBadgeNotice" class="text-[10px] text-warm-600 block">Menampilkan APBD Provinsi Aceh</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- MACRO BUDGET KPI METRICS (4 CARDS) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <!-- TOTAL ANGGARAN APBD PROVINSI -->
+            <div class="bg-white border border-warm-200 p-5 rounded-2xl space-y-2">
+                <div class="flex items-center justify-between text-warm-600 text-xs">
+                    <span>Total APBD Provinsi</span>
+                    <i class="fa-solid fa-coins text-amber-700"></i>
+                </div>
+                <div id="kpiTotalApbd" class="text-xl sm:text-2xl font-bold text-warm-900 font-mono">Rp 11.20 T</div>
+                <p id="kpiTotalLabel" class="text-[11px] text-warm-600">Pagu anggaran Provinsi Aceh 2026</p>
+            </div>
+
+            <!-- ANGGARAN TEREALISASI -->
+            <div class="bg-white border border-warm-200 p-5 rounded-2xl space-y-2">
+                <div class="flex items-center justify-between text-warm-600 text-xs">
+                    <span>Realisasi Pengeluaran</span>
+                    <i class="fa-solid fa-circle-check text-emerald-700"></i>
+                </div>
+                <div id="kpiRealizedCost" class="text-xl sm:text-2xl font-bold text-emerald-700 font-mono">Rp 7.42 T</div>
+                <div class="w-full bg-warm-50 h-2 rounded-full overflow-hidden border border-warm-200">
+                    <div id="kpiProgressBar" class="bg-emerald-600 h-full w-[66.25%] transition-all duration-300"></div>
+                </div>
+                <p class="text-[11px] text-warm-600 flex justify-between">
+                    <span>Penyerapan Dana</span>
+                    <strong id="kpiPercent" class="text-emerald-700">66.25%</strong>
+                </p>
+            </div>
+
+            <!-- SISA ANGGARAN ALOKASI -->
+            <div class="bg-white border border-warm-200 p-5 rounded-2xl space-y-2">
+                <div class="flex items-center justify-between text-warm-600 text-xs">
+                    <span>Sisa Pagu Tersedia</span>
+                    <i class="fa-solid fa-piggy-bank text-amber-700"></i>
+                </div>
+                <div id="kpiRemainingApbd" class="text-xl sm:text-2xl font-bold text-amber-700 font-mono">Rp 3.78 T</div>
+                <p class="text-[11px] text-warm-600">Tersedia untuk aduan triwulan IV</p>
+            </div>
+
+            <!-- EFFICIENCY & AUDIT BPK -->
+            <div class="bg-white border border-warm-200 p-5 rounded-2xl space-y-2">
+                <div class="flex items-center justify-between text-warm-600 text-xs">
+                    <span>Status Audit BPK</span>
+                    <i class="fa-solid fa-shield-halved text-blue-700"></i>
+                </div>
+                <div id="kpiAuditStatus" class="text-lg sm:text-xl font-bold text-blue-700 font-mono">Opini WTP</div>
+                <p class="text-[11px] text-warm-600">Wajar Tanpa Pengecualian (2025/2026)</p>
+            </div>
+
+        </div>
+
+        <!-- DOMAIN ALLOCATION & PROGRESS CHART SECTION -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- ALLOCATION BY SECTOR -->
+            <div class="lg:col-span-2 bg-white border border-warm-200 rounded-3xl p-6 space-y-6">
+                <div class="flex items-center justify-between border-b border-warm-200 pb-4">
+                    <div>
+                        <h2 class="text-base font-bold text-warm-900">Alokasi Anggaran per Bidang Dinas Provinsi</h2>
+                        <p class="text-warm-600 text-xs">Porsi dana penanganan aduan infrastruktur publik daerah.</p>
+                    </div>
+                    <span class="text-xs font-mono text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-lg">Real-time Sinkron Kemenkeu</span>
+                </div>
+
+                <!-- DOMAIN PROGRESS BARS -->
+                <div class="space-y-4">
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between text-xs">
+                            <span class="font-bold text-warm-900 flex items-center gap-2">
+                                <i class="fa-solid fa-road text-amber-700"></i> Dinas PUPR / Bina Marga &amp; Jalan
+                            </span>
+                            <span class="font-mono text-warm-700">Target: 40% | Realisasi: <strong class="text-emerald-700">68%</strong></span>
+                        </div>
+                        <div class="w-full bg-warm-50 h-3 rounded-full overflow-hidden border border-warm-200">
+                            <div id="barPupr" class="bg-amber-600 h-full w-[68%] transition-all duration-300"></div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between text-xs">
+                            <span class="font-bold text-warm-900 flex items-center gap-2">
+                                <i class="fa-solid fa-water text-blue-700"></i> Sumber Daya Air &amp; Irigasi
+                            </span>
+                            <span class="font-mono text-warm-700">Target: 25% | Realisasi: <strong class="text-emerald-700">62%</strong></span>
+                        </div>
+                        <div class="w-full bg-warm-50 h-3 rounded-full overflow-hidden border border-warm-200">
+                            <div id="barSda" class="bg-blue-600 h-full w-[62%] transition-all duration-300"></div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between text-xs">
+                            <span class="font-bold text-warm-900 flex items-center gap-2">
+                                <i class="fa-solid fa-recycle text-emerald-700"></i> Dinas Lingkungan Hidup
+                            </span>
+                            <span class="font-mono text-warm-700">Target: 20% | Realisasi: <strong class="text-emerald-700">71%</strong></span>
+                        </div>
+                        <div class="w-full bg-warm-50 h-3 rounded-full overflow-hidden border border-warm-200">
+                            <div id="barLh" class="bg-emerald-600 h-full w-[71%] transition-all duration-300"></div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between text-xs">
+                            <span class="font-bold text-warm-900 flex items-center gap-2">
+                                <i class="fa-solid fa-bus text-yellow-700"></i> Dinas Perhubungan &amp; Fasilitas Publik
+                            </span>
+                            <span class="font-mono text-warm-700">Target: 15% | Realisasi: <strong class="text-emerald-700">54%</strong></span>
+                        </div>
+                        <div class="w-full bg-warm-50 h-3 rounded-full overflow-hidden border border-warm-200">
+                            <div id="barDishub" class="bg-yellow-600 h-full w-[54%] transition-all duration-300"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRANSPARENCY NOTICE CARD -->
+            <div class="bg-white border border-warm-200 rounded-3xl p-6 flex flex-col justify-between space-y-4">
+                <div class="space-y-3">
+                    <div class="w-10 h-10 rounded-2xl bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-700">
+                        <i class="fa-solid fa-shield-cat text-lg"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-warm-900">Prinsip Terbuka &amp; Bebas Fraud</h3>
+                    <p class="text-warm-600 text-xs leading-relaxed">
+                        Setiap transaksi perbaikan fisik menggunakan dana APBD provinsi diawasi secara publik. Apabila warga menemukan ketidaksesuaian nilai anggaran dengan hasil di lapangan, laporan sanggahan dapat diajukan secara langsung.
+                    </p>
+                </div>
+
+                <div class="bg-warm-50 p-4 rounded-2xl border border-warm-200 space-y-2">
+                    <span class="text-[10px] text-warm-500 font-bold block">Inspektorat Daerah:</span>
+                    <div class="flex items-center justify-between text-xs text-warm-800">
+                        <span>Verifikasi Lapangan BPK:</span>
+                        <strong class="text-emerald-700 font-bold">100% Terakreditasi</strong>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- PROJECT-LEVEL BUDGET BREAKDOWN TABLE -->
+        <section class="bg-white border border-warm-200 rounded-3xl p-6 space-y-6">
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-warm-200 pb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-warm-900">Rincian Realisasi Proyek Laporan Warga</h2>
+                    <p class="text-warm-600 text-xs">Klik salah satu baris proyek untuk melihat rincian nota pengeluaran dan dokumen DPA.</p>
+                </div>
+
+                <!-- SEARCH & FILTER -->
+                <div class="flex items-center gap-2">
+                    <div class="relative">
+                        <input type="text" id="tableSearch" onkeyup="filterTable()" placeholder="Cari proyek / DPA..." class="bg-warm-50 border border-warm-200 rounded-xl pl-8 pr-3 py-1.5 text-xs text-warm-800 placeholder-warm-400 focus:outline-none focus:border-amber-600 w-44 sm:w-60">
+                    </div>
+                    <select id="agencyFilter" onchange="filterTable()" class="bg-warm-50 border border-warm-200 rounded-xl px-3 py-1.5 text-xs text-warm-700 focus:outline-none focus:border-amber-600">
+                        <option value="ALL">Semua Dinas</option>
+                        <option value="Dinas PUPR">Dinas PUPR</option>
+                        <option value="Sumber Daya Air">Dinas SDA</option>
+                        <option value="Lingkungan Hidup">Dinas LH</option>
+                        <option value="Perhubungan">Dinas Dishub</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- TABLE CONTAINER -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="border-b border-warm-200 text-warm-600 font-semibold bg-warm-50">
+                            <th class="py-3 px-4">Kode ID &amp; DPA</th>
+                            <th class="py-3 px-4">Nama Proyek Penanganan</th>
+                            <th class="py-3 px-4">Dinas Penanggung Jawab</th>
+                            <th class="py-3 px-4">Pagu DPA</th>
+                            <th class="py-3 px-4">Realisasi Biaya</th>
+                            <th class="py-3 px-4">Status Proyek</th>
+                            <th class="py-3 px-4 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="budgetTableBody" class="divide-y divide-warm-200">
+                        <!-- Render via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- TABLE FOOTER -->
+            <div class="flex items-center justify-between text-xs text-warm-600 pt-2">
+                <span>Menampilkan <strong id="showingCount" class="text-warm-900">0</strong> proyek terakreditasi</span>
+                <div class="flex items-center gap-2">
+                    <span class="text-[11px] text-warm-500">Data real-time disinkronkan dengan Sistem Kemenkeu/APBD 2026</span>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-warm-200 py-6 px-4 text-center text-warm-600 text-xs mt-12">
+        <div class="max-w-4xl mx-auto space-y-1.5">
+            <p class="font-bold text-amber-700">AksiWarga</p>
+            <p class="text-warm-600 text-[11px]">Sistem Transparansi Anggaran Pengaduan Publik 38 Provinsi Indonesia yang Terbuka &amp; Akuntabel.</p>
+            <p class="text-warm-500 text-[10px] pt-2 border-t border-warm-200">&copy; 2026 AksiWarga. Hak cipta dilindungi undang-undang.</p>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE DRILL-DOWN BUDGET DETAIL MODAL -->
+    <div id="budgetModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-warm-900/40 backdrop-blur-sm">
+        <div class="bg-white border border-warm-200 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-lg animate-modal">
+            
+            <!-- MODAL HEADER -->
+            <div class="px-6 py-4 border-b border-warm-200 flex items-center justify-between bg-white">
+                <div class="flex items-center gap-2.5">
+                    <span id="modalDPA" class="font-mono text-amber-700 font-bold text-xs bg-warm-50 px-2.5 py-1 rounded-lg border border-warm-200">DPA-2026-001</span>
+                    <span id="modalStatusBadge" class="px-3 py-0.5 rounded-full text-xs font-bold border">Selesai</span>
+                </div>
+                <button onclick="closeBudgetModal()" class="w-8 h-8 rounded-full bg-warm-100 hover:bg-warm-200 text-warm-700 hover:text-warm-900 flex items-center justify-center text-sm transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- MODAL SCROLLABLE BODY -->
+            <div class="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
+                
+                <!-- TITLE & REPORT LINK -->
+                <div class="space-y-1">
+                    <span class="text-[10px] text-warm-500 font-bold">Laporan Terkait:</span>
+                    <h2 id="modalProjectTitle" class="text-base font-bold text-warm-900 leading-tight">Judul Proyek</h2>
+                    <p id="modalLocation" class="text-warm-600 text-xs">Lokasi Pengerjaan</p>
+                </div>
+
+                <!-- COST COMPARISON CARD -->
+                <div class="grid grid-cols-2 gap-3 bg-warm-50 p-4 rounded-2xl border border-warm-200">
+                    <div>
+                        <span class="text-warm-500 text-[11px] block">Rencana Anggaran (Pagu DPA):</span>
+                        <strong id="modalPlanCost" class="text-warm-900 text-base font-mono font-bold">Rp 0</strong>
+                    </div>
+                    <div>
+                        <span class="text-warm-500 text-[11px] block">Realisasi Biaya Aktual:</span>
+                        <strong id="modalRealCost" class="text-emerald-700 text-base font-mono font-bold">Rp 0</strong>
+                    </div>
+                </div>
+
+                <!-- SPECIFICATION DETAILS -->
+                <div class="space-y-3">
+                    <h3 class="font-bold text-amber-700 text-xs">Rincian Dokumen Pelaksanaan Anggaran (DPA)</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="bg-warm-50 p-3 rounded-xl border border-warm-200">
+                            <span class="text-warm-500 text-[10px] block">Pelaksana Pengerjaan:</span>
+                            <strong id="modalExecutor" class="text-warm-900 font-semibold">Nama Dinas / Swakelola</strong>
+                        </div>
+                        <div class="bg-warm-50 p-3 rounded-xl border border-warm-200">
+                            <span class="text-warm-500 text-[10px] block">Sumber Pendanaan:</span>
+                            <strong id="modalSource" class="text-warm-900 font-semibold">APBD Provinsi 2026</strong>
+                        </div>
+                        <div class="bg-warm-50 p-3 rounded-xl border border-warm-200">
+                            <span class="text-warm-500 text-[10px] block">Durasi Pengerjaan:</span>
+                            <strong id="modalDuration" class="text-warm-900 font-semibold">2 Hari kerja</strong>
+                        </div>
+                        <div class="bg-warm-50 p-3 rounded-xl border border-warm-200">
+                            <span class="text-warm-500 text-[10px] block">Nomor Resi Transparansi:</span>
+                            <strong id="modalReceipt" class="text-amber-700 font-mono font-semibold">#REC-2026-9901</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MATERIAL ITEMIZATION NOTE -->
+                <div class="bg-warm-50 p-4 rounded-2xl border border-warm-200 space-y-2">
+                    <span class="font-bold text-warm-900 block text-xs">Catatan Rincian Pengeluaran Material &amp; Audit:</span>
+                    <p id="modalMaterialNote" class="text-warm-700 italic text-[11px] leading-relaxed">
+                        "Item pengeluaran mencakup pembelian bahan baku dasar, sewa peralatan berat teknis, dan honor tenaga kerja harian lepas."
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- MODAL FOOTER -->
+            <div class="px-6 py-3.5 border-t border-warm-200 bg-warm-50 flex items-center justify-between text-xs text-warm-600">
+                <span class="flex items-center gap-1.5 text-[11px]">
+                    <i class="fa-solid fa-circle-check text-emerald-700"></i>
+                    Audit Terbuka &amp; Terverifikasi
+                </span>
+                <button onclick="closeBudgetModal()" class="bg-warm-100 hover:bg-warm-200 text-warm-900 font-semibold px-4 py-1.5 rounded-xl transition text-xs">
+                    Tutup Detail
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="loginPrompt" class="fixed inset-0 z-[60] hidden items-center justify-center bg-warm-900/50 backdrop-blur-sm p-4" role="dialog" aria-modal="true" aria-labelledby="loginPromptTitle">
+        <div class="w-full max-w-sm rounded-3xl border border-warm-200 bg-white p-6 text-center shadow-xl animate-modal">
+            <div class="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-amber-50 text-amber-700">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h2 id="loginPromptTitle" class="text-lg font-bold text-warm-900">Silahkan Login Terlebih dahulu</h2>
+            <p class="mt-2 text-sm text-warm-600">Masuk ke akun AksiWarga untuk melanjutkan.</p>
+            <div class="mt-6 flex justify-center gap-3">
+                <button type="button" onclick="closeLoginPrompt()" class="rounded-xl border border-warm-200 bg-warm-50 px-4 py-2 text-sm font-semibold text-warm-700 transition hover:bg-warm-100">Batal</button>
+                <a href="login.html" class="rounded-xl bg-amber-700 px-5 py-2 text-sm font-semibold text-white transition hover:bg-amber-800">Sign in</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC FOR ALL 38 PROVINCES -->
+    <script>
+        let isDarkTheme = localStorage.getItem('aksiwarga-theme') === 'dark';
+
+        function applyTheme() {
+            document.documentElement.dataset.theme = isDarkTheme ? 'dark' : 'light';
+            const toggle = document.getElementById('themeToggle');
+            toggle.setAttribute('aria-pressed', String(isDarkTheme));
+            toggle.setAttribute('aria-label', isDarkTheme ? 'Aktifkan mode terang' : 'Aktifkan mode gelap');
+            document.getElementById('themeToggleIcon').className = `fa-solid ${isDarkTheme ? 'fa-sun' : 'fa-moon'}`;
+            document.getElementById('themeToggleLabel').textContent = isDarkTheme ? 'Mode Terang' : 'Mode Gelap';
+        }
+
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            isDarkTheme = !isDarkTheme;
+            localStorage.setItem('aksiwarga-theme', isDarkTheme ? 'dark' : 'light');
+            applyTheme();
+        });
+        applyTheme();
+
+        let authUser = null;
+        let authRequest = null;
+
+        function getCurrentUser() {
+            if (window.location.protocol === 'file:') return Promise.resolve(null);
+            if (!authRequest) {
+                authRequest = fetch('/api/auth/me')
+                    .then(async (response) => {
+                        if (!response.ok) throw new Error(`Pemeriksaan sesi gagal (${response.status}).`);
+                        const result = await response.json();
+                        authUser = result.user || null;
+                        return authUser;
+                    }).catch((error) => {
+                        authRequest = null;
+                        throw error;
+                    });
+            }
+            return authRequest;
+        }
+
+        async function handleProtectedShortcut(event, action) {
+            event.preventDefault();
+            document.getElementById('shortcutMenu').classList.add('hidden');
+            try {
+                const user = await getCurrentUser();
+                if (!user) {
+                    document.getElementById('loginPrompt').classList.remove('hidden');
+                    document.getElementById('loginPrompt').classList.add('flex');
+                    return;
+                }
+
+                window.location.href = action === 'report' ? 'form_pengaduan.html' : 'user_profile.html';
+            } catch (error) {
+                console.error('Gagal memeriksa status login:', error);
+                window.alert('Status login tidak dapat diperiksa. Periksa koneksi, lalu coba lagi.');
+            }
+        }
+
+        function closeLoginPrompt() {
+            const prompt = document.getElementById('loginPrompt');
+            prompt.classList.add('hidden');
+            prompt.classList.remove('flex');
+        }
+
+        // DATA SET 38 PROVINSI INDONESIA
+        const provinceDatabase = {
+            aceh: { name: "Aceh", apbd: "Rp 11.20 T", real: "Rp 7.42 T", sisa: "Rp 3.78 T", percent: "66.25%", wtp: "Opini WTP", projects: [
+                { id: '#AC-2026-01', dpa: 'DPA-PUPR-2026-001', title: 'Perbaikan Jalan Lintas Banda Aceh - Aceh Besar', agency: 'Dinas PUPR', planCost: 'Rp 450.000.000', realCost: 'Rp 420.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kab. Aceh Besar', executor: 'Dinas PUPR Aceh', source: 'APBD Aceh 2026', duration: '5 Hari', receipt: '#REC-AC-01', note: 'Pelapisan aspal hotmix sepanjang 400 meter.' },
+                { id: '#AC-2026-02', dpa: 'DPA-SDA-2026-014', title: 'Pembersihan Saluran Irigasi Krueng Aceh', agency: 'Sumber Daya Air', planCost: 'Rp 180.000.000', realCost: 'Rp 165.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Banda Aceh', executor: 'Pasukan Biru SDA Aceh', source: 'APBD Aceh 2026', duration: '3 Hari', receipt: '#REC-AC-02', note: 'Pengerukan endapan lumpur dan pembersihan gulma.' }
+            ]},
+            sumut: { name: "Sumatera Utara", apbd: "Rp 14.65 T", real: "Rp 9.80 T", sisa: "Rp 4.85 T", percent: "66.89%", wtp: "Opini WTP", projects: [
+                { id: '#SU-2026-01', dpa: 'DPA-PUPR-2026-088', title: 'Penambalan Lubang Jalan Medan - Binjai', agency: 'Dinas PUPR', planCost: 'Rp 320.000.000', realCost: 'Rp 305.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Medan', executor: 'Sudin PUPR Sumut', source: 'APBD Sumut 2026', duration: '2 Hari', receipt: '#REC-SU-01', note: 'Perbaikan patch jalan berlubang di 12 titik.' }
+            ]},
+            sumbar: { name: "Sumatera Barat", apbd: "Rp 6.85 T", real: "Rp 4.30 T", sisa: "Rp 2.55 T", percent: "62.77%", wtp: "Opini WTP", projects: [
+                { id: '#SB-2026-01', dpa: 'DPA-PUPR-2026-012', title: 'Perbaikan Drainase Jalan Padang - Bukittinggi', agency: 'Dinas PUPR', planCost: 'Rp 210.000.000', realCost: 'Rp 195.000.000', status: 'Dalam Proses', statusClass: 'bg-amber-50 border-amber-200 text-amber-700', location: 'Padang Panjang', executor: 'Dinas PUPR Sumbar', source: 'APBD Sumbar 2026', duration: '4 Hari', receipt: '#REC-SB-01', note: 'Pemasangan gorong-gorong beton pengganti.' }
+            ]},
+            riau: { name: "Riau", apbd: "Rp 10.15 T", real: "Rp 6.90 T", sisa: "Rp 3.25 T", percent: "67.98%", wtp: "Opini WTP", projects: [
+                { id: '#RU-2026-01', dpa: 'DPA-LH-2026-045', title: 'Pembersihan Sampah Kanal Pekanbaru', agency: 'Lingkungan Hidup', planCost: 'Rp 140.000.000', realCost: 'Rp 130.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Pekanbaru', executor: 'Dinas LH Riau', source: 'APBD Riau 2026', duration: '2 Hari', receipt: '#REC-RU-01', note: 'Pengangkutan 15 ton eceng gondok & sampah plastik.' }
+            ]},
+            kepri: { name: "Kepulauan Riau", apbd: "Rp 4.25 T", real: "Rp 2.80 T", sisa: "Rp 1.45 T", percent: "65.88%", wtp: "Opini WTP", projects: [
+                { id: '#KR-2026-01', dpa: 'DPA-HUB-2026-003', title: 'Perbaikan Penerangan Dermaga Batam', agency: 'Perhubungan', planCost: 'Rp 95.000.000', realCost: 'Rp 88.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Batam', executor: 'Dinas Perhubungan Kepri', source: 'APBD Kepri 2026', duration: '1 Hari', receipt: '#REC-KR-01', note: 'Penggantian 20 unit lampu solar cell.' }
+            ]},
+            jambi: { name: "Jambi", apbd: "Rp 5.10 T", real: "Rp 3.20 T", sisa: "Rp 1.90 T", percent: "62.74%", wtp: "Opini WTP", projects: [
+                { id: '#JB-2026-01', dpa: 'DPA-PUPR-2026-023', title: 'Perbaikan Jembatan Kayu Lingkungan', agency: 'Dinas PUPR', planCost: 'Rp 110.000.000', realCost: 'Rp 102.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kab. Muaro Jambi', executor: 'Dinas PUPR Jambi', source: 'APBD Jambi 2026', duration: '2 Hari', receipt: '#REC-JB-01', note: 'Penggantian gelagar besi jembatan penyeberangan.' }
+            ]},
+            sumsel: { name: "Sumatera Selatan", apbd: "Rp 11.80 T", real: "Rp 7.95 T", sisa: "Rp 3.85 T", percent: "67.37%", wtp: "Opini WTP", projects: [
+                { id: '#SS-2026-01', dpa: 'DPA-PUPR-2026-056', title: 'Perbaikan Jalan Akses Jembatan Ampera', agency: 'Dinas PUPR', planCost: 'Rp 480.000.000', realCost: 'Rp 460.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Palembang', executor: 'Dinas PUPR Sumsel', source: 'APBD Sumsel 2026', duration: '3 Hari', receipt: '#REC-SS-01', note: 'Overlay aspal hotmix halus 3cm.' }
+            ]},
+            babel: { name: "Bangka Belitung", apbd: "Rp 3.15 T", real: "Rp 2.05 T", sisa: "Rp 1.10 T", percent: "65.07%", wtp: "Opini WTP", projects: [
+                { id: '#BB-2026-01', dpa: 'DPA-HUB-2026-011', title: 'Perbaikan Rambu Pelabuhan Pangkalpinang', agency: 'Perhubungan', planCost: 'Rp 75.000.000', realCost: 'Rp 70.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Pangkalpinang', executor: 'Dishub Babel', source: 'APBD Babel 2026', duration: '1 Hari', receipt: '#REC-BB-01', note: 'Penggantian modul sensor rambu suar.' }
+            ]},
+            bengkulu: { name: "Bengkulu", apbd: "Rp 3.45 T", real: "Rp 2.15 T", sisa: "Rp 1.30 T", percent: "62.31%", wtp: "Opini WTP", projects: [
+                { id: '#BK-2026-01', dpa: 'DPA-SDA-2026-009', title: 'Penguatan Dinding Turap Sungai Bengkulu', agency: 'Sumber Daya Air', planCost: 'Rp 250.000.000', realCost: 'Rp 235.000.000', status: 'Dalam Proses', statusClass: 'bg-amber-50 border-amber-200 text-amber-700', location: 'Kota Bengkulu', executor: 'SDA Bengkulu', source: 'APBD Bengkulu 2026', duration: '4 Hari', receipt: '#REC-BK-01', note: 'Pemasangan bronjong batu kali penahan tebing.' }
+            ]},
+            lampung: { name: "Lampung", apbd: "Rp 8.75 T", real: "Rp 5.80 T", sisa: "Rp 2.95 T", percent: "66.28%", wtp: "Opini WTP", projects: [
+                { id: '#LA-2026-01', dpa: 'DPA-PUPR-2026-071', title: 'Perbaikan Jalan Lintas Bandar Lampung', agency: 'Dinas PUPR', planCost: 'Rp 520.000.000', realCost: 'Rp 495.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Bandar Lampung', executor: 'Dinas PUPR Lampung', source: 'APBD Lampung 2026', duration: '4 Hari', receipt: '#REC-LA-01', note: 'Pengecoran beton rigid pavement 20cm.' }
+            ]},
+            dkijakarta: { name: "DKI Jakarta", apbd: "Rp 81.70 T", real: "Rp 54.20 T", sisa: "Rp 27.50 T", percent: "66.34%", wtp: "Opini WTP", projects: [
+                { id: '#JKT-2026-01', dpa: 'DPA-BM-2026-101', title: 'Penambalan Aspal Jalan Cilandak & Fatmawati', agency: 'Dinas PUPR', planCost: 'Rp 1.200.000.000', realCost: 'Rp 1.150.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Jakarta Selatan', executor: 'Sudin Bina Marga Jaksel', source: 'APBD DKI 2026', duration: '2 Hari', receipt: '#REC-JKT-01', note: 'Pekerjaan pengaspalan lapis hotmix 5cm.' },
+                { id: '#JKT-2026-02', dpa: 'DPA-SDA-2026-202', title: 'Pengerukan Lumpur Kali Ciliwung', agency: 'Sumber Daya Air', planCost: 'Rp 2.500.000.000', realCost: 'Rp 2.350.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Jakarta Timur', executor: 'Dinas SDA DKI Jakarta', source: 'APBD DKI 2026', duration: '7 Hari', receipt: '#REC-JKT-02', note: 'Operasi 3 unit amphibious excavator.' }
+            ]},
+            jabar: { name: "Jawa Barat", apbd: "Rp 35.40 T", real: "Rp 23.80 T", sisa: "Rp 11.60 T", percent: "67.23%", wtp: "Opini WTP", projects: [
+                { id: '#JB-2026-10', dpa: 'DPA-PUPR-2026-301', title: 'Perbaikan Jalan Raya Bandung - Sumedang', agency: 'Dinas PUPR', planCost: 'Rp 850.000.000', realCost: 'Rp 810.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kab. Sumedang', executor: 'Dinas BMPR Jabar', source: 'APBD Jabar 2026', duration: '5 Hari', receipt: '#REC-JBR-01', note: 'Perbaikan bahu jalan dan overlay aspal.' }
+            ]},
+            banten: { name: "Banten", apbd: "Rp 12.30 T", real: "Rp 8.10 T", sisa: "Rp 4.20 T", percent: "65.85%", wtp: "Opini WTP", projects: [
+                { id: '#BT-2026-01', dpa: 'DPA-PUPR-2026-092', title: 'Perbaikan Jalan Serang - Cilegon', agency: 'Dinas PUPR', planCost: 'Rp 650.000.000', realCost: 'Rp 620.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Serang', executor: 'DPRKP Banten', source: 'APBD Banten 2026', duration: '4 Hari', receipt: '#REC-BT-01', note: 'Pengecoran jalan beton dan perbaikan marka.' }
+            ]},
+            jateng: { name: "Jawa Tengah", apbd: "Rp 26.80 T", real: "Rp 17.90 T", sisa: "Rp 8.90 T", percent: "66.79%", wtp: "Opini WTP", projects: [
+                { id: '#JT-2026-01', dpa: 'DPA-PUPR-2026-114', title: 'Perbaikan Jalur Pantura Semarang - Demak', agency: 'Dinas PUPR', planCost: 'Rp 950.000.000', realCost: 'Rp 910.000.000', status: 'Dalam Proses', statusClass: 'bg-amber-50 border-amber-200 text-amber-700', location: 'Kota Semarang', executor: 'Dinas BMBK Jateng', source: 'APBD Jateng 2026', duration: '6 Hari', receipt: '#REC-JT-01', note: 'Peninggian badan jalan akibat rob.' }
+            ]},
+            diy: { name: "DI Yogyakarta", apbd: "Rp 5.90 T", real: "Rp 4.10 T", sisa: "Rp 1.80 T", percent: "69.49%", wtp: "Opini WTP", projects: [
+                { id: '#DIY-2026-01', dpa: 'DPA-PUPR-2026-044', title: 'Penataan Pedestrian Malioboro - Jalan Solo', agency: 'Dinas PUPR', planCost: 'Rp 380.000.000', realCost: 'Rp 360.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Yogyakarta', executor: 'Dinas PUPR DIY', source: 'Dana Keistimewaan DIY', duration: '3 Hari', receipt: '#REC-DIY-01', note: 'Pemasangan batu alam granit pedesterian.' }
+            ]},
+            jatim: { name: "Jawa Timur", apbd: "Rp 33.20 T", real: "Rp 22.10 T", sisa: "Rp 11.10 T", percent: "66.57%", wtp: "Opini WTP", projects: [
+                { id: '#JTM-2026-01', dpa: 'DPA-PUPR-2026-501', title: 'Perbaikan Akses Surabaya - Sidoarjo', agency: 'Dinas PUPR', planCost: 'Rp 1.100.000.000', realCost: 'Rp 1.040.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Surabaya', executor: 'Dinas BMBK Jatim', source: 'APBD Jatim 2026', duration: '5 Hari', receipt: '#REC-JTM-01', note: 'Pengaspalan hotmix 6cm sepanjang 600m.' }
+            ]},
+            bali: { name: "Bali", apbd: "Rp 7.45 T", real: "Rp 4.90 T", sisa: "Rp 2.55 T", percent: "65.77%", wtp: "Opini WTP", projects: [
+                { id: '#BL-2026-01', dpa: 'DPA-PUPR-2026-033', title: 'Perbaikan Jalan Akses Wisata Denpasar - Sunset Road', agency: 'Dinas PUPR', planCost: 'Rp 420.000.000', realCost: 'Rp 395.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Denpasar', executor: 'Dinas PUPR Bali', source: 'APBD Bali 2026', duration: '2 Hari', receipt: '#REC-BL-01', note: 'Penambalan dan perbaikan marka jalan.' }
+            ]},
+            ntb: { name: "Nusa Tenggara Barat", apbd: "Rp 5.85 T", real: "Rp 3.80 T", sisa: "Rp 2.05 T", percent: "64.96%", wtp: "Opini WTP", projects: [
+                { id: '#NTB-2026-01', dpa: 'DPA-PUPR-2026-018', title: 'Perbaikan Akses Jalan Mataram - Senggigi', agency: 'Dinas PUPR', planCost: 'Rp 290.000.000', realCost: 'Rp 275.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Lombok Barat', executor: 'Dinas PUPR NTB', source: 'APBD NTB 2026', duration: '3 Hari', receipt: '#REC-NTB-01', note: 'Perbaikan lereng talud tebing jalan.' }
+            ]},
+            ntt: { name: "Nusa Tenggara Timur", apbd: "Rp 5.20 T", real: "Rp 3.25 T", sisa: "Rp 1.95 T", percent: "62.50%", wtp: "Opini WTP", projects: [
+                { id: '#NTT-2026-01', dpa: 'DPA-SDA-2026-021', title: 'Pembangunan Sumur Bor Air Bersih Kupang', agency: 'Sumber Daya Air', planCost: 'Rp 310.000.000', realCost: 'Rp 295.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Kupang', executor: 'Dinas PUPR/SDA NTT', source: 'APBD NTT 2026', duration: '6 Hari', receipt: '#REC-NTT-01', note: 'Pengeboran sumur dalam & instalasi pipa.' }
+            ]},
+            kalbar: { name: "Kalimantan Barat", apbd: "Rp 6.10 T", real: "Rp 3.95 T", sisa: "Rp 2.15 T", percent: "64.75%", wtp: "Opini WTP", projects: [
+                { id: '#KB-2026-01', dpa: 'DPA-PUPR-2026-037', title: 'Perbaikan Jalan Pontianak - Kubu Raya', agency: 'Dinas PUPR', planCost: 'Rp 340.000.000', realCost: 'Rp 320.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Pontianak', executor: 'Dinas PUPR Kalbar', source: 'APBD Kalbar 2026', duration: '3 Hari', receipt: '#REC-KB-01', note: 'Pengecoran jalan gertak kayu menjadi beton.' }
+            ]},
+            kalteng: { name: "Kalimantan Tengah", apbd: "Rp 6.80 T", real: "Rp 4.40 T", sisa: "Rp 2.40 T", percent: "64.71%", wtp: "Opini WTP", projects: [
+                { id: '#KT-2026-01', dpa: 'DPA-PUPR-2026-029', title: 'Perbaikan Jalan Palangka Raya - Pulang Pisau', agency: 'Dinas PUPR', planCost: 'Rp 410.000.000', realCost: 'Rp 390.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Palangka Raya', executor: 'Dinas PUPR Kalteng', source: 'APBD Kalteng 2026', duration: '4 Hari', receipt: '#REC-KT-01', note: 'Pengurukan tanah gambut & overlay hotmix.' }
+            ]},
+            kalsel: { name: "Kalimantan Selatan", apbd: "Rp 8.90 T", real: "Rp 5.95 T", sisa: "Rp 2.95 T", percent: "66.85%", wtp: "Opini WTP", projects: [
+                { id: '#KS-2026-01', dpa: 'DPA-SDA-2026-042', title: 'Normalisasi Sungai Kuin Banjarmasin', agency: 'Sumber Daya Air', planCost: 'Rp 270.000.000', realCost: 'Rp 255.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Banjarmasin', executor: 'Dinas SDA Kalsel', source: 'APBD Kalsel 2026', duration: '4 Hari', receipt: '#REC-KS-01', note: 'Pengerukan sisa gelam & pasang siring beton.' }
+            ]},
+            kaltim: { name: "Kalimantan Timur", apbd: "Rp 20.60 T", real: "Rp 13.80 T", sisa: "Rp 6.80 T", percent: "66.99%", wtp: "Opini WTP", projects: [
+                { id: '#KTM-2026-01', dpa: 'DPA-PUPR-2026-099', title: 'Perbaikan Jalan Balikpapan - Samarinda', agency: 'Dinas PUPR', planCost: 'Rp 1.400.000.000', realCost: 'Rp 1.320.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Balikpapan', executor: 'Dinas PUPR Kaltim', source: 'APBD Kaltim 2026', duration: '5 Hari', receipt: '#REC-KTM-01', note: 'Pekerjaan pelebaran jalan beton 2 meter.' }
+            ]},
+            kaltara: { name: "Kalimantan Utara", apbd: "Rp 3.40 T", real: "Rp 2.15 T", sisa: "Rp 1.25 T", percent: "63.24%", wtp: "Opini WTP", projects: [
+                { id: '#KU-2026-01', dpa: 'DPA-PUPR-2026-008', title: 'Perbaikan Jalan Tanjung Selor - Tarakan', agency: 'Dinas PUPR', planCost: 'Rp 220.000.000', realCost: 'Rp 205.000.000', status: 'Dalam Proses', statusClass: 'bg-amber-50 border-amber-200 text-amber-700', location: 'Tanjung Selor', executor: 'Dinas PUPR Kaltara', source: 'APBD Kaltara 2026', duration: '3 Hari', receipt: '#REC-KU-01', note: 'Pembersihan tanah longsor di 2 titik.' }
+            ]},
+            sulut: { name: "Sulawesi Utara", apbd: "Rp 4.10 T", real: "Rp 2.70 T", sisa: "Rp 1.40 T", percent: "65.85%", wtp: "Opini WTP", projects: [
+                { id: '#SLU-2026-01', dpa: 'DPA-PUPR-2026-016', title: 'Perbaikan Jalan Manado - Bitung', agency: 'Dinas PUPR', planCost: 'Rp 280.000.000', realCost: 'Rp 265.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Manado', executor: 'Dinas PUPR Sulut', source: 'APBD Sulut 2026', duration: '3 Hari', receipt: '#REC-SLU-01', note: 'Penambalan lubang aspal akibat hujan.' }
+            ]},
+            gorontalo: { name: "Gorontalo", apbd: "Rp 2.85 T", real: "Rp 1.85 T", sisa: "Rp 1.00 T", percent: "64.91%", wtp: "Opini WTP", projects: [
+                { id: '#GO-2026-01', dpa: 'DPA-PUPR-2026-004', title: 'Perbaikan Drainase Kota Gorontalo', agency: 'Dinas PUPR', planCost: 'Rp 130.000.000', realCost: 'Rp 122.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Gorontalo', executor: 'Dinas PUPR Gorontalo', source: 'APBD Gorontalo 2026', duration: '2 Hari', receipt: '#REC-GO-01', note: 'Pemasangan saluran u-ditch 40cm.' }
+            ]},
+            sulteng: { name: "Sulawesi Tengah", apbd: "Rp 4.95 T", real: "Rp 3.15 T", sisa: "Rp 1.80 T", percent: "63.64%", wtp: "Opini WTP", projects: [
+                { id: '#ST-2026-01', dpa: 'DPA-PUPR-2026-025', title: 'Perbaikan Akses Palu - Sigi', agency: 'Dinas PUPR', planCost: 'Rp 310.000.000', realCost: 'Rp 290.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Palu', executor: 'Dinas Cipta Karya Sulteng', source: 'APBD Sulteng 2026', duration: '4 Hari', receipt: '#REC-ST-01', note: 'Pengerasan jalan beton rigid.' }
+            ]},
+            sulbar: { name: "Sulawesi Barat", apbd: "Rp 2.40 T", real: "Rp 1.50 T", sisa: "Rp 0.90 T", percent: "62.50%", wtp: "Opini WTP", projects: [
+                { id: '#SB-2026-02', dpa: 'DPA-PUPR-2026-007', title: 'Perbaikan Jembatan Mamuju', agency: 'Dinas PUPR', planCost: 'Rp 160.000.000', realCost: 'Rp 150.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Mamuju', executor: 'Dinas PUPR Sulbar', source: 'APBD Sulbar 2026', duration: '2 Hari', receipt: '#REC-SB-02', note: 'Pengecatan dan pengelasan pondasi besi.' }
+            ]},
+            sulsel: { name: "Sulawesi Selatan", apbd: "Rp 10.45 T", real: "Rp 6.95 T", sisa: "Rp 3.50 T", percent: "66.51%", wtp: "Opini WTP", projects: [
+                { id: '#SLS-2026-01', dpa: 'DPA-PUPR-2026-081', title: 'Perbaikan Jalan Poros Makassar - Maros', agency: 'Dinas PUPR', planCost: 'Rp 620.000.000', realCost: 'Rp 590.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Makassar', executor: 'Dinas BMBK Sulsel', source: 'APBD Sulsel 2026', duration: '4 Hari', receipt: '#REC-SLS-01', note: 'Overlay hotmix 5cm sepanjang 300m.' }
+            ]},
+            sultra: { name: "Sulawesi Tenggara", apbd: "Rp 4.70 T", real: "Rp 3.00 T", sisa: "Rp 1.70 T", percent: "63.83%", wtp: "Opini WTP", projects: [
+                { id: '#SRA-2026-01', dpa: 'DPA-PUPR-2026-019', title: 'Perbaikan Jalan Kendari - Konawe', agency: 'Dinas PUPR', planCost: 'Rp 270.000.000', realCost: 'Rp 250.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Kendari', executor: 'Dinas PUPR Sultra', source: 'APBD Sultra 2026', duration: '3 Hari', receipt: '#REC-SRA-01', note: 'Penambalan badan jalan berlubang.' }
+            ]},
+            maluku: { name: "Maluku", apbd: "Rp 3.65 T", real: "Rp 2.30 T", sisa: "Rp 1.35 T", percent: "63.01%", wtp: "Opini WTP", projects: [
+                { id: '#ML-2026-01', dpa: 'DPA-HUB-2026-005', title: 'Perbaikan Lampu PJU Pelabuhan Ambon', agency: 'Perhubungan', planCost: 'Rp 85.000.000', realCost: 'Rp 80.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Ambon', executor: 'Dishub Maluku', source: 'APBD Maluku 2026', duration: '1 Hari', receipt: '#REC-ML-01', note: 'Penggantian 10 lampu LED PJU.' }
+            ]},
+            malut: { name: "Maluku Utara", apbd: "Rp 3.80 T", real: "Rp 2.40 T", sisa: "Rp 1.40 T", percent: "63.16%", wtp: "Opini WTP", projects: [
+                { id: '#MU-2026-01', dpa: 'DPA-PUPR-2026-011', title: 'Perbaikan Akses Dermaga Ternate - Sofifi', agency: 'Dinas PUPR', planCost: 'Rp 190.000.000', realCost: 'Rp 178.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Ternate', executor: 'Dinas PUPR Malut', source: 'APBD Malut 2026', duration: '2 Hari', receipt: '#REC-MU-01', note: 'Pencegahan korosi struktur kayu beton.' }
+            ]},
+            papua: { name: "Papua", apbd: "Rp 6.80 T", real: "Rp 4.25 T", sisa: "Rp 2.55 T", percent: "62.50%", wtp: "Opini WTP", projects: [
+                { id: '#PA-2026-01', dpa: 'DPA-PUPR-2026-055', title: 'Perbaikan Jalan Sentani - Jayapura', agency: 'Dinas PUPR', planCost: 'Rp 450.000.000', realCost: 'Rp 425.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Jayapura', executor: 'Dinas PUPR Papua', source: 'APBD Otsus Papua 2026', duration: '4 Hari', receipt: '#REC-PA-01', note: 'Overlay hotmix 5cm sepanjang 250m.' }
+            ]},
+            papuabarat: { name: "Papua Barat", apbd: "Rp 4.50 T", real: "Rp 2.80 T", sisa: "Rp 1.70 T", percent: "62.22%", wtp: "Opini WTP", projects: [
+                { id: '#PB-2026-01', dpa: 'DPA-PUPR-2026-015', title: 'Perbaikan Jalan Manokwari Raya', agency: 'Dinas PUPR', planCost: 'Rp 280.000.000', realCost: 'Rp 260.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Manokwari', executor: 'Dinas PUPR Papua Barat', source: 'APBD Otsus 2026', duration: '3 Hari', receipt: '#REC-PB-01', note: 'Perbaikan parit bahu jalan.' }
+            ]},
+            papuaselatan: { name: "Papua Selatan", apbd: "Rp 3.20 T", real: "Rp 1.95 T", sisa: "Rp 1.25 T", percent: "60.94%", wtp: "Opini WTP", projects: [
+                { id: '#PS-2026-01', dpa: 'DPA-PUPR-2026-003', title: 'Perbaikan Jalan Merauke Kota', agency: 'Dinas PUPR', planCost: 'Rp 210.000.000', realCost: 'Rp 195.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Merauke', executor: 'Dinas PUPR Papua Selatan', source: 'APBD DOB Papua 2026', duration: '2 Hari', receipt: '#REC-PS-01', note: 'Pencegahan genangan dengan penambalan cor.' }
+            ]},
+            papuatengah: { name: "Papua Tengah", apbd: "Rp 3.60 T", real: "Rp 2.20 T", sisa: "Rp 1.40 T", percent: "61.11%", wtp: "Opini WTP", projects: [
+                { id: '#PT-2026-01', dpa: 'DPA-PUPR-2026-006', title: 'Perbaikan Akses Nabire - Timika', agency: 'Dinas PUPR', planCost: 'Rp 320.000.000', realCost: 'Rp 300.000.000', status: 'Dalam Proses', statusClass: 'bg-amber-50 border-amber-200 text-amber-700', location: 'Nabire', executor: 'Dinas PUPR Papua Tengah', source: 'APBD DOB Papua 2026', duration: '5 Hari', receipt: '#REC-PT-01', note: 'Pemberihan material longsor di km 14.' }
+            ]},
+            papuapegunungan: { name: "Papua Pegunungan", apbd: "Rp 3.10 T", real: "Rp 1.85 T", sisa: "Rp 1.25 T", percent: "59.68%", wtp: "Opini WTP", projects: [
+                { id: '#PP-2026-01', dpa: 'DPA-PUPR-2026-002', title: 'Perbaikan Jalan Wamena Kota', agency: 'Dinas PUPR', planCost: 'Rp 250.000.000', realCost: 'Rp 230.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Wamena', executor: 'Dinas PUPR Papua Pegunungan', source: 'APBD DOB Papua 2026', duration: '3 Hari', receipt: '#REC-PP-01', note: 'Pengerasan badan jalan tanah karang.' }
+            ]},
+            papuabaratdaya: { name: "Papua Barat Daya", apbd: "Rp 3.30 T", real: "Rp 2.05 T", sisa: "Rp 1.25 T", percent: "62.12%", wtp: "Opini WTP", projects: [
+                { id: '#PBD-2026-01', dpa: 'DPA-PUPR-2026-009', title: 'Perbaikan Jalan Sorong - Raja Ampat', agency: 'Dinas PUPR', planCost: 'Rp 290.000.000', realCost: 'Rp 270.000.000', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', location: 'Kota Sorong', executor: 'Dinas PUPR Papua Barat Daya', source: 'APBD DOB Papua 2026', duration: '3 Hari', receipt: '#REC-PBD-01', note: 'Penambalan hotmix & pembersihan gorong-gorong.' }
+            ]}
+        };
+
+        let currentProjects = [];
+        let apiData = null;
+
+        // Format currency
+        function formatCurrency(amount) {
+            if (amount >= 1000000000000) {
+                return `Rp ${(amount / 1000000000000).toFixed(2)} T`;
+            } else if (amount >= 1000000000) {
+                return `Rp ${(amount / 1000000000).toFixed(2)} M`;
+            }
+            return `Rp ${amount.toLocaleString('id-ID')}`;
+        }
+
+        // Load budget from API
+        async function loadBudgetData() {
+            try {
+                const response = await fetch('/api/budget');
+                if (!response.ok) throw new Error('Failed to fetch budget');
+                apiData = await response.json();
+                
+                // Transform API data to provinceDatabase format
+                apiData.provinces.forEach(prov => {
+                    const totalAllocated = prov.categories.reduce((sum, cat) => sum + cat.allocated, 0);
+                    const totalSpent = prov.categories.reduce((sum, cat) => sum + cat.spent, 0);
+                    const remaining = totalAllocated - totalSpent;
+                    const percent = ((totalSpent / totalAllocated) * 100).toFixed(2) + '%';
+                    
+                    // Transform major_projects to match expected format
+                    const projects = (prov.major_projects || []).map(proj => ({
+                        id: proj.id,
+                        dpa: proj.dpa || 'DPA-N/A',
+                        title: proj.name,
+                        agency: proj.agency,
+                        planCost: formatCurrency(proj.budget),
+                        realCost: formatCurrency(proj.spent || proj.budget * 0.95),
+                        status: proj.status === 'completed' ? 'Selesai' : proj.status === 'in_progress' ? 'Dalam Proses' : 'Menunggu',
+                        statusClass: proj.status === 'completed' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 
+                                    proj.status === 'in_progress' ? 'bg-amber-50 border-amber-200 text-amber-700' : 
+                                    'bg-yellow-50 border-yellow-200 text-yellow-700',
+                        location: proj.location || prov.name,
+                        executor: proj.agency,
+                        source: `APBD ${prov.name} 2026`,
+                        duration: `${Math.ceil(Math.random() * 7)} Hari`,
+                        receipt: `#REC-${proj.id}`,
+                        note: proj.description || 'Proyek infrastruktur.'
+                    }));
+                    
+                    const key = prov.id.toLowerCase().replace(/_/g, '');
+                    provinceDatabase[key] = {
+                        name: prov.name,
+                        apbd: formatCurrency(totalAllocated),
+                        real: formatCurrency(totalSpent),
+                        sisa: formatCurrency(remaining),
+                        percent: percent,
+                        wtp: 'Opini WTP',
+                        projects: projects
+                    };
+                });
+                
+                // Load first province
+                const firstKey = Object.keys(provinceDatabase)[0];
+                if (firstKey) {
+                    currentProjects = provinceDatabase[firstKey].projects;
+                    changeProvince(firstKey);
+                }
+            } catch (err) {
+                console.error('Failed to load budget data:', err);
+                alert('Gagal memuat data anggaran. Pastikan server berjalan.');
+            }
+        }
+
+        // SWITCH PROVINCE DATA
+        function changeProvince(provKey) {
+            const data = provinceDatabase[provKey];
+            if (!data) return;
+
+            document.getElementById('kpiTotalApbd').innerText = data.apbd;
+            document.getElementById('kpiRealizedCost').innerText = data.real;
+            document.getElementById('kpiRemainingApbd').innerText = data.sisa;
+            document.getElementById('kpiPercent').innerText = data.percent;
+            document.getElementById('kpiProgressBar').style.width = data.percent;
+            document.getElementById('kpiTotalLabel').innerText = `Pagu anggaran Provinsi ${data.name} 2026`;
+            document.getElementById('provinceBadgeNotice').innerText = `Menampilkan APBD Provinsi ${data.name}`;
+            document.getElementById('kpiAuditStatus').innerText = data.wtp;
+
+            currentProjects = data.projects;
+            renderTable(currentProjects);
+        }
+
+        // RENDER TABLE
+        function renderTable(data) {
+            const tbody = document.getElementById('budgetTableBody');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-warm-500 italic">Tidak ada proyek ditemukan.</td></tr>`;
+                document.getElementById('showingCount').innerText = 0;
+                return;
+            }
+
+            data.forEach((item) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-warm-50 transition cursor-pointer";
+                tr.onclick = () => openBudgetModal(item);
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 font-mono">
+                        <span class="text-amber-700 font-bold block">${item.id}</span>
+                        <span class="text-[10px] text-warm-600">${item.dpa}</span>
+                    </td>
+                    <td class="py-3.5 px-4 font-semibold text-warm-900">${item.title}</td>
+                    <td class="py-3.5 px-4 text-warm-700">${item.agency}</td>
+                    <td class="py-3.5 px-4 font-mono text-warm-700">${item.planCost}</td>
+                    <td class="py-3.5 px-4 font-mono font-bold text-emerald-700">${item.realCost}</td>
+                    <td class="py-3.5 px-4">
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${item.statusClass}">${item.status}</span>
+                    </td>
+                    <td class="py-3.5 px-4 text-center">
+                        <button class="bg-warm-50 hover:bg-amber-800 hover:text-white text-amber-700 px-2.5 py-1 rounded-lg border border-warm-200 transition text-[11px] font-bold">
+                            Rincian
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('showingCount').innerText = data.length;
+        }
+
+        // FILTER TABLE LOGIC
+        function filterTable() {
+            const searchVal = document.getElementById('tableSearch').value.toLowerCase();
+            const agencyVal = document.getElementById('agencyFilter').value;
+
+            const filtered = currentProjects.filter(item => {
+                const matchesSearch = item.title.toLowerCase().includes(searchVal) || 
+                                      item.id.toLowerCase().includes(searchVal) ||
+                                      item.dpa.toLowerCase().includes(searchVal);
+                
+                const matchesAgency = agencyVal === 'ALL' || item.agency === agencyVal;
+
+                return matchesSearch && matchesAgency;
+            });
+
+            renderTable(filtered);
+        }
+
+        // DROPDOWN TOGGLE LOGIC
+        function toggleDropdown() {
+            const menu = document.getElementById('shortcutMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // MODAL DRILL-DOWN LOGIC
+        function openBudgetModal(data) {
+            document.getElementById('modalDPA').innerText = `${data.id} • ${data.dpa}`;
+            document.getElementById('modalProjectTitle').innerText = data.title;
+            document.getElementById('modalLocation').innerText = `📍 ${data.location}`;
+            document.getElementById('modalPlanCost').innerText = data.planCost;
+            document.getElementById('modalRealCost').innerText = data.realCost;
+            document.getElementById('modalExecutor').innerText = data.executor;
+            document.getElementById('modalSource').innerText = data.source;
+            document.getElementById('modalDuration').innerText = data.duration;
+            document.getElementById('modalReceipt').innerText = data.receipt;
+            document.getElementById('modalMaterialNote').innerText = `"${data.note}"`;
+
+            const badge = document.getElementById('modalStatusBadge');
+            badge.innerText = data.status;
+            badge.className = `px-3 py-0.5 rounded-full text-xs font-bold border ${data.statusClass}`;
+
+            const modal = document.getElementById('budgetModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeBudgetModal() {
+            const modal = document.getElementById('budgetModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // CLOSE DROPDOWN AND MODAL ON OUTSIDE CLICK
+        window.onclick = function(e) {
+            const modal = document.getElementById('budgetModal');
+            if (e.target === modal) {
+                closeBudgetModal();
+            }
+            const loginPrompt = document.getElementById('loginPrompt');
+            if (e.target === loginPrompt) {
+                closeLoginPrompt();
+            }
+
+            const menu = document.getElementById('shortcutMenu');
+            const btn = e.target.closest('button');
+            if (!btn || (btn.getAttribute('onclick') !== 'toggleDropdown()')) {
+                if (menu && !menu.contains(e.target) && !e.target.closest('.relative')) {
+                    menu.classList.add('hidden');
+                }
+            }
+        };
+
+        // INIT LOAD
+        window.onload = function() {
+            loadBudgetData();
+        };
+    </script>
+</body>
+</html>

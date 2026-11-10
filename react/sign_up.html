@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daftar – TransparansiWarga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#3b2412;--muted:#9a8c7e;--line:#e8dfd2;--accent:#c4833f;--accent-d:#ad6f2f;--bg:#faf7f2;--err:#b42318}
+html,body{height:100%}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.page{display:grid;grid-template-columns:minmax(360px,40.5%) 1fr;min-height:100vh}
+
+/* Panel kiri */
+.side{position:relative;overflow:hidden;display:flex;flex-direction:column;padding:48px;color:#fff;background:linear-gradient(165deg,#2e190b 0%,#46280f 55%,#5b3a1e 100%)}
+.side:before,.side:after{content:"";position:absolute;border-radius:50%;pointer-events:none}
+.side:before{width:380px;height:380px;top:-120px;right:-140px;background:rgba(196,131,63,.16)}
+.side:after{width:360px;height:360px;bottom:-130px;left:-120px;background:rgba(255,255,255,.05)}
+.side>*{position:relative;z-index:1}
+.side>.dots{position:absolute;z-index:0;width:150px;height:150px;pointer-events:none;background:radial-gradient(rgba(207,149,83,.45) 1.2px,transparent 1.6px) 0 0/14px 14px;-webkit-mask-image:linear-gradient(#000,transparent);mask-image:linear-gradient(#000,transparent)}
+.d1{top:7%;right:0}
+.d2{top:46%;left:0}
+.brand{display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none}
+.logo{width:36px;height:36px;border-radius:10px;display:block;object-fit:cover}
+.logo svg{width:20px;height:20px}
+.brand b{display:block;font-size:17px;font-weight:700;letter-spacing:-.01em}
+.brand small{display:block;font-size:9px;letter-spacing:.2em;color:#c99a63;margin-top:2px;font-weight:500}
+.side h1{font-size:clamp(32px,3.1vw,44px);line-height:1.18;font-weight:700;margin:56px 0 18px;letter-spacing:-.02em}
+.lead{font-size:14px;line-height:1.65;color:#d8c3a8;max-width:380px}
+.stats{display:flex;margin-top:32px}
+.stats div{padding:0 22px;border-left:1px solid rgba(255,255,255,.15)}
+.stats div:first-child{padding-left:0;border:0}
+.stats b{display:block;font-size:26px;font-weight:700;color:#cf9553}
+.stats span{font-size:11px;color:#bba386}
+.foot{margin-top:auto;padding-top:40px;font-size:13px;line-height:1.6;color:#d8c3a8}
+.foot:before{content:"";display:block;width:36px;height:2px;background:var(--accent);margin-bottom:14px}
+.who{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:11px;color:#bba386}
+.who i{width:26px;height:26px;border-radius:50%;background:rgba(196,131,63,.35)}
+
+/* Panel kanan */
+.main{position:relative;display:flex;align-items:center;justify-content:center;padding:72px 32px 40px}
+.back{position:absolute;top:28px;right:48px;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.back:hover{color:var(--ink);text-decoration:none}
+.back svg{width:13px;height:13px}
+.card{width:100%;max-width:460px}
+.card h2{text-align:center;font-size:30px;font-weight:700;letter-spacing:-.02em}
+.sub{text-align:center;font-size:14px;color:var(--muted);margin:8px 0 30px}
+.row{margin-bottom:8px}
+.l{font-size:13px;font-weight:600}
+.field{margin-bottom:18px}
+.inp{position:relative}
+.inp>svg{position:absolute;left:14px;top:50%;width:17px;height:17px;transform:translateY(-50%);color:#a89a8b;pointer-events:none}
+.inp input{width:100%;height:48px;padding:0 44px;background:#fff;border:1px solid var(--line);border-radius:10px;font-size:14px;outline:none;transition:.15s}
+.inp input::placeholder{color:#b9ad9f}
+.inp input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(196,131,63,.15)}
+.bad input{border-color:var(--err)}
+.eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:34px;height:34px;display:grid;place-items:center;background:none;border:0;border-radius:8px;cursor:pointer;color:#a89a8b}
+.eye:hover{color:var(--ink)}
+.eye svg{width:17px;height:17px}
+.err{margin-top:6px;font-size:12px;color:var(--err)}
+.alert{margin-bottom:16px;padding:11px 14px;border-radius:10px;background:#fdecea;border:1px solid #f5c6c0;color:var(--err);font-size:13px}
+.chk{display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.5;color:#6f6256;cursor:pointer}
+.chk input{appearance:none;-webkit-appearance:none;flex:none;width:16px;height:16px;margin-top:2px;border:1.5px solid #cdbfae;border-radius:4px;background:#fff center/11px no-repeat;cursor:pointer}
+.chk input:checked{background-color:var(--accent);border-color:var(--accent);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E")}
+.chk input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chkwrap{margin:4px 0 22px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:48px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 6px 16px rgba(196,131,63,.3);transition:.15s}
+.btn:hover:not(:disabled){background:var(--accent-d);transform:translateY(-1px)}
+.btn:disabled{opacity:.8;cursor:wait}
+.btn svg{width:16px;height:16px}
+.spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.alt{text-align:center;font-size:13px;color:#6f6256;margin-top:22px}
+.alt a{font-weight:600}
+.legal{text-align:center;font-size:11px;color:#a89a8b;margin-top:18px;line-height:1.6}
+.legal a{color:#8c6a43}
+
+/* Animasi berhasil (3 detik) */
+.ok{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(46,25,11,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fi .3s ease}
+@keyframes fi{from{opacity:0}}
+.okcard{width:min(380px,90vw);padding:36px 32px 30px;text-align:center;background:#fffdf9;border-radius:20px;box-shadow:0 24px 60px rgba(40,20,5,.35);animation:pop .5s cubic-bezier(.2,1.2,.4,1)}
+@keyframes pop{from{opacity:0;transform:scale(.85) translateY(10px)}}
+.ring{position:relative;width:76px;height:76px;margin:0 auto 18px}
+.ring:before,.ring:after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--accent);animation:rp 1.5s ease-out infinite}
+.ring:after{animation-delay:.75s}
+@keyframes rp{from{transform:scale(1);opacity:.6}to{transform:scale(1.8);opacity:0}}
+.ring svg{position:relative;width:100%;height:100%;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.ring .c{stroke:var(--accent);fill:#fdf1e1;stroke-dasharray:151;stroke-dashoffset:151;animation:dr .7s ease forwards}
+.ring .t{stroke:var(--accent);stroke-dasharray:40;stroke-dashoffset:40;animation:dr .4s .6s ease forwards}
+@keyframes dr{to{stroke-dashoffset:0}}
+.okcard h3{font-size:26px;font-weight:700;letter-spacing:-.02em}
+.okcard p{font-size:14px;color:var(--muted);margin:8px 0 22px;line-height:1.6}
+.bar{height:6px;border-radius:99px;background:#efe5d6;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transform-origin:left;animation:fl 3s linear forwards}
+@keyframes fl{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){.ring:before,.ring:after{animation:none}}
+@media(max-width:860px){.page{grid-template-columns:1fr}.side{display:none}.main{padding:80px 20px 32px}.back{right:20px}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+/* ====== KONFIGURASI: sesuaikan dengan situs Anda ====== */
+const ROUTES = {
+  home: 'index.html',     // tujuan otomatis setelah berhasil daftar
+  login: 'login.html',
+  terms: 'syarat&ketentuan.html',
+  privacy: 'syarat&ketentuan.html'
+};
+const REDIRECT_MS = 3000; // durasi animasi berhasil sebelum pindah ke beranda
+
+async function registerRequest({ name, email, password }) {
+  let response;
+  try {
+    response = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password })
+    });
+  } catch {
+    throw new Error('Server akun tidak terhubung. Jalankan "node server.js", lalu buka situs di http://127.0.0.1:3000.');
+  }
+  if (!response.headers.get('content-type')?.includes('application/json')) {
+    throw new Error(`Server tidak menyediakan API pendaftaran (HTTP ${response.status}). Jalankan "node server.js" dan buka http://127.0.0.1:3000, bukan Live Server.`);
+  }
+  let result;
+  try {
+    result = await response.json();
+  } catch {
+    throw new Error('Respons API pendaftaran kosong atau tidak valid. Pastikan server.js berjalan dan coba lagi.');
+  }
+  if (!response.ok) throw new Error(result.error || 'Pendaftaran gagal. Coba lagi.');
+  return result;
+}
+
+/* ====== Ikon ====== */
+const P = {
+  user: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  mail: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/>',
+  lock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  eyeOff: '<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/>',
+  right: '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
+  left: '<path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>',
+  shield: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><circle cx="12" cy="11" r="2"/>'
+};
+const Icon = ({ n }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" dangerouslySetInnerHTML={{ __html: P[n] }} />
+);
+
+/* ====== Panel kiri ====== */
+const Side = () => (
+  <aside className="side">
+    <a className="brand" href="index.html" aria-label="AksiWarga - Beranda">
+      <img className="logo" src="../asset/logo%20web.jpg" alt="" />
+      <div><b>AksiWarga</b></div>
+    </a>
+    <h1>Suarakan,<br />Pantau, Ubah.</h1>
+    <p className="lead">Platform pengaduan warga berbasis data yang menghubungkan Anda dengan instansi pemerintah secara transparan dan akuntabel.</p>
+    <div className="stats">
+      <div><b>1.405</b><span>Aduan Masuk</span></div>
+      <div><b>89%</b><span>Tingkat Penyelesaian</span></div>
+      <div><b>1.8 Hari</b><span>Rata-rata SLA</span></div>
+    </div>
+    <div className="foot">
+      “Bersama kita ciptakan pemerintahan yang terbuka, responsif, dan bertanggung jawab kepada warganya.”
+      <div className="who"><span>Tim TransparansiWarga</span></div>
+    </div>
+  </aside>
+);
+
+/* ====== Notifikasi berhasil: animasi 3 detik lalu otomatis ke beranda ====== */
+function Success() {
+  const [n, setN] = useState(3);
+  useEffect(() => {
+    const i = setInterval(() => setN(v => Math.max(v - 1, 0)), 1000);
+    const t = setTimeout(() => { window.location.href = ROUTES.home; }, REDIRECT_MS);
+    return () => { clearInterval(i); clearTimeout(t); };
+  }, []);
+  return (
+    <div className="ok" role="status" aria-live="polite">
+      <div className="okcard">
+        <div className="ring">
+          <svg viewBox="0 0 52 52"><circle className="c" cx="26" cy="26" r="24" /><path className="t" d="M15 27l8 8 14-16" /></svg>
+        </div>
+        <h3>Berhasil!</h3>
+        <p>Akun Anda telah dibuat. Mengalihkan ke beranda dalam {n} detik…</p>
+        <div className="bar"><i /></div>
+      </div>
+    </div>
+  );
+}
+
+/* ====== Halaman daftar ====== */
+function App() {
+  const [f, setF] = useState({ name: '', email: '', password: '', agree: false });
+  const [show, setShow] = useState(false);
+  const [err, setErr] = useState({});
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState(false);
+
+  const set = k => e => {
+    const v = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+    setF({ ...f, [k]: v });
+    setErr({ ...err, [k]: '', form: '' });
+  };
+
+  const submit = async e => {
+    e.preventDefault();
+    const x = {};
+    if (f.name.trim().length < 3) x.name = 'Nama lengkap minimal 3 karakter.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim())) x.email = 'Masukkan alamat email yang valid.';
+    if (f.password.length < 8) x.password = 'Kata sandi minimal 8 karakter.';
+    if (!f.agree) x.agree = 'Centang persetujuan untuk melanjutkan pendaftaran.';
+    setErr(x);
+    if (Object.keys(x).length) return;
+    setBusy(true);
+    try {
+      const r = await registerRequest({ name: f.name.trim(), email: f.email.trim(), password: f.password });
+      if (!r || !r.ok) throw new Error();
+      setDone(true);
+    } catch (ex) {
+      setErr({ form: ex.message || 'Pendaftaran gagal. Coba lagi beberapa saat lagi.' });
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="page">
+      <Side />
+      <main className="main">
+        <a className="back" href={ROUTES.home}><Icon n="left" /> Kembali ke Beranda</a>
+        <div className="card">
+          <h2>Daftar Akun Baru</h2>
+          <p className="sub">Silakan lengkapi data Anda untuk membuat akun.</p>
+
+          <form onSubmit={submit} noValidate>
+            {err.form && <div className="alert" role="alert">{err.form}</div>}
+
+            <div className={'field' + (err.name ? ' bad' : '')}>
+              <div className="row"><label className="l" htmlFor="name">Nama Lengkap</label></div>
+              <div className="inp">
+                <Icon n="user" />
+                <input id="name" type="text" autoComplete="name" placeholder="Nama Lengkap Anda" value={f.name} onChange={set('name')} />
+              </div>
+              {err.name && <p className="err">{err.name}</p>}
+            </div>
+
+            <div className={'field' + (err.email ? ' bad' : '')}>
+              <div className="row"><label className="l" htmlFor="email">Alamat Email</label></div>
+              <div className="inp">
+                <Icon n="mail" />
+                <input id="email" type="email" autoComplete="email" placeholder="nama@email.com" value={f.email} onChange={set('email')} />
+              </div>
+              {err.email && <p className="err">{err.email}</p>}
+            </div>
+
+            <div className={'field' + (err.password ? ' bad' : '')}>
+              <div className="row"><label className="l" htmlFor="password">Kata Sandi</label></div>
+              <div className="inp">
+                <Icon n="lock" />
+                <input id="password" type={show ? 'text' : 'password'} autoComplete="new-password" placeholder="••••••••" value={f.password} onChange={set('password')} />
+                <button type="button" className="eye" onClick={() => setShow(!show)} aria-label={show ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}>
+                  <Icon n={show ? 'eyeOff' : 'eye'} />
+                </button>
+              </div>
+              {err.password && <p className="err">{err.password}</p>}
+            </div>
+
+            <div className="chkwrap">
+              <label className="chk">
+                <input type="checkbox" checked={f.agree} onChange={set('agree')} />
+                <span>Saya setuju dengan <a href={ROUTES.terms}>Syarat &amp; Ketentuan</a> dan <a href={ROUTES.privacy}>Kebijakan Privasi</a> kami.</span>
+              </label>
+              {err.agree && <p className="err">{err.agree}</p>}
+            </div>
+
+            <button className="btn" type="submit" disabled={busy}>
+              {busy ? <span className="spin" /> : <>Daftar Sekarang <Icon n="right" /></>}
+            </button>
+          </form>
+
+          <p className="alt">Sudah punya akun? <a href={ROUTES.login}>Masuk Sekarang</a></p>
+          <p className="legal">Dengan mendaftar, Anda menyetujui <a href={ROUTES.terms}>Syarat &amp; Ketentuan</a> dan <a href={ROUTES.privacy}>Kebijakan Privasi</a> kami.</p>
+        </div>
+      </main>
+      {done && <Success />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

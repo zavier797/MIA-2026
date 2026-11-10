@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AksiWarga - PublicPulse 2026</title>
+
+    <!-- Tailwind CSS CDN + konfigurasi font & warna -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        jakarta: ['Plus Jakarta Sans', 'sans-serif'],
+                        schibsted: ['"Schibsted Grotesk"', 'system-ui', 'sans-serif']
+                    },
+                    colors: {
+                        paper: 'var(--paper)', ink: 'var(--ink)', muted: 'var(--muted)',
+                        warm: {
+                            50: '#faf8f5', 100: '#f3efe6', 200: '#e5dccb', 300: '#d4c2a7',
+                            400: '#bf9e7f', 500: '#a7805b', 600: '#8c6547', 700: '#704f3a',
+                            800: '#3a2d24', 900: '#231d19', 950: '#161210'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+
+    <!-- Font: Schibsted Grotesk -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-paper font-sans text-ink antialiased selection:bg-ink selection:text-white">
+    <div id="root"></div>
+
+    <!-- React 18 (UMD) -->
+    <script crossorigin src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/history@5.3.0/umd/history.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-router@6.3.0/umd/react-router.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-router-dom@6.3.0/umd/react-router-dom.production.min.js"></script>
+    <script src="auth-context.js"></script>
+    <script src="protected-route.js"></script>
+    <script src="../map%20aksiwarga/core.js"></script>
+    <script src="../map%20aksiwarga/data.js"></script>
+    <script src="map-embed.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

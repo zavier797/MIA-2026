@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Saya - AksiWarga</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans (isi) + Fraunces (judul) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        serif: ['Fraunces', 'Georgia', 'serif'],
+                    },
+                    colors: {
+                        cream: {
+                            50: '#fbf7f0',
+                            100: '#f5eee2',
+                            200: '#eadfcb',
+                            300: '#d9cbb1',
+                        },
+                        ink: {
+                            DEFAULT: '#3b2f27',
+                            soft: '#6f6051',
+                        },
+                        cocoa: {
+                            600: '#5a3e2b',
+                            700: '#4a3427',
+                            800: '#3a281d',
+                        },
+                        ochre: '#965712',
+                        leaf: '#8db57a',
+                        honey: '#e0a84a',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        document.documentElement.dataset.theme = localStorage.getItem('aksiwarga-theme') || 'light';
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        :focus-visible {
+            outline: 2px solid #965712;
+            outline-offset: 2px;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .animate-fade-in { animation: none; }
+            * { transition: none !important; }
+        }
+        html[data-theme="dark"] body,
+        html[data-theme="dark"] [class~="bg-cream-50"] {
+            background-color: #1c1915 !important;
+        }
+        html[data-theme="dark"] [class~="bg-cream-100"],
+        html[data-theme="dark"] [class~="hover:bg-cream-100/70"]:hover {
+            background-color: #302a23 !important;
+        }
+        html[data-theme="dark"] [class~="bg-cream-200"] {
+            background-color: #40372d !important;
+        }
+        html[data-theme="dark"] [class~="bg-cream-300"] {
+            background-color: #514638 !important;
+        }
+        html[data-theme="dark"] [class~="bg-white/60"] {
+            background-color: #26221d !important;
+        }
+        html[data-theme="dark"] [class~="text-ink"],
+        html[data-theme="dark"] [class~="text-cocoa-600"] {
+            color: #f5eee2 !important;
+        }
+        html[data-theme="dark"] [class~="text-ink-soft"] {
+            color: #c4b8a7 !important;
+        }
+        html[data-theme="dark"] [class~="text-ochre"] {
+            color: #e0ad61 !important;
+        }
+        html[data-theme="dark"] [class~="border-cream-200"],
+        html[data-theme="dark"] [class~="divide-cream-200"] > :not([hidden]) ~ :not([hidden]) {
+            border-color: #494034 !important;
+        }
+        html[data-theme="dark"] [class~="border-cream-300"] {
+            border-color: #514638 !important;
+        }
+        html[data-theme="dark"] input {
+            color: #f5eee2 !important;
+            color-scheme: dark;
+        }
+        html[data-theme="dark"] input::placeholder {
+            color: #a99b88 !important;
+        }
+        html[data-theme="dark"] .profile-note {
+            background: #302a23;
+            border-color: #514638;
+            color: #e8ddcc;
+        }
+        html[data-theme="dark"] #themeToggle {
+            background: #302a23;
+            border-color: #514638;
+            color: #f5eee2;
+        }
+        html[data-theme="dark"] #themeToggle:hover {
+            background: #40372d;
+        }
+        html[data-theme="dark"] .profile-header-cta {
+            background: #8d5b22;
+            color: #fffaf1;
+        }
+        html[data-theme="dark"] .profile-header-cta:hover {
+            background: #a56d2d;
+        }
+    </style>
+</head>
+<body class="bg-cream-50 text-ink font-sans antialiased min-h-screen flex flex-col selection:bg-honey/40 selection:text-ink">
+
+    <!-- TOP NAVBAR -->
+    <header class="bg-cream-50 border-b border-cream-200 sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="index.html" class="flex shrink-0 items-center gap-3 leading-tight">
+                <div class="flex h-8 w-8 items-center justify-center">
+                    <img src="../asset/logo web.jpg" alt="Logo AksiWarga" class="h-8 w-8 rounded">
+                </div>
+                <div>
+                    <span class="font-serif font-semibold text-lg text-ink block">AksiWarga</span>
+                </div>
+            </a>
+
+            <div class="flex items-center gap-2 sm:gap-4">
+                <button type="button" id="themeToggle" aria-label="Aktifkan mode gelap" aria-pressed="false" onclick="toggleTheme()" class="inline-flex items-center gap-2 border border-cream-200 bg-white/60 hover:bg-cream-100 text-ink px-3 py-2 rounded-xl font-semibold text-sm transition">
+                    <svg id="themeToggleIcon" aria-hidden="true" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"></path>
+                    </svg>
+                    <span id="themeToggleLabel">Mode Gelap</span>
+                </button>
+
+                <a href="form_pengaduan.html" class="profile-header-cta hidden sm:inline-flex items-center bg-cocoa-700 hover:bg-cocoa-800 text-cream-50 px-4 py-2 rounded-xl font-semibold text-sm transition">
+                    Buat Pengaduan
+                </a>
+
+                <div class="flex items-center gap-3 pl-4 border-l border-cream-200">
+                    <div class="w-9 h-9 rounded-full bg-cream-200 text-cocoa-600 font-semibold flex items-center justify-center text-sm">
+                        AW
+                    </div>
+                    <span class="hidden md:inline-block text-sm font-semibold text-ink">Ahmad Warga</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        <!-- HEADER PROFIL USER -->
+        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-10">
+            <!-- Avatar -->
+            <div class="shrink-0 flex flex-col items-center gap-3">
+                <div class="w-24 h-24 rounded-full bg-cream-200 text-cocoa-600 font-serif font-semibold text-3xl flex items-center justify-center">
+                    AW
+                </div>
+                <button class="text-sm font-semibold text-ochre hover:text-cocoa-800 underline underline-offset-4 decoration-ochre/40 transition" title="Ubah Foto Profil">
+                    Ubah foto
+                </button>
+            </div>
+
+            <!-- Info Identitas -->
+            <div class="w-full flex-1 sm:pt-2 flex flex-col lg:flex-row lg:items-start lg:gap-8">
+                <div class="text-center sm:text-left space-y-2 flex-1">
+                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+                        <h1 class="font-serif font-semibold text-3xl text-ink tracking-tight">Ahmad Warga</h1>
+                    </div>
+
+                    <p class="text-ink text-sm sm:text-base">ahmad@warga.id</p>
+
+                    <p class="text-ink-soft text-sm">Anggota sejak 12 Januari 2026</p>
+                </div>
+
+                <aside class="profile-note mt-5 lg:mt-0 rounded-2xl border border-cream-200 bg-cream-100/70 px-4 py-3 text-left text-sm leading-relaxed text-ink-soft lg:max-w-sm">
+                    <span class="font-semibold text-ink">Note:</span> Kami akan memberi notifikasi kepada anda jika Laporan anda telah selesai. Anda juga bisa memberi Reaksi terhadap kinerja Dinas pada notifikasi yang kami berikan.
+                </aside>
+            </div>
+        </div>
+
+        <!-- TAB NAVIGASI (INFORMASI PRIBADI & AKTIVITAS LAPORAN) -->
+        <div class="flex items-center gap-8 mb-8 border-b border-cream-200">
+            <button onclick="switchTab('tab-informasi', this)" class="tab-btn active px-1 pb-3 -mb-px text-sm sm:text-base font-semibold text-ink border-b-2 border-ochre transition">
+                Informasi Pribadi
+            </button>
+
+            <button onclick="switchTab('tab-aktivitas', this)" class="tab-btn px-1 pb-3 -mb-px text-sm sm:text-base font-medium text-ink-soft hover:text-ink border-b-2 border-transparent transition">
+                Aktivitas Laporan
+            </button>
+        </div>
+
+        <!-- TAB CONTENT AREA -->
+        <div>
+            <!-- TAB 1: INFORMASI PRIBADI + TOMBOL KELUAR -->
+            <div id="tab-informasi" class="tab-content animate-fade-in bg-white/60 border border-cream-200 rounded-2xl p-6 sm:p-8 space-y-6">
+                <div>
+                    <h2 class="font-serif font-semibold text-2xl text-ink tracking-tight">Informasi Pribadi</h2>
+                    <p class="text-ink-soft text-sm mt-1">Kelola data profil dan kontak Anda di bawah ini.</p>
+                </div>
+
+                <form onsubmit="handleSaveProfile(event)" class="space-y-5 max-w-xl">
+
+                    <!-- Nama Lengkap -->
+                    <div>
+                        <label for="profNama" class="block text-sm font-semibold text-ink mb-1.5">Nama Lengkap</label>
+                        <input type="text" id="profNama" value="Ahmad Warga" required class="w-full bg-cream-50 border border-cream-300 text-ink text-base rounded-xl px-4 py-3 focus:border-ochre focus:ring-1 focus:ring-ochre focus:outline-none transition">
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="profEmail" class="block text-sm font-semibold text-ink mb-1.5">Alamat Email</label>
+                        <input type="email" id="profEmail" value="ahmad@warga.id" required class="w-full bg-cream-50 border border-cream-300 text-ink text-base rounded-xl px-4 py-3 focus:border-ochre focus:ring-1 focus:ring-ochre focus:outline-none transition">
+                    </div>
+
+                    <!-- WhatsApp -->
+                    <div>
+                        <label for="profWA" class="block text-sm font-semibold text-ink mb-1.5">Nomor WhatsApp</label>
+                        <input type="tel" id="profWA" value="081234567890" placeholder="08xxxxxxxxxx" class="w-full bg-cream-50 border border-cream-300 text-ink text-base rounded-xl px-4 py-3 placeholder:text-ink-soft/60 focus:border-ochre focus:ring-1 focus:ring-ochre focus:outline-none transition">
+                    </div>
+
+                    <!-- Ubah Kata Sandi -->
+                    <div class="pt-6 border-t border-cream-200">
+                        <h3 class="font-serif font-semibold text-lg text-ink mb-4">Ganti Kata Sandi</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="passBaru" class="block text-sm font-semibold text-ink mb-1.5">Kata Sandi Baru</label>
+                                <input type="password" id="passBaru" placeholder="Kosongkan jika tidak diubah" class="w-full bg-cream-50 border border-cream-300 text-ink text-base rounded-xl px-4 py-3 placeholder:text-ink-soft/60 focus:border-ochre focus:ring-1 focus:ring-ochre focus:outline-none transition">
+                            </div>
+                            <div>
+                                <label for="passKonfirm" class="block text-sm font-semibold text-ink mb-1.5">Konfirmasi Kata Sandi</label>
+                                <input type="password" id="passKonfirm" placeholder="Ketik ulang kata sandi" class="w-full bg-cream-50 border border-cream-300 text-ink text-base rounded-xl px-4 py-3 placeholder:text-ink-soft/60 focus:border-ochre focus:ring-1 focus:ring-ochre focus:outline-none transition">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TOMBOL: SIMPAN & KELUAR -->
+                    <div class="pt-6 border-t border-cream-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <button type="submit" id="btnSave" class="w-full sm:w-auto bg-cocoa-700 hover:bg-cocoa-800 disabled:opacity-70 text-cream-50 font-semibold py-3 px-7 rounded-xl transition text-sm sm:text-base">
+                            Simpan Perubahan
+                        </button>
+
+                        <button type="button" onclick="handleLogout()" class="w-full sm:w-auto bg-transparent hover:bg-[#f8ece8] text-[#9b3b2e] border border-[#e4c9c0] font-semibold py-3 px-6 rounded-xl transition text-sm sm:text-base">
+                            Keluar dari Akun
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- TAB 2: AKTIVITAS LAPORAN -->
+            <div id="tab-aktivitas" class="tab-content hidden animate-fade-in space-y-6">
+
+                <!-- 3 METRIK STATISTIK -->
+                <div class="bg-white/60 border border-cream-200 rounded-2xl grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-cream-200">
+                    <div class="p-6">
+                        <span class="font-serif font-semibold text-4xl text-ink block leading-none">5</span>
+                        <span class="text-sm text-ink-soft block mt-3">Total Laporan</span>
+                        <span class="text-sm font-semibold text-ink block">Dibuat</span>
+                    </div>
+
+                    <div class="p-6">
+                        <span class="font-serif font-semibold text-4xl text-ochre block leading-none">2</span>
+                        <span class="text-sm text-ink-soft block mt-3">Dalam Proses</span>
+                        <span class="text-sm font-semibold text-ochre block">Sedang Ditangani</span>
+                    </div>
+
+                    <div class="p-6">
+                        <span class="font-serif font-semibold text-4xl text-[#3f6b2e] block leading-none">3</span>
+                        <span class="text-sm text-ink-soft block mt-3">Selesai</span>
+                        <span class="text-sm font-semibold text-[#3f6b2e] block">Tuntas Ditangani</span>
+                    </div>
+                </div>
+
+                <!-- TABEL RIWAYAT LAPORAN -->
+                <div class="bg-white/60 border border-cream-200 rounded-2xl p-6 sm:p-8 space-y-5">
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <h2 class="font-serif font-semibold text-2xl text-ink tracking-tight">Riwayat Pengaduan</h2>
+                            <p class="text-ink-soft text-sm mt-1">Daftar aduan publik yang telah Anda kirimkan.</p>
+                        </div>
+                        <a href="form_pengaduan.html" class="text-sm font-semibold text-ochre hover:text-cocoa-800 underline underline-offset-4 decoration-ochre/40 whitespace-nowrap transition">
+                            Buat Baru
+                        </a>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full min-w-[640px] text-left text-sm text-ink">
+                            <thead class="text-ink-soft font-medium border-b border-cream-200">
+                                <tr>
+                                    <th class="px-4 py-3 font-medium">No. Resi</th>
+                                    <th class="px-4 py-3 font-medium">Judul Pengaduan</th>
+                                    <th class="px-4 py-3 font-medium">Kategori</th>
+                                    <th class="px-4 py-3 font-medium">Tanggal</th>
+                                    <th class="px-4 py-3 font-medium">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-cream-200">
+                                <tr class="hover:bg-cream-100/70 transition">
+                                    <td class="px-4 py-4 text-ochre font-semibold tabular-nums">#TRW-2026-991</td>
+                                    <td class="px-4 py-4 text-ink font-medium">Jalan Berlubang Parah di Fatmawati</td>
+                                    <td class="px-4 py-4">Infrastruktur</td>
+                                    <td class="px-4 py-4 text-ink-soft">06 Mar 2026</td>
+                                    <td class="px-4 py-4">
+                                        <span class="bg-[#fbefd5] text-[#8a5a0b] font-semibold px-3 py-1 rounded-full text-xs">Diproses</span>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-cream-100/70 transition">
+                                    <td class="px-4 py-4 text-ochre font-semibold tabular-nums">#TRW-2026-842</td>
+                                    <td class="px-4 py-4 text-ink font-medium">PJU Mati di Area Taman Kota</td>
+                                    <td class="px-4 py-4">Fasilitas Umum</td>
+                                    <td class="px-4 py-4 text-ink-soft">02 Mar 2026</td>
+                                    <td class="px-4 py-4">
+                                        <span class="bg-[#fbefd5] text-[#8a5a0b] font-semibold px-3 py-1 rounded-full text-xs">Diproses</span>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-cream-100/70 transition">
+                                    <td class="px-4 py-4 text-ochre font-semibold tabular-nums">#TRW-2026-701</td>
+                                    <td class="px-4 py-4 text-ink font-medium">Penumpukan Sampah liar RT 05</td>
+                                    <td class="px-4 py-4">Kebersihan</td>
+                                    <td class="px-4 py-4 text-ink-soft">20 Feb 2026</td>
+                                    <td class="px-4 py-4">
+                                        <span class="bg-[#e3eedc] text-[#3f6b2e] font-semibold px-3 py-1 rounded-full text-xs">Selesai</span>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-cream-100/70 transition">
+                                    <td class="px-4 py-4 text-ochre font-semibold tabular-nums">#TRW-2026-610</td>
+                                    <td class="px-4 py-4 text-ink font-medium">Genangan Air akibat Saluran Tersumbat</td>
+                                    <td class="px-4 py-4">Infrastruktur</td>
+                                    <td class="px-4 py-4 text-ink-soft">14 Feb 2026</td>
+                                    <td class="px-4 py-4">
+                                        <span class="bg-[#e3eedc] text-[#3f6b2e] font-semibold px-3 py-1 rounded-full text-xs">Selesai</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" role="status" aria-live="polite" class="fixed bottom-6 right-6 left-6 sm:left-auto z-50 hidden transition-all duration-300 transform translate-y-4">
+        <div id="toastBody" class="bg-cocoa-800 text-cream-50 px-5 py-4 rounded-2xl shadow-lg flex items-center gap-3.5 text-sm max-w-md ml-auto">
+            <span id="toastIconContainer" class="w-2.5 h-2.5 rounded-full bg-leaf shrink-0"></span>
+            <div>
+                <span id="toastTitle" class="font-semibold text-cream-50 block">Berhasil!</span>
+                <span id="toastMsg" class="text-cream-200 text-sm">Profil Anda telah berhasil diperbarui.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT CONTROLLER -->
+    <script>
+        const TAB_ACTIVE = "tab-btn active px-1 pb-3 -mb-px text-sm sm:text-base font-semibold text-ink border-b-2 border-ochre transition";
+        const TAB_INACTIVE = "tab-btn px-1 pb-3 -mb-px text-sm sm:text-base font-medium text-ink-soft hover:text-ink border-b-2 border-transparent transition";
+
+        function updateThemeToggle() {
+            const isDark = document.documentElement.dataset.theme === 'dark';
+            const button = document.getElementById('themeToggle');
+            button.setAttribute('aria-pressed', String(isDark));
+            button.setAttribute('aria-label', isDark ? 'Aktifkan mode terang' : 'Aktifkan mode gelap');
+            document.getElementById('themeToggleLabel').textContent = isDark ? 'Mode Terang' : 'Mode Gelap';
+            document.getElementById('themeToggleIcon').innerHTML = isDark
+                ? '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"></path>'
+                : '<path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"></path>';
+        }
+
+        function toggleTheme() {
+            const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('aksiwarga-theme', theme);
+            updateThemeToggle();
+        }
+
+        updateThemeToggle();
+
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = TAB_INACTIVE;
+            });
+
+            document.getElementById(tabId).classList.remove('hidden');
+
+            btnElement.className = TAB_ACTIVE;
+        }
+
+        function handleSaveProfile(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSave');
+            btn.disabled = true;
+            btn.textContent = "Menyimpan...";
+
+            setTimeout(() => {
+                showToast("Profil Diperbarui!", "Informasi akun berhasil disimpan.", "success");
+                btn.disabled = false;
+                btn.textContent = "Simpan Perubahan";
+            }, 900);
+        }
+
+        async function handleLogout() {
+            try {
+                const response = await fetch("/api/auth/logout", { method: "POST" });
+                if (!response.ok) throw new Error("Sesi akun gagal diakhiri.");
+            } catch (error) {
+                alert(error.message || "Tidak dapat menghubungi server untuk keluar.");
+                return;
+            }
+            showToast("Sesi Diakhiri", "Anda telah keluar dari akun.", "info");
+            setTimeout(() => {
+                window.location.href = "login.html";
+            }, 1200);
+        }
+
+        function showToast(title, message, type = "success") {
+            const toast = document.getElementById('toast');
+            const dot = document.getElementById('toastIconContainer');
+
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMsg').textContent = message;
+
+            dot.className = (type === "info")
+                ? "w-2.5 h-2.5 rounded-full bg-honey shrink-0"
+                : "w-2.5 h-2.5 rounded-full bg-leaf shrink-0";
+
+            toast.classList.remove('hidden', 'translate-y-4');
+            toast.classList.add('translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-4', 'hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

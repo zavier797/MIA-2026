@@ -1,0 +1,134 @@
+{
+  "provinces": [
+    {
+      "id": "DKI_JAKARTA",
+      "name": "DKI Jakarta",
+      "totalBudget": 82500000000000,
+      "year": 2026,
+      "categories": [
+        {
+          "name": "Infrastruktur & Transportasi",
+          "allocated": 18500000000000,
+          "spent": 12300000000000,
+          "percentage": 22.4,
+          "projects": 1248
+        },
+        {
+          "name": "Pendidikan",
+          "allocated": 16800000000000,
+          "spent": 14200000000000,
+          "percentage": 20.4,
+          "projects": 892
+        },
+        {
+          "name": "Kesehatan",
+          "allocated": 14200000000000,
+          "spent": 11800000000000,
+          "percentage": 17.2,
+          "projects": 756
+        },
+        {
+          "name": "Lingkungan Hidup & Kebersihan",
+          "allocated": 8900000000000,
+          "spent": 6700000000000,
+          "percentage": 10.8,
+          "projects": 542
+        },
+        {
+          "name": "Keamanan & Ketertiban",
+          "allocated": 6500000000000,
+          "spent": 5100000000000,
+          "percentage": 7.9,
+          "projects": 324
+        },
+        {
+          "name": "Pekerjaan Umum & Perumahan",
+          "allocated": 5800000000000,
+          "spent": 4200000000000,
+          "percentage": 7.0,
+          "projects": 418
+        },
+        {
+          "name": "Sosial & Pemberdayaan Masyarakat",
+          "allocated": 4200000000000,
+          "spent": 3500000000000,
+          "percentage": 5.1,
+          "projects": 287
+        },
+        {
+          "name": "Aparatur & Administrasi",
+          "allocated": 3800000000000,
+          "spent": 3200000000000,
+          "percentage": 4.6,
+          "projects": 156
+        },
+        {
+          "name": "Kebudayaan & Pariwisata",
+          "allocated": 2400000000000,
+          "spent": 1800000000000,
+          "percentage": 2.9,
+          "projects": 124
+        },
+        {
+          "name": "Lain-lain",
+          "allocated": 1400000000000,
+          "spent": 900000000000,
+          "percentage": 1.7,
+          "projects": 89
+        }
+      ],
+      "transparency": {
+        "publicReports": 428,
+        "onlineAuctions": 342,
+        "completedProjects": 2156,
+        "ongoingProjects": 1680
+      }
+    },
+    {
+      "id": "JAWA_BARAT",
+      "name": "Jawa Barat",
+      "totalBudget": 67300000000000,
+      "year": 2026,
+      "categories": [
+        {
+          "name": "Infrastruktur & Transportasi",
+          "allocated": 15200000000000,
+          "spent": 10100000000000,
+          "percentage": 22.6
+        },
+        {
+          "name": "Pendidikan",
+          "allocated": 13500000000000,
+          "spent": 11200000000000,
+          "percentage": 20.1
+        },
+        {
+          "name": "Kesehatan",
+          "allocated": 11800000000000,
+          "spent": 9400000000000,
+          "percentage": 17.5
+        }
+      ]
+    },
+    {
+      "id": "JAWA_TENGAH",
+      "name": "Jawa Tengah",
+      "totalBudget": 58900000000000,
+      "year": 2026,
+      "categories": [
+        {
+          "name": "Infrastruktur & Transportasi",
+          "allocated": 13200000000000,
+          "spent": 8900000000000,
+          "percentage": 22.4
+        },
+        {
+          "name": "Pendidikan",
+          "allocated": 11800000000000,
+          "spent": 9800000000000,
+          "percentage": 20.0
+        }
+      ]
+    }
+  ]
+}

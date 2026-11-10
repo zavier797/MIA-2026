@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekam Jejak Pengaduan - AksiWarga</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        warm: {
+                            50: '#fbf7f0',
+                            100: '#f5eee2',
+                            200: '#eadfcc',
+                            300: '#d9c8ae',
+                            400: '#ad9a82',
+                            500: '#80705c',
+                            600: '#66574a',
+                            700: '#4d4036',
+                            800: '#3a2f27',
+                            900: '#261e18',
+                            950: '#1a140f',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes modalScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .animate-modal {
+            animation: modalScale 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        html[data-theme="dark"] body { background-color: #171411 !important; color: #f5eee2 !important; }
+        html[data-theme="dark"] header, html[data-theme="dark"] footer, html[data-theme="dark"] .bg-white {
+            background-color: #24201b !important;
+        }
+        html[data-theme="dark"] .bg-warm-50 { background-color: #1c1915 !important; }
+        html[data-theme="dark"] .bg-warm-100 { background-color: #302920 !important; }
+        html[data-theme="dark"] .text-warm-900, html[data-theme="dark"] .text-warm-800,
+        html[data-theme="dark"] .text-warm-700 { color: #f5eee2 !important; }
+        html[data-theme="dark"] .text-warm-600, html[data-theme="dark"] .text-warm-500,
+        html[data-theme="dark"] .text-warm-400 { color: #b6a894 !important; }
+        html[data-theme="dark"] .border-warm-200, html[data-theme="dark"] .border-warm-300 {
+            border-color: #494034 !important;
+        }
+        html[data-theme="dark"] select { color-scheme: dark; }
+    </style>
+</head>
+<body class="bg-warm-50 text-warm-800 font-sans antialiased min-h-screen flex flex-col selection:bg-amber-200 selection:text-warm-900">
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="bg-white border-b border-warm-200 sticky top-0 z-40 backdrop-blur-md bg-warm-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div><img src="../asset/logo web.jpg" alt="AksiWarga Logo" class="w-10 h-10 border border-warm-200 rounded-lg"></div>
+                <div>
+                    <span class="text-warm-900 font-bold text-base tracking-tight block">AksiWarga</span>
+                </div>
+            </a>
+
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button id="themeToggle" type="button" aria-label="Aktifkan mode gelap" aria-pressed="false" class="inline-flex items-center gap-2 rounded-full border border-warm-200 bg-warm-50 px-3 py-2 text-xs font-semibold text-warm-700 transition hover:border-amber-600">
+                    <i id="themeToggleIcon" class="fa-solid fa-moon" aria-hidden="true"></i>
+                    <span id="themeToggleLabel">Mode Gelap</span>
+                </button>
+                <a href="index.html" class="inline-flex items-center gap-2 text-xs font-semibold text-warm-700 hover:text-amber-800 transition-colors bg-warm-50 px-3.5 py-2 rounded-xl border border-warm-200">
+                    <span>Kembali ke Beranda</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN WRAPPER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
+        
+        <!-- HEADER TITLE CARD -->
+        <div class="bg-white border border-warm-200 rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="space-y-2">
+                    <div class="inline-flex items-center gap-2 bg-amber-100 border border-amber-200 text-amber-700 text-xs font-semibold px-3 py-1 rounded-full">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>Rekapitulasi Suara Warga</span>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-warm-900 tracking-tight">Rekam Jejak Pengaduan</h1>
+                    <p class="text-warm-600 text-xs sm:text-sm max-w-2xl leading-relaxed">
+                        Pantau sejauh mana pengaduan warga didengar dan ditindaklanjuti. Seluruh riwayat laporan disajikan secara terbuka tanpa ada data yang ditutupi.
+                    </p>
+                </div>
+
+                <!-- QUICK FILTER TAB SWITCHER -->
+                <div class="flex flex-wrap items-center gap-2 bg-warm-50 p-2 rounded-2xl border border-warm-200 self-start md:self-auto">
+                    <button onclick="switchView('master', this)" class="nav-tab active bg-amber-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition">
+                        Ringkasan Utuh
+                    </button>
+                    <button onclick="switchView('total', this)" class="nav-tab text-warm-600 hover:text-warm-900 px-3.5 py-2 rounded-xl text-xs font-semibold transition">
+                        Total Masuk
+                    </button>
+                    <button onclick="switchView('proses', this)" class="nav-tab text-warm-600 hover:text-warm-900 px-3.5 py-2 rounded-xl text-xs font-semibold transition">
+                        Dalam Proses
+                    </button>
+                    <button onclick="switchView('selesai', this)" class="nav-tab text-warm-600 hover:text-warm-900 px-3.5 py-2 rounded-xl text-xs font-semibold transition">
+                        Diselesaikan
+                    </button>
+                    <button onclick="switchView('belum', this)" class="nav-tab text-warm-600 hover:text-warm-900 px-3.5 py-2 rounded-xl text-xs font-semibold transition">
+                        Belum Ditanggapi
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTAINER UNTUK VIEW SECTIONS -->
+        <div id="viewContainer" class="space-y-12">
+            <!-- Content render via Javascript based on selected tab -->
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-warm-200 py-6 px-4 text-center text-warm-600 text-xs mt-12">
+        <div class="max-w-4xl mx-auto space-y-1.5">
+            <p class="font-bold text-amber-700">AksiWarga</p>
+            <p class="text-warm-600 text-[11px]">Sistem Rekam Jejak Pengaduan Publik yang Transparan, Cepat, dan Akuntabel.</p>
+            <p class="text-warm-500 text-[10px] pt-2 border-t border-warm-200">&copy; 2026 AksiWarga. Hak cipta dilindungi.</p>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE DETAIL MODAL OVERLAY (FACEBOOK WEB STYLE) -->
+    <div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-warm-900/40 backdrop-blur-sm">
+        <div class="bg-white border border-warm-200 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-lg animate-modal">
+            
+            <!-- MODAL HEADER -->
+            <div class="px-6 py-4 border-b border-warm-200 flex items-center justify-between bg-warm-100">
+                <div class="flex items-center gap-2.5">
+                    <span id="modalId" class="font-mono text-amber-700 font-bold text-xs sm:text-sm bg-warm-50 px-2.5 py-1 rounded-lg border border-warm-200">#TW-2026-0000</span>
+                    <span id="modalStatus" class="px-3 py-0.5 rounded-full text-xs font-bold border">Status</span>
+                </div>
+                <button onclick="closeDetailModal()" class="w-8 h-8 rounded-full bg-warm-100 hover:bg-warm-200 text-warm-700 hover:text-warm-900 flex items-center justify-center text-sm transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- MODAL SCROLLABLE CONTENT -->
+            <div class="p-6 overflow-y-auto space-y-6 flex-1">
+                
+                <!-- PHOTO OR NO IMAGE BANNER -->
+                <div id="modalImageContainer" class="rounded-2xl overflow-hidden border border-warm-200 bg-warm-50">
+                    <img id="modalImage" src="" alt="Detail Laporan" class="w-full h-auto max-h-72 object-cover" onerror="this.src='https://placehold.co/600x400/231d19/bf9e7f?text=Foto+Laporan'">
+                    <div id="modalNoImage" class="p-8 text-center hidden flex flex-col items-center justify-center gap-2 text-warm-500">
+                        <i class="fa-solid fa-camera-slash text-3xl"></i>
+                        <span class="text-xs font-semibold">Gambar Tidak Tersedia untuk Laporan Ini</span>
+                    </div>
+                </div>
+
+                <!-- TITLE & USER REPORT TEXT -->
+                <div class="space-y-2">
+                    <h2 id="modalTitle" class="text-lg font-bold text-warm-900 leading-tight">Judul Laporan</h2>
+                    <div class="bg-warm-50 p-4 rounded-xl border border-warm-200">
+                        <span class="text-[10px] text-warm-500 font-semibold block mb-1">Deskripsi Aduan Warga:</span>
+                        <p id="modalDesc" class="text-warm-700 text-xs sm:text-sm leading-relaxed italic">
+                            "Deskripsi lengkap laporan."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- METADATA GRID -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div class="bg-warm-50 p-3.5 rounded-xl border border-warm-200 space-y-0.5">
+                        <span class="text-warm-600 text-[11px] block">Identitas Pelapor</span>
+                        <strong id="modalUser" class="text-warm-900 font-semibold">Nama Pelapor</strong>
+                    </div>
+
+                    <div class="bg-warm-50 p-3.5 rounded-xl border border-warm-200 space-y-0.5">
+                        <span class="text-warm-600 text-[11px] block">Instansi Penanggung Jawab</span>
+                        <strong id="modalAgency" class="text-amber-700 font-semibold">Nama Dinas</strong>
+                    </div>
+
+                    <div class="bg-warm-50 p-3.5 rounded-xl border border-warm-200 space-y-0.5">
+                        <span class="text-warm-600 text-[11px] block">Tanggal Pengaduan</span>
+                        <strong id="modalDate" class="text-warm-900 font-semibold">00 Bulan 2026</strong>
+                    </div>
+
+                    <div class="bg-warm-50 p-3.5 rounded-xl border border-warm-200 space-y-0.5">
+                        <span class="text-warm-600 text-[11px] block">Lokasi Kejadian</span>
+                        <strong id="modalLocation" class="text-warm-900 font-semibold leading-tight block">Alamat Lokasi</strong>
+                    </div>
+                </div>
+
+                <!-- TRANSPARENCY & BUDGET METRICS -->
+                <div class="bg-warm-50 border border-warm-200 p-4 rounded-xl space-y-2 text-xs">
+                    <span class="font-bold text-amber-700 text-[11px] block flex items-center gap-1.5">
+                        <i class="fa-solid fa-shield-halved"></i> Transparansi Anggaran &amp; SLA
+                    </span>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-[11px] pt-1">
+                        <div>
+                            <span class="text-warm-500 block">Sumber Dana:</span>
+                            <span id="modalBudget" class="text-warm-700 font-medium">APBD 2026</span>
+                        </div>
+                        <div>
+                            <span class="text-warm-500 block">Biaya Penanganan:</span>
+                            <span id="modalSpent" class="text-emerald-700 font-semibold">Rp 0</span>
+                        </div>
+                        <div>
+                            <span class="text-warm-500 block">Target SLA:</span>
+                            <span id="modalSLA" class="text-amber-700 font-semibold">2 Hari</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- MODAL FOOTER -->
+            <div class="px-6 py-3.5 border-t border-warm-200 bg-warm-50 flex items-center justify-between text-xs text-warm-600">
+                <span class="flex items-center gap-1.5 text-[11px]">
+                    <i class="fa-solid fa-circle-check text-emerald-700"></i>
+                    Data Akuntabel TransparansiWarga
+                </span>
+                <button onclick="closeDetailModal()" class="bg-warm-100 hover:bg-warm-200 text-warm-900 font-semibold px-4 py-1.5 rounded-xl transition text-xs">
+                    Tutup
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT CONTROLLER DATA & VIEW RENDERER -->
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const themeToggleIcon = document.getElementById('themeToggleIcon');
+        const themeToggleLabel = document.getElementById('themeToggleLabel');
+        let isDarkTheme = localStorage.getItem('aksiwarga-theme') === 'dark';
+
+        function applyTheme() {
+            document.documentElement.dataset.theme = isDarkTheme ? 'dark' : 'light';
+            themeToggle.setAttribute('aria-pressed', String(isDarkTheme));
+            themeToggle.setAttribute('aria-label', isDarkTheme ? 'Aktifkan mode terang' : 'Aktifkan mode gelap');
+            themeToggleIcon.className = `fa-solid ${isDarkTheme ? 'fa-sun' : 'fa-moon'}`;
+            themeToggleLabel.textContent = isDarkTheme ? 'Mode Terang' : 'Mode Gelap';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            isDarkTheme = !isDarkTheme;
+            localStorage.setItem('aksiwarga-theme', isDarkTheme ? 'dark' : 'light');
+            applyTheme();
+        });
+        applyTheme();
+
+        // DATA DUMMY REKAM JEJAK
+        const sampleReports = {
+            total: [
+                { id: '#TW-2026-1405', title: 'Jalan Berlubang Parah di Raya Cilandak', desc: 'Terdapat lubang jalan berdiameter 1 meter dengan kedalaman 10cm yang membahayakan pengendara motor.', user: 'Budi Santoso', agency: 'Dinas Bina Marga', status: 'Dalam Proses', statusClass: 'bg-amber-50 border-amber-200 text-amber-700', date: '08 Nov 2026', location: 'Jl. Raya Cilandak No. 45', image: 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=600&q=80', budget: 'APBD DPA Bina Marga', spent: 'Est. Rp 3.500.000', sla: '2 Hari' },
+                { id: '#TW-2026-1404', title: 'Lampu PJU Mati Total Sepanjang 500M', desc: 'Penerangan jalan umum di kawasan pemukiman mati sejak dua malam lalu.', user: 'Warga (Anonim)', agency: 'Dinas Perhubungan', status: 'Belum Ditanggapi', statusClass: 'bg-rose-50 border-rose-200 text-rose-700', date: '08 Nov 2026', location: 'Jl. Melati Raya', image: null, budget: 'Anggaran PJU Dishub', spent: 'TBA', sla: '24 Jam' },
+                { id: '#TW-2026-1403', title: 'Penumpukan Sampah Pasar Tradisional', desc: 'Tumpukan sampah meluber hingga ke badan jalan menimbulkan bau menyengat.', user: 'Rina Wijaya', agency: 'Dinas Lingkungan Hidup', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', date: '07 Nov 2026', location: 'Pasar Minggu', image: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=600&q=80', budget: 'Dana Operasional LH', spent: 'Rp 1.200.000', sla: '1 Hari' },
+                { id: '#TW-2026-1402', title: 'Drainase Tersumbat Banjir Lokal', desc: 'Saluran air tidak mengalir karena penuh endapan lumpur dan sampah plastik.', user: 'Hendra Pratama', agency: 'Dinas Sumber Daya Air', status: 'Dalam Proses', statusClass: 'bg-amber-50 border-amber-200 text-amber-700', date: '07 Nov 2026', location: 'Jl. Terogong Raya', image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80', budget: 'APBD SDA 2026', spent: 'Est. Rp 2.800.000', sla: '2 Hari' },
+                { id: '#TW-2026-1401', title: 'Pohon Rindang Halangi Rambulalu', desc: 'Dahan pohon terlalu rimbun hingga menutup plang petunjuk jalan dan lampu lalu lintas.', user: 'Siti Aminah', agency: 'Dinas Pertamanan', status: 'Dalam Proses', statusClass: 'bg-amber-50 border-amber-200 text-amber-700', date: '06 Nov 2026', location: 'Simpang Fatmawati', image: null, budget: 'Dana Rutin Pertamanan', spent: 'Est. Rp 800.000', sla: '1 Hari' },
+                { id: '#TW-2026-1400', title: 'Bansos Tunai Belum Tepat Sasaran', desc: 'Pelaporan dugaan ketidaksesuaian data penerima bantuan sosial di lingkungan RW 03.', user: 'Warga (Anonim)', agency: 'Dinas Sosial', status: 'Belum Ditanggapi', statusClass: 'bg-rose-50 border-rose-200 text-rose-700', date: '05 Nov 2026', location: 'Kel. Gandaria Selatan', image: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=600&q=80', budget: 'Dana Dinsos 2026', spent: 'TBA', sla: '3 Hari' }
+            ],
+            proses: [
+                { id: '#TW-2026-0892', title: 'Penambalan Aspal Jalan Fatmawati', desc: 'Petugas TRC Bina Marga sedang melakukan pelapisan aspal hotmix 5cm.', user: 'Ahmad Warga', agency: 'Dinas Bina Marga', status: 'Dalam Proses', statusClass: 'bg-amber-50 border-amber-200 text-amber-700', date: '06 Nov 2026', location: 'Jl. Fatmawati No. 12', image: 'https://images.unsplash.com/photo-1584467735815-f778f274e296?auto=format&fit=crop&w=600&q=80', budget: 'APBD Bina Marga', spent: 'Est. Rp 4.500.000', sla: '48 Jam' },
+                { id: '#TW-2026-0888', title: 'Perbaikan Tanggul Pembatas Kali', desc: 'Pengerjaan penguatan fondasi beton tanggul penahan banjir kali kecil.', user: 'Joko Susilo', agency: 'Dinas Sumber Daya Air', status: 'Dalam Proses', statusClass: 'bg-amber-50 border-amber-200 text-amber-700', date: '05 Nov 2026', location: 'Bantaran Kali Pesanggrahan', image: null, budget: 'APBD DPA SDA', spent: 'Est. Rp 12.000.000', sla: '5 Hari' },
+                { id: '#TW-2026-0870', title: 'Pembersihan Sampah TPS Liar', desc: 'Alat berat eskavator mini dikerahkan untuk memindahkan sampah liar.', user: 'Dewi Lestari', agency: 'Dinas Lingkungan Hidup', status: 'Dalam Proses', statusClass: 'bg-amber-50 border-amber-200 text-amber-700', date: '04 Nov 2026', location: 'Jl. Radio Dalam No. 19', image: 'https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?auto=format&fit=crop&w=600&q=80', budget: 'Dana Operasional LH', spent: 'Est. Rp 2.100.000', sla: '24 Jam' },
+                { id: '#TW-2026-0865', title: 'Perbaikan Lampu Traffic Light Off', desc: 'Tim teknisi Dishub sedang mengganti modul kontrol sirkuit APILL yang terbakar.', user: 'Warga (Anonim)', agency: 'Dinas Perhubungan', status: 'Dalam Proses', statusClass: 'bg-amber-50 border-amber-200 text-amber-700', date: '04 Nov 2026', location: 'Perempatan Blok M', image: 'https://images.unsplash.com/photo-1508873696983-2df515122519?auto=format&fit=crop&w=600&q=80', budget: 'Pemeliharaan Lalu Lintas', spent: 'Est. Rp 1.500.000', sla: '12 Jam' },
+                { id: '#TW-2026-0850', title: 'Pemasangan Kanopi Halte Bus', desc: 'Pekerjaan perbaikan atap seng halte busway yang terbongkar akibat angin kencang.', user: 'Bambang N.', agency: 'Dinas Perhubungan', status: 'Dalam Proses', statusClass: 'bg-amber-50 border-amber-200 text-amber-700', date: '03 Nov 2026', location: 'Halte Panglima Polim', image: null, budget: 'Pemeliharaan Halte Dishub', spent: 'Est. Rp 3.000.000', sla: '2 Hari' },
+                { id: '#TW-2026-0842', title: 'Perbaikan Pagar Pembatas Taman', desc: 'Pengecatan ulang dan pengelasan pagar besi taman kota yang patah.', user: 'Maya Indah', agency: 'Dinas Pertamanan', status: 'Dalam Proses', statusClass: 'bg-amber-50 border-amber-200 text-amber-700', date: '02 Nov 2026', location: 'Taman Ayodya', image: 'https://images.unsplash.com/photo-1519331379826-f10be5486c6f?auto=format&fit=crop&w=600&q=80', budget: 'Dana Pertamanan 2026', spent: 'Est. Rp 950.000', sla: '2 Hari' }
+            ],
+            selesai: [
+                { id: '#TW-2026-0750', title: 'Penambalan Jalan Berlubang Parah', desc: 'Pekerjaan penambalan hotmix tuntas 100%. Akses jalan kembali mulus.', user: 'Rian Kurnia', agency: 'Dinas Bina Marga', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', date: '01 Nov 2026', location: 'Jl. RS Fatmawati No. 9', image: 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=600&q=80', budget: 'APBD DPA Bina Marga', spent: 'Rp 3.200.000', sla: '2 Hari' },
+                { id: '#TW-2026-0720', title: 'Pembersihan Gorong-gorong Mampet', desc: 'Pembersihan sedimentasi tanah liat dan sampah plastik telah selesai dikerjakan.', user: 'Warga (Anonim)', agency: 'Dinas Sumber Daya Air', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', date: '30 Okt 2026', location: 'Jl. Terogong 3', image: null, budget: 'Pemeliharaan Rutin SDA', spent: 'Rp 1.800.000', sla: '1 Hari' },
+                { id: '#TW-2026-0700', title: 'Pengangkutan Tumpukan Sampah', desc: 'Dua armada truk sampah LH dikerahkan. Lahan kini sudah bersih.', user: 'Deni Setiawan', agency: 'Dinas Lingkungan Hidup', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', date: '28 Okt 2026', location: 'Area Pasar Cipete', image: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=600&q=80', budget: 'Dana Kebersihan Wilayah', spent: 'Rp 1.500.000', sla: '24 Jam' },
+                { id: '#TW-2026-0690', title: 'Perbaikan Lampu PJU Taman', desc: 'Penggantian 4 bohlam LED PJU mati telah rampung, taman terang kembali.', user: 'Farida Nur', agency: 'Dinas Perhubungan', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', date: '25 Okt 2026', location: 'Taman Langsat', image: 'https://images.unsplash.com/photo-1508873696983-2df515122519?auto=format&fit=crop&w=600&q=80', budget: 'Pemeliharaan PJU', spent: 'Rp 850.000', sla: '1 Hari' },
+                { id: '#TW-2026-0685', title: 'Pemerataan Pembagian Sembako', desc: 'Dinas Sosial telah memvalidasi ulang data warga dan menyalurkan bansos.', user: 'Pak RT 05', agency: 'Dinas Sosial', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', date: '22 Okt 2026', location: 'Kel. Kebayoran Lama', image: null, budget: 'Anggaran Dinsos 2026', spent: 'Sesuai Kuota', sla: '3 Hari' },
+                { id: '#TW-2026-0670', title: 'Penataan Trotoar Halte Bus', desc: 'Pemasangan ubin pemandu disabilitas (guiding block) telah selesai.', user: 'Agus Santoso', agency: 'Dinas Bina Marga', status: 'Selesai', statusClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', date: '20 Okt 2026', location: 'Jl. Panglima Polim', image: 'https://images.unsplash.com/photo-1584467735815-f778f274e296?auto=format&fit=crop&w=600&q=80', budget: 'APBD Bina Marga', spent: 'Rp 4.100.000', sla: '2 Hari' }
+            ],
+            belum: [
+                { id: '#TW-2026-0234', title: 'Lampu PJU Padam di Gang Sempit', desc: 'Gang masuk perumahan gelap gulita karena instalasi kabel terputus.', user: 'Nurul Hidayah', agency: 'Dinas Perhubungan', status: 'Belum Ditanggapi', statusClass: 'bg-rose-50 border-rose-200 text-rose-700', date: '08 Nov 2026', location: 'Gang Haji Umar', image: 'https://images.unsplash.com/photo-1508873696983-2df515122519?auto=format&fit=crop&w=600&q=80', budget: 'Antrean Verifikasi', spent: 'TBA', sla: '24 Jam' },
+                { id: '#TW-2026-0230', title: 'Kerusakan Penutup Manhole Saluran', desc: 'Tutup besi saluran air jalan berlubang dan goyah saat dilintasi mobil.', user: 'Warga (Anonim)', agency: 'Dinas Bina Marga', status: 'Belum Ditanggapi', statusClass: 'bg-rose-50 border-rose-200 text-rose-700', date: '08 Nov 2026', location: 'Jl. Panglima Polim Raya', image: null, budget: 'Antrean Verifikasi', spent: 'TBA', sla: '24 Jam' },
+                { id: '#TW-2026-0220', title: 'Tumpukan Puing Bangunan Liar', desc: 'Puing sisa bongkaran ditinggalkan di pinggir trotoar menutup akses pejalan kaki.', user: 'Lukman Hakim', agency: 'Dinas Lingkungan Hidup', status: 'Belum Ditanggapi', statusClass: 'bg-rose-50 border-rose-200 text-rose-700', date: '07 Nov 2026', location: 'Jl. Gandaria 2', image: 'https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?auto=format&fit=crop&w=600&q=80', budget: 'Antrean Verifikasi', spent: 'TBA', sla: '24 Jam' },
+                { id: '#TW-2026-0210', title: 'Dinding Saluran Air Retak Parah', desc: 'Dinding turap penahan tanah retak dan mengancam pondasi jalan saat hujan.', user: 'Kusuma W.', agency: 'Dinas Sumber Daya Air', status: 'Belum Ditanggapi', statusClass: 'bg-rose-50 border-rose-200 text-rose-700', date: '07 Nov 2026', location: 'Kebayoran Lama', image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80', budget: 'Antrean Verifikasi', spent: 'TBA', sla: '24 Jam' },
+                { id: '#TW-2026-0205', title: 'Lampu Rambu Zebra Cross Padam', desc: 'Indikator penyeberangan jalan bagi pejalan kaki padam total.', user: 'Warga (Anonim)', agency: 'Dinas Perhubungan', status: 'Belum Ditanggapi', statusClass: 'bg-rose-50 border-rose-200 text-rose-700', date: '06 Nov 2026', location: 'Jl. Cipete Raya', image: null, budget: 'Antrean Verifikasi', spent: 'TBA', sla: '24 Jam' },
+                { id: '#TW-2026-0201', title: 'Permohonan Tempat Sampah Organik', desc: 'Usulan penambahan 5 unit tong sampah terpilah di sepanjang taman.', user: 'Tri Wahyudi', agency: 'Dinas Lingkungan Hidup', status: 'Belum Ditanggapi', statusClass: 'bg-rose-50 border-rose-200 text-rose-700', date: '06 Nov 2026', location: 'Taman Ayodya', image: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=600&q=80', budget: 'Antrean Verifikasi', spent: 'TBA', sla: '24 Jam' }
+            ]
+        };
+
+        const reportsPerPage = 4;
+        const archivedReports = {};
+        Object.entries(sampleReports).forEach(([groupKey, originals], groupIndex) => {
+            const reports = [...originals];
+            while (reports.length < reportsPerPage * 5) {
+                const archiveIndex = reports.length + 1;
+                const source = originals[reports.length % originals.length];
+                reports.push({
+                    ...source,
+                    id: `#TW-2026-${String(2000 + groupIndex * 100 + archiveIndex).padStart(4, '0')}`,
+                    title: `${source.title} (Arsip ${archiveIndex})`
+                });
+            }
+            archivedReports[groupKey] = reports;
+        });
+
+        // RENDER CARD HTML HELPER
+        function generateCardHTML(item) {
+            const imageBlock = item.image 
+                ? `<div class="aspect-video w-full bg-warm-50 relative overflow-hidden">
+                     <img src="${item.image}" alt="Laporan" class="w-full h-full object-cover transition duration-300" onerror="this.src='https://placehold.co/600x400/231d19/bf9e7f?text=Foto+Laporan'">
+                     <span class="absolute top-2.5 right-2.5 bg-white/90 text-amber-700 border border-amber-200 text-[10px] font-mono px-2 py-0.5 rounded-md">${item.id}</span>
+                   </div>`
+                : `<div class="aspect-video w-full bg-warm-50 border-b border-warm-200 flex flex-col items-center justify-center gap-2 text-warm-500 relative">
+                     <i class="fa-solid fa-camera-slash text-2xl"></i>
+                     <span class="text-[11px] font-semibold">Gambar Tidak Tersedia</span>
+                     <span class="absolute top-2.5 right-2.5 bg-white/90 text-amber-700 border border-amber-200 text-[10px] font-mono px-2 py-0.5 rounded-md">${item.id}</span>
+                   </div>`;
+
+            return `
+                <div onclick='openDetailModal(${JSON.stringify(item)})' class="bg-white border border-warm-200 hover:border-amber-400 rounded-2xl overflow-hidden cursor-pointer group transition duration-200 flex flex-col justify-between">
+                    <div>
+                        ${imageBlock}
+                        <div class="p-4 space-y-1.5">
+                            <h3 class="font-bold text-warm-900 text-sm group-hover:text-amber-800 transition line-clamp-1">${item.title}</h3>
+                            <p class="text-warm-600 text-xs line-clamp-2 leading-relaxed">${item.desc}</p>
+                        </div>
+                    </div>
+                    <div class="px-4 py-3 bg-warm-50 border-t border-warm-200 flex items-center justify-between text-xs">
+                        <span class="text-warm-700 font-medium flex items-center gap-1.5 text-[11px]">
+                            <i class="fa-regular fa-user text-amber-700"></i> ${item.user}
+                        </span>
+                        <span class="bg-white text-warm-700 border border-warm-200 px-2.5 py-0.5 rounded-lg text-[10px]">${item.agency}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // SWITCH VIEW CONTROLLER
+        function switchView(tabKey, btn, page = 1) {
+            document.querySelectorAll('.nav-tab').forEach(b => {
+                b.className = "nav-tab text-warm-600 hover:text-warm-900 px-3.5 py-2 rounded-xl text-xs font-semibold transition";
+            });
+            btn.className = "nav-tab active bg-amber-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition";
+
+            const container = document.getElementById('viewContainer');
+            container.innerHTML = '';
+
+            if (tabKey === 'master') {
+                // RENDER MASTER VIEW (4 SECTIONS x 6 CARDS)
+                container.innerHTML = `
+                    <!-- SECTION 1: TOTAL LAPORAN MASUK -->
+                    <section class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-warm-200 pb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-7 bg-amber-600 rounded-full"></div>
+                                <div>
+                                    <h2 class="text-lg font-bold text-warm-900">1. Total Laporan Masuk</h2>
+                                    <span class="text-warm-600 text-xs">Aduan keseluruhan yang tercatat di sistem transparansi warga</span>
+                                </div>
+                            </div>
+                            <button onclick="switchView('total', document.querySelectorAll('.nav-tab')[1])" class="text-amber-700 hover:text-amber-800 font-bold text-xs flex items-center gap-1 bg-white hover:bg-warm-100 px-3.5 py-1.5 rounded-xl border border-warm-200 transition">
+                                <span>Lihat Semua</span>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                            ${sampleReports.total.map(item => generateCardHTML(item)).join('')}
+                        </div>
+                    </section>
+
+                    <!-- SECTION 2: DALAM PROSES -->
+                    <section class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-warm-200 pb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-7 bg-amber-500 rounded-full"></div>
+                                <div>
+                                    <h2 class="text-lg font-bold text-warm-900">2. Dalam Proses</h2>
+                                    <span class="text-warm-600 text-xs">Aduan terverifikasi yang sedang dikerjakan oleh tim teknis dinas</span>
+                                </div>
+                            </div>
+                            <button onclick="switchView('proses', document.querySelectorAll('.nav-tab')[2])" class="text-amber-700 hover:text-amber-800 font-bold text-xs flex items-center gap-1 bg-white hover:bg-warm-100 px-3.5 py-1.5 rounded-xl border border-warm-200 transition">
+                                <span>Lihat Semua</span>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                            ${sampleReports.proses.map(item => generateCardHTML(item)).join('')}
+                        </div>
+                    </section>
+
+                    <!-- SECTION 3: BERHASIL DISELESAIKAN -->
+                    <section class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-warm-200 pb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-7 bg-emerald-600 rounded-full"></div>
+                                <div>
+                                    <h2 class="text-lg font-bold text-warm-900">3. Berhasil Diselesaikan</h2>
+                                    <span class="text-warm-600 text-xs">Laporan tuntas ditangani beserta bukti transparansi pengerjaan</span>
+                                </div>
+                            </div>
+                            <button onclick="switchView('selesai', document.querySelectorAll('.nav-tab')[3])" class="text-emerald-700 hover:text-emerald-800 font-bold text-xs flex items-center gap-1 bg-white hover:bg-warm-100 px-3.5 py-1.5 rounded-xl border border-warm-200 transition">
+                                <span>Lihat Semua</span>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                            ${sampleReports.selesai.map(item => generateCardHTML(item)).join('')}
+                        </div>
+                    </section>
+
+                    <!-- SECTION 4: BELUM DITANGGAPI -->
+                    <section class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-warm-200 pb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-7 bg-rose-600 rounded-full"></div>
+                                <div>
+                                    <h2 class="text-lg font-bold text-warm-900">4. Belum Ditanggapi</h2>
+                                    <span class="text-warm-600 text-xs">Laporan baru masuk yang menunggu antrean verifikasi petugas</span>
+                                </div>
+                            </div>
+                            <button onclick="switchView('belum', document.querySelectorAll('.nav-tab')[4])" class="text-rose-700 hover:text-rose-800 font-bold text-xs flex items-center gap-1 bg-white hover:bg-warm-100 px-3.5 py-1.5 rounded-xl border border-warm-200 transition">
+                                <span>Lihat Semua</span>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                            ${sampleReports.belum.map(item => generateCardHTML(item)).join('')}
+                        </div>
+                    </section>
+                `;
+            } else {
+                // RENDER FULL LIST VIEW DEMO
+                const titles = {
+                    total: { title: 'Semua Laporan Masuk', badge: 'Total 1,405 Aduan Kota', key: 'total' },
+                    proses: { title: 'Laporan Dalam Proses', badge: 'Sedang Dikerjakan Dinas', key: 'proses' },
+                    selesai: { title: 'Laporan Berhasil Diselesaikan', badge: 'Terbukti Tuntas 100%', key: 'selesai' },
+                    belum: { title: 'Laporan Belum Ditanggapi', badge: 'Menunggu Verifikasi', key: 'belum' }
+                };
+
+                const current = titles[tabKey];
+                const items = archivedReports[current.key];
+                const pageCount = Math.ceil(items.length / reportsPerPage);
+                const currentPage = Math.min(Math.max(page, 1), pageCount);
+                const pageItems = items.slice((currentPage - 1) * reportsPerPage, currentPage * reportsPerPage);
+                const tabIndex = Array.from(document.querySelectorAll('.nav-tab')).indexOf(btn);
+                const paginationButtonClass = 'min-w-[36px] px-3 py-1.5 rounded-lg border border-warm-200 transition';
+
+                container.innerHTML = `
+                    <section class="space-y-6">
+                        <div class="flex items-center justify-between border-b border-warm-200 pb-4">
+                            <div>
+                                <h2 class="text-xl font-bold text-warm-900">${current.title}</h2>
+                                <p class="text-warm-600 text-xs mt-1">Daftar arsip transparansi lengkap tanpa ada data yang tersembunyi.</p>
+                            </div>
+                            <span class="font-mono text-xs font-bold bg-amber-100 text-amber-700 border border-amber-200 px-3 py-1.5 rounded-xl">
+                                ${current.badge}
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                            ${pageItems.map(item => generateCardHTML(item)).join('')}
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white border border-warm-200 p-4 rounded-2xl text-xs text-warm-600 mt-8">
+                            <span>Halaman ${currentPage} dari ${pageCount}</span>
+                            <div class="flex flex-wrap items-center justify-center gap-1.5">
+                                <button type="button" onclick="switchView('${tabKey}', document.querySelectorAll('.nav-tab')[${tabIndex}], ${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="${paginationButtonClass} ${currentPage === 1 ? 'bg-warm-50 text-warm-400 cursor-not-allowed' : 'bg-warm-50 hover:text-warm-900'}">Sebelumnya</button>
+                                ${Array.from({ length: pageCount }, (_, index) => {
+                                    const pageNumber = index + 1;
+                                    const activeClass = pageNumber === currentPage ? 'bg-amber-700 text-white border-amber-700 font-bold' : 'bg-warm-50 hover:text-warm-900';
+                                    return `<button type="button" onclick="switchView('${tabKey}', document.querySelectorAll('.nav-tab')[${tabIndex}], ${pageNumber})" aria-label="Halaman ${pageNumber}" ${pageNumber === currentPage ? 'aria-current="page"' : ''} class="${paginationButtonClass} ${activeClass}">${pageNumber}</button>`;
+                                }).join('')}
+                                <button type="button" onclick="switchView('${tabKey}', document.querySelectorAll('.nav-tab')[${tabIndex}], ${currentPage + 1})" ${currentPage === pageCount ? 'disabled' : ''} class="${paginationButtonClass} ${currentPage === pageCount ? 'bg-warm-50 text-warm-400 cursor-not-allowed' : 'bg-warm-50 hover:text-warm-900'}">Berikutnya</button>
+                            </div>
+                        </div>
+                    </section>
+                `;
+            }
+        }
+
+        // MODAL CONTROLLER
+        function openDetailModal(data) {
+            document.getElementById('modalId').innerText = data.id;
+            document.getElementById('modalTitle').innerText = data.title;
+            document.getElementById('modalDesc').innerText = `"${data.desc}"`;
+            document.getElementById('modalUser').innerText = data.user;
+            document.getElementById('modalAgency').innerText = data.agency;
+            document.getElementById('modalDate').innerText = data.date;
+            document.getElementById('modalLocation').innerText = data.location;
+            document.getElementById('modalBudget').innerText = data.budget || 'APBD Kota 2026';
+            document.getElementById('modalSpent').innerText = data.spent || 'TBA';
+            document.getElementById('modalSLA').innerText = data.sla || '2 Hari';
+
+            const statusEl = document.getElementById('modalStatus');
+            statusEl.innerText = data.status;
+            statusEl.className = `px-3 py-0.5 rounded-full text-xs font-bold border ${data.statusClass}`;
+
+            const imgEl = document.getElementById('modalImage');
+            const noImgEl = document.getElementById('modalNoImage');
+
+            if (data.image) {
+                imgEl.src = data.image;
+                imgEl.classList.remove('hidden');
+                noImgEl.classList.add('hidden');
+            } else {
+                imgEl.classList.add('hidden');
+                noImgEl.classList.remove('hidden');
+            }
+
+            const modal = document.getElementById('detailModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeDetailModal() {
+            const modal = document.getElementById('detailModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        window.onclick = function(e) {
+            const modal = document.getElementById('detailModal');
+            if (e.target === modal) {
+                closeDetailModal();
+            }
+        };
+
+        // INIT LOAD MASTER VIEW
+        window.onload = function() {
+            switchView('master', document.querySelectorAll('.nav-tab')[0]);
+        };
+    </script>
+</body>
+</html>

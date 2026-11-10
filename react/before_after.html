@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TransparansiWarga – Portal Publik</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: { extend: {
+    fontFamily: { sans: ['Inter', 'sans-serif'], jakarta: ['Plus Jakarta Sans', 'sans-serif'] },
+    colors: { warm: { 50:'#faf8f5',100:'#f3efe6',200:'#e5dccb',300:'#d4c2a7',400:'#bf9e7f',500:'#a7805b',600:'#8c6547',700:'#704f3a',800:'#3a2d24',900:'#231d19',950:'#161210' } }
+  } }
+}
+</script>
+<style>
+@keyframes modalFadeIn{from{opacity:0;transform:scale(.96) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.animate-modal{animation:modalFadeIn .3s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes fadeBg{from{opacity:0}to{opacity:1}}
+.animate-bg{animation:fadeBg .25s ease forwards}
+html{scroll-behavior:smooth}
+</style>
+</head>
+<body class="bg-[#faf8f4] font-sans text-[#2f1d10] antialiased">
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const ALL_URL = 'before_dan_after_all.html';
+
+/* ====== Data (sementara). Ganti dengan data dari backend ====== */
+const ph = (c, t) => `https://placehold.co/600x600/${c}/e5dccb?text=${t}`;
+const IMG = [ph('5a4636', 'Sebelum'), ph('4a6b4f', 'Sesudah')];
+const BLN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const pd = s => { const [a, b, c] = s.split('-'); return new Date(+a, +b - 1, +c); };
+const fm = (d, l) => d.getDate() + ' ' + (l ? BLN[d.getMonth()] : BLN[d.getMonth()].slice(0, 3)) + ' ' + d.getFullYear();
+
+const ITEMS = [
+  ['0892','Jakarta Selatan','Perbaikan Jalan Berlubang Parah di Jl. Fatmawati','Jalan berlubang yang membahayakan pengendara telah ditambal dan diaspal ulang.','Dinas Bina Marga',2,'Infrastruktur Jalan','Terdapat lubang jalan cukup dalam dan lebar di lajur kiri dekat lampu merah yang sangat membahayakan pengendara motor saat malam hari.','Jl. Fatmawati No. 12, Kel. Cilandak Barat, Kec. Cilandak, Jakarta Selatan','Ahmad Warga','Rp 4.500.000','Pembersihan area lubang, pelapisan fondasi tack coat, dan penambalan dengan aspal hotmix 5cm dilanjutkan penggilasan drum roller.','-6.2915, 106.7972','2026-03-12',
+    ['https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=600&q=80','https://images.unsplash.com/photo-1584467735815-f778f274e296?auto=format&fit=crop&w=600&q=80']],
+  ['0731','Bandung','Pembersihan Tumpukan Sampah Bantaran Sungai','Penumpukan sampah yang menyumbat aliran sungai berhasil dibersihkan dan lokasi kini tertata rapi.','Dinas Lingkungan Hidup',1,'Kebersihan & Lingkungan','Sampah menumpuk di bantaran sungai hingga menutup aliran air dan menimbulkan bau menyengat bagi warga sekitar.','Bantaran Sungai Cikapundung, Kel. Braga, Kec. Sumur Bandung, Kota Bandung','Siti Rahma','Rp 2.800.000','Pengangkatan sampah dengan alat berat ringan, pembersihan sedimen, dan pemasangan jaring penahan sampah.','-6.9147, 107.6098','2026-03-20'],
+  ['0954','Surabaya','Perbaikan Lampu Penerangan Jalan (PJU)','Penggantian bohlam PJU yang mati di area permukiman untuk mencegah potensi kejahatan malam.','Dinas Perhubungan',3,'Penerangan Jalan','Lampu jalan di gang permukiman mati berminggu-minggu sehingga area menjadi gelap dan rawan tindak kejahatan.','Jl. Darmo Permai Selatan, Kel. Putat Gede, Kec. Sukomanunggal, Surabaya','Budi Santoso','Rp 3.200.000','Penggantian 6 titik bohlam dan fotosel PJU, pengecekan kabel, serta uji nyala pada malam hari.','-7.2899, 112.7138','2026-04-02']
+].map(([no, kota, judul, ringkas, dinas, hari, kat, keluhan, alamat, pelapor, biaya, catatan, gps, mulai, img], i) =>
+  ({ no, kota, judul, ringkas, dinas, hari, kat, keluhan, alamat, pelapor, biaya, catatan, gps, mulai, tiket: 'TW-2026-' + no, regu: 'BACDEFGHI'[i], img: img || IMG }));
+
+/* ====== Pop up detail (isi sesuai kode yang diberikan) ====== */
+const Foto = ({ src, lab, red, gps, by }) => (
+  <div className="relative rounded-2xl overflow-hidden border border-warm-800 bg-warm-950 group">
+    <div className="aspect-square w-full relative">
+      <img src={src} alt={'Kondisi ' + lab} className={'w-full h-full object-cover group-hover:scale-105 transition duration-300 ' + (red ? 'grayscale-[30%]' : '')}
+        onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = ph('231d19', 'Foto+' + lab); }} />
+      <div className={'absolute top-3 left-3 border text-xs font-extrabold px-3 py-1 rounded-lg uppercase tracking-wider shadow-md ' + (red ? 'bg-rose-950/90 border-rose-700/80 text-rose-300' : 'bg-emerald-950/90 border-emerald-700/80 text-emerald-300')}>{lab}</div>
+      <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-warm-950/90 via-warm-950/50 to-transparent p-3 text-[10px] text-warm-300 space-y-0.5">
+        <p className="font-mono text-warm-200 flex items-center gap-1">
+          <i className={'fa-solid fa-location-crosshairs ' + (red ? 'text-amber-500' : 'text-emerald-400')}></i><span>{gps}</span>
+        </p>
+        <p className="text-warm-400">{by}</p>
+      </div>
+    </div>
+  </div>
+);
+
+function Modal({ it, onClose }) {
+  const s = pd(it.mulai), e = new Date(s.getFullYear(), s.getMonth(), s.getDate() + it.hari);
+  useEffect(() => {
+    const k = x => x.key === 'Escape' && onClose();
+    document.addEventListener('keydown', k);
+    const o = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.removeEventListener('keydown', k); document.body.style.overflow = o; };
+  }, []);
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 font-jakarta text-warm-100 antialiased">
+      <div className="absolute inset-0 bg-warm-950/80 backdrop-blur-md animate-bg" onClick={onClose}></div>
+      <div role="dialog" aria-modal="true" aria-label={'Detail pengaduan ' + it.tiket} className="relative z-10 w-full max-w-3xl bg-warm-900 border border-warm-800 rounded-3xl shadow-2xl overflow-hidden animate-modal max-h-[92vh] flex flex-col">
+
+        <div className="px-6 py-4 border-b border-warm-800 flex items-center justify-between bg-warm-900/90 sticky top-0 z-20">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-amber-600/20 border border-amber-500/30 text-amber-500 flex items-center justify-center font-bold text-xs"><i className="fa-solid fa-file-invoice"></i></div>
+            <div>
+              <h2 className="text-sm sm:text-base font-extrabold text-white tracking-tight">Detail Transparansi Pengaduan</h2>
+              <span className="text-amber-500 font-mono text-[11px] font-bold">#{it.tiket}</span>
+            </div>
+          </div>
+          <button autoFocus onClick={onClose} className="w-8 h-8 rounded-full bg-warm-800 hover:bg-warm-700 text-warm-400 hover:text-white flex items-center justify-center text-sm transition" title="Tutup" aria-label="Tutup">
+            <i className="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div className="p-6 overflow-y-auto space-y-6 flex-1">
+          <div className="bg-warm-950/80 border border-warm-800/80 rounded-2xl p-4 sm:p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-warm-800/60">
+              <div className="flex items-center gap-2">
+                <span className="bg-amber-600/15 border border-amber-500/30 text-amber-400 text-xs font-semibold px-3 py-1 rounded-full">{it.kat}</span>
+                <span className="text-warm-400 text-xs font-medium">{it.dinas}</span>
+              </div>
+              <span className="inline-flex items-center gap-1.5 bg-emerald-950 border border-emerald-700 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                <i className="fa-solid fa-circle-check text-xs"></i><span>Selesai (Verified Completed)</span>
+              </span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-3.5 text-xs">
+              <div><span className="text-warm-400 text-[11px] block">Tanggal Diajukan</span><strong className="text-white font-semibold">{fm(s, true)}</strong></div>
+              <div><span className="text-warm-400 text-[11px] block">Tanggal Selesai</span><strong className="text-white font-semibold">{fm(e, true)}</strong></div>
+              <div className="col-span-2 sm:col-span-1">
+                <span className="text-warm-400 text-[11px] block">Durasi SLA Penanganan</span>
+                <strong className="text-amber-400 font-bold flex items-center gap-1"><i className="fa-regular fa-clock text-[11px]"></i><span>{it.hari} Hari ({it.hari * 24} Jam)</span></strong>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-warm-400 mb-2.5 flex items-center gap-2"><i className="fa-solid fa-images text-amber-500 text-xs"></i><span>Dokumentasi Komparasi Visual</span></h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Foto src={it.img[0]} lab="Sebelum" red gps={it.gps} by={'Foto Pelapor \u2022 ' + fm(s) + ', 09:15 WIB'} />
+              <Foto src={it.img[1]} lab="Sesudah" gps={it.gps} by={'Petugas Lapangan \u2022 ' + fm(e) + ', 14:30 WIB'} />
+            </div>
+          </div>
+
+          <div className="bg-warm-950/60 border border-warm-800 rounded-2xl p-5 space-y-4">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-warm-400 flex items-center gap-2"><i className="fa-solid fa-circle-info text-amber-500 text-xs"></i><span>Informasi Keluhan Warga</span></h3>
+            <div>
+              <h4 className="text-base font-bold text-white mb-1.5">{it.judul}</h4>
+              <p className="text-xs sm:text-sm text-warm-300 leading-relaxed bg-warm-900/80 p-3.5 rounded-xl border border-warm-800/60">“{it.keluhan}”</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
+              <div className="flex items-start gap-2.5">
+                <i className="fa-solid fa-location-dot text-amber-500 mt-0.5 shrink-0"></i>
+                <div><span className="text-warm-400 text-[11px] block">Lokasi Kejadian</span><span className="text-warm-200 font-medium leading-tight block">{it.alamat}</span></div>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <i className="fa-solid fa-user-shield text-amber-500 mt-0.5 shrink-0"></i>
+                <div>
+                  <span className="text-warm-400 text-[11px] block">Identitas Pelapor</span>
+                  <span className="text-warm-200 font-medium inline-flex items-center gap-1.5">{it.pelapor}<span className="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 rounded-full">Terverifikasi</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-warm-950/60 border border-warm-800 rounded-2xl p-5 space-y-4">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-amber-500 flex items-center gap-2"><i className="fa-solid fa-sack-dollar text-amber-500 text-xs"></i><span>Eksekusi Lapangan &amp; Transparansi Anggaran</span></h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div className="bg-warm-900/90 p-3.5 rounded-xl border border-warm-800/80">
+                <span className="text-warm-400 text-[11px] block">Sumber Dana Anggaran</span>
+                <strong className="text-white font-semibold">APBD DPA {it.dinas} 2026</strong>
+                <span className="text-warm-400 text-[11px] block mt-0.5">(Dana Pemeliharaan Rutin)</span>
+              </div>
+              <div className="bg-warm-900/90 p-3.5 rounded-xl border border-warm-800/80">
+                <span className="text-warm-400 text-[11px] block">Realisasi Pengeluaran Anggaran</span>
+                <strong className="text-amber-400 text-base font-extrabold block">{it.biaya}</strong>
+              </div>
+            </div>
+            <div className="space-y-1.5 text-xs">
+              <span className="text-warm-400 font-semibold block">Catatan Penyelesaian Petugas Lapangan:</span>
+              <p className="text-warm-300 leading-relaxed bg-warm-900/80 p-3.5 rounded-xl border border-warm-800/60">{it.catatan}</p>
+            </div>
+            <div className="flex items-center gap-2 pt-1 text-xs text-warm-300">
+              <i className="fa-solid fa-people-group text-amber-500"></i>
+              <span>Tim Pelaksana: <strong className="text-white">Tim Reaksi Cepat Regu {it.regu} - {it.dinas}</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <div className="px-6 py-3.5 border-t border-warm-800 bg-warm-950 flex items-center justify-between text-xs text-warm-400">
+          <span className="flex items-center gap-1.5"><i className="fa-solid fa-shield-halved text-emerald-400 text-xs"></i>Data Resmi Terverifikasi TransparansiWarga</span>
+          <button onClick={onClose} className="bg-warm-800 hover:bg-warm-700 text-white font-semibold px-4 py-2 rounded-xl transition text-xs">Tutup</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ====== Komponen umum ====== */
+const Eyebrow = ({ children }) => (
+  <div className="flex items-center justify-center gap-3 text-[11px] font-medium tracking-[.2em] text-[#c4833f] uppercase">
+    <span className="w-10 h-px bg-[#c4833f]/60"></span>{children}<span className="w-10 h-px bg-[#c4833f]/60"></span>
+  </div>
+);
+const H2 = ({ children, cls = 'text-[40px]' }) => <h2 className={'mt-4 font-bold leading-tight tracking-tight text-[#2f1d10] ' + cls}>{children}</h2>;
+const Sub = ({ children }) => <p className="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-[#7c6b5c]">{children}</p>;
+
+const Card = ({ it, onOpen }) => (
+  <article role="button" tabIndex={0} aria-label={'Lihat detail: ' + it.judul} onClick={() => onOpen(it)}
+    onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen(it); } }}
+    className="cursor-pointer bg-white rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(80,50,20,.08)] hover:shadow-[0_14px_36px_rgba(80,50,20,.16)] hover:-translate-y-1 transition duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c4833f]">
+    <div className="grid grid-cols-2 gap-[2px] bg-white aspect-[1.87/1]">
+      {[0, 1].map(i => (
+        <div key={i} className="relative overflow-hidden">
+          <img src={it.img[i]} alt={i ? 'Sesudah' : 'Sebelum'} loading="lazy" className="absolute inset-0 w-full h-full object-cover"
+            onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = IMG[i]; }} />
+          <span className={'absolute top-2.5 left-2.5 text-[10px] font-bold tracking-wider px-2 py-1 rounded-md text-white ' + (i ? 'bg-[#5f8a64]/90' : 'bg-[#3b2f27]/85')}>{i ? 'SESUDAH' : 'SEBELUM'}</span>
+        </div>
+      ))}
+    </div>
+    <div className="p-[18px]">
+      <div className="flex items-center gap-1.5 text-xs font-medium text-[#c4833f]"><i className="fa-solid fa-location-dot text-[11px]"></i>{it.kota}</div>
+      <h3 className="mt-2 text-[15px] font-bold leading-snug text-[#2f1d10]">{it.judul}</h3>
+      <p className="mt-2 text-[13px] leading-relaxed text-[#8a7a6c]">{it.ringkas}</p>
+      <div className="mt-4 pt-3 border-t border-[#f0e9df] flex items-center justify-between gap-2">
+        <span className="text-[11.5px] text-[#a89a8b] flex items-center gap-1.5"><i className="fa-regular fa-clock"></i>Selesai {it.hari} Hari</span>
+        <span className="bg-[#f8e9d6] text-[#b0702c] text-[11.5px] font-semibold px-3 py-1 rounded-full">{it.dinas}</span>
+      </div>
+    </div>
+  </article>
+);
+
+const Step = ({ n, t, d, tag, ic, g }) => (
+  <div className="flex-1 min-w-0 bg-white rounded-2xl p-8 shadow-[0_8px_30px_rgba(80,50,20,.08)]">
+    <div className={'w-10 h-10 rounded-full grid place-items-center font-bold text-[15px] ' + (g ? 'bg-[#e0f0e5] text-[#3f8a5a]' : 'bg-[#fbeedd] text-[#c4833f]')}>{n}</div>
+    <h3 className="mt-5 text-base font-bold text-[#2f1d10]">{t}</h3>
+    <p className="mt-2 text-[13px] leading-relaxed text-[#7c6b5c]">{d}</p>
+    <span className={'mt-5 inline-flex items-center gap-1.5 text-[11.5px] font-semibold px-3 py-1.5 rounded-lg ' + (g ? 'bg-[#e3f1e7] text-[#3f7a52]' : 'bg-[#fbeedd] text-[#b0702c]')}><i className={ic}></i>{tag}</span>
+  </div>
+);
+const Arrow = () => <div className="hidden md:grid place-items-center w-[76px] shrink-0 self-start mt-6 text-sm text-[#c9bdae]"><i className="fa-solid fa-arrow-right"></i></div>;
+
+/* ====== Halaman ====== */
+const norm = s => s.replace(/[#\s]/g, '').toUpperCase();
+
+function App() {
+  const [open, setOpen] = useState(null);
+  const [q, setQ] = useState('');
+  const [msg, setMsg] = useState('');
+
+  // TODO: ganti pencarian demo ini dengan request ke backend berdasarkan nomor tiket.
+  const cek = e => {
+    e.preventDefault();
+    const k = norm(q);
+    if (!k) return setMsg('Masukkan nomor tiket terlebih dahulu.');
+    const it = ITEMS.find(i => norm(i.tiket) === k);
+    if (!it) return setMsg('Nomor tiket tidak ditemukan. Periksa kembali nomor pada bukti pengaduan Anda.');
+    setMsg(''); setOpen(it);
+  };
+
+  return (
+    <>
+      {/* Sebelum & Sesudah */}
+      <section className="bg-[#faf8f4] px-5 py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center">
+            <Eyebrow>Bukti Nyata Perubahan</Eyebrow>
+            <H2>Sebelum &amp; Sesudah</H2>
+            <Sub>Dokumentasi visual perubahan nyata dari setiap pengaduan warga yang telah diselesaikan oleh instansi terkait.</Sub>
+            <p className="mt-4 text-xs text-[#6f5f50]">* Visual bersifat ilustratif sebagai representasi kondisi lapangan</p>
+          </div>
+          <div className="flex justify-end mt-7 mb-3">
+            <a href={ALL_URL} className="text-[13px] font-bold text-[#2f1d10] hover:text-[#c4833f] transition">Lihat Semua</a>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 items-start">
+            {ITEMS.map(it => <Card key={it.no} it={it} onOpen={setOpen} />)}
+          </div>
+        </div>
+      </section>
+
+      {/* Lacak Status */}
+      <section className="bg-gradient-to-b from-[#fdf2e4] to-[#faf7f1] px-5 py-20 border-b border-[#efe6d8]">
+        <div className="mx-auto max-w-3xl text-center">
+          <Eyebrow>Lacak Status</Eyebrow>
+          <h2 className="mt-4 text-[40px] font-bold leading-tight tracking-tight text-[#2f1d10]">Lacak Progres Laporan Anda</h2>
+          <Sub>Masukkan nomor tiket aduan unik yang Anda terima untuk memantau proses verifikasi dan durasi pengerjaan instansi.</Sub>
+          <form onSubmit={cek} noValidate className="mt-9 flex items-center overflow-hidden rounded-xl bg-white shadow-[0_8px_28px_rgba(120,80,30,.12)]">
+            <i className="fa-solid fa-magnifying-glass ml-5 mr-3 text-sm text-[#b3a698]"></i>
+            <input value={q} onChange={e => { setQ(e.target.value); setMsg(''); }} aria-label="Nomor tiket" placeholder="Nomor tiket, misal: #TRW-2026-889"
+              className="h-14 min-w-0 flex-1 bg-transparent text-sm text-[#2f1d10] placeholder:text-[#b9ad9f] outline-none" />
+            <button type="submit" className="h-14 shrink-0 bg-[#c4833f] px-8 text-sm font-semibold text-white transition hover:bg-[#ad6f2f]">Cek Status</button>
+          </form>
+          {msg
+            ? <p role="alert" className="mt-7 text-xs font-medium text-[#b42318]">{msg}</p>
+            : <p className="mt-7 text-xs text-[#b0a394]">Gunakan nomor tiket yang Anda terima saat mengirim pengaduan.</p>}
+        </div>
+      </section>
+
+      {/* Panduan */}
+      <section className="bg-[#f6f4ef] px-5 py-20">
+        <div className="mx-auto max-w-3xl text-center">
+          <Eyebrow>Panduan</Eyebrow>
+          <H2 cls="text-4xl">Bagaimana TransparansiWarga Bekerja?</H2>
+          <Sub>Langkah sederhana berpartisipasi menciptakan perubahan publik yang akuntabel.</Sub>
+        </div>
+        <div className="mx-auto mt-14 flex max-w-[1232px] flex-col gap-5 md:flex-row md:gap-0">
+          <Step n="1" t="Laporkan Masalah" d="Ambil foto bukti masalah publik, beri titik lokasi presisi, dan pilih instansi/kategori terkait." tag="Unggah Foto & Deskripsi" ic="fa-solid fa-camera" />
+          <Arrow />
+          <Step n="2" g t="Pantau Batas SLA" d="Sistem memantau durasi pengerjaan instansi. Jika terlambat, laporan otomatis ditandai merah (Overdue)." tag="Pantau Via Nomor Tiket" ic="fa-regular fa-clock" />
+          <Arrow />
+          <Step n="3" t="Verifikasi Warga" d="Setelah laporan dinyatakan selesai oleh instansi, berikan ulasan dan penilaian atas penyelesaian yang diberikan." tag="Beri Ulasan & Penilaian" ic="fa-regular fa-circle-check" />
+        </div>
+      </section>
+
+      {open && <Modal it={open} onClose={() => setOpen(null)} />}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+<footer class="bg-warm-900 border-t border-warm-800 py-6 px-4 text-center text-warm-400 text-xs">
+  <div class="max-w-4xl mx-auto space-y-2">
+    <p class="font-semibold text-amber-500 tracking-wide">TransparansiWarga</p>
+    <p class="text-warm-300">Wadah pengaduan publik yang cepat, akuntabel, dan transparan untuk lingkungan kita.</p>
+    <p class="text-warm-500 pt-2 border-t border-warm-800/50">© 2026 TransparansiWarga. Dibuat untuk pelayanan publik yang lebih baik.</p>
+  </div>
+</footer>
+</body>
+</html>

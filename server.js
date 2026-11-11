@@ -84,7 +84,53 @@ const OAUTH_DEMO_MODE = !process.env.GITHUB_CLIENT_SECRET || process.env.GITHUB_
 // AI Gateway config
 const AI_GATEWAY_URL = process.env.AI_GATEWAY_URL || '';
 const AI_GATEWAY_KEY = process.env.AI_GATEWAY_KEY || '';
-const AI_MODEL = process.env.AI_MODEL || 'ag/gemini-3.8-flash';
+
+// Multi-model fallback: fetch all models from gateway, try each until success
+let _aiModels = null;
+let _aiModelsAt = 0;
+async function getAIModels() {
+    if (_aiModels && Date.now() - _aiModelsAt < 600000) return _aiModels;
+    try {
+        const resp = await fetch(`${AI_GATEWAY_URL}/models`, {
+            headers: { 'Authorization': `Bearer ${AI_GATEWAY_KEY}` }
+        });
+        const data = await resp.json();
+        _aiModels = (data.data || []).map(m => m.id).filter(Boolean);
+        _aiModelsAt = Date.now();
+        return _aiModels;
+    } catch (e) {
+        return _aiModels || [];
+    }
+}
+
+async function callAI(messages, maxTokens, temperature, minLength) {
+    const models = await getAIModels();
+    if (!models.length) throw new Error('No AI models available');
+    const min = minLength || 5;
+    let lastErr;
+    for (const model of models) {
+        try {
+            const ctrl = new AbortController();
+            const timer = setTimeout(() => ctrl.abort(), 20000);
+            const resp = await fetch(`${AI_GATEWAY_URL}/chat/completions`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${AI_GATEWAY_KEY}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model, stream: false, max_tokens: maxTokens, temperature, messages }),
+                signal: ctrl.signal
+            });
+            clearTimeout(timer);
+            if (!resp.ok) { lastErr = new Error(`${model}: HTTP ${resp.status}`); continue; }
+            const data = await resp.json();
+            const content = data.choices?.[0]?.message?.content;
+            if (content && content.trim().length >= min) return content.trim();
+            lastErr = new Error(`${model}: response too short (${content?.trim().length || 0} chars)`);
+        } catch (e) {
+            lastErr = e;
+            continue;
+        }
+    }
+    throw lastErr || new Error('All models failed');
+}
 const oauthState = new Map(); // CSRF protection
 const MIME_TYPES = {
     '.css': 'text/css; charset=utf-8',
@@ -694,25 +740,13 @@ async function handleApi(request, response, url) {
         };
 
         try {
-            const aiResp = await fetch(`${AI_GATEWAY_URL}/chat/completions`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${AI_GATEWAY_KEY}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    model: AI_MODEL,
-                    stream: false,
-                    max_tokens: 150,
-                    temperature: 0.1,
-                    messages: [{
-                        role: 'user',
-                        content: `Anda adalah sistem klasifikasi pengaduan warga Indonesia. Analisis pengaduan berikut dan berikan response JSON ONLY (tanpa markdown).\n\nPilihan kategori: ${categories.join(', ')}\n\nPilihan prioritas: low, medium, high, urgent\n\nAturan prioritas:\n- urgent: mengancam nyawa/keselamatan (gas bocor, struktur bangunan rapuh, kebakaran)\n- high: dampak luas atau bahaya signifikan (jalan rusak parah, banjir bandang)\n- medium: dampak sedang (lampu mati, sampah menumpuk)\n- low: gangguan minor (trotoar retak rambut pudar)\n\nPengaduan: "${description}"\n\nJawab dengan format JSON: {"category": "nama kategori", "priority": "level", "reason": "alasan singkat dalam Bahasa Indonesia"}`
-                    }]
-                })
-            });
-            const aiData = await aiResp.json();
-            let content = aiData.choices?.[0]?.message?.content || '';
+            const content = await callAI([{
+                role: 'user',
+                content: `Anda adalah sistem klasifikasi pengaduan warga Indonesia. Analisis pengaduan berikut dan berikan response JSON ONLY (tanpa markdown).\n\nPilihan kategori: ${categories.join(', ')}\n\nPilihan prioritas: low, medium, high, urgent\n\nAturan prioritas:\n- urgent: mengancam nyawa/keselamatan (gas bocor, struktur bangunan rapuh, kebakaran)\n- high: dampak luas atau bahaya signifikan (jalan rusak parah, banjir bandang)\n- medium: dampak sedang (lampu mati, sampah menumpuk)\n- low: gangguan minor (trotoar retak rambat pudar)\n\nPengaduan: "${description}"\n\nJawab dengan format JSON: {"category": "nama kategori", "priority": "level", "reason": "alasan singkat dalam Bahasa Indonesia"}`
+            }], 150, 0.1);
             // Strip markdown code fences if present
-            content = content.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
-            const parsed = JSON.parse(content);
+            const cleanContent = content.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+            const parsed = JSON.parse(cleanContent);
 
             const category = categories.includes(parsed.category) ? parsed.category : categories[0];
             const validPriorities = ['low', 'medium', 'high', 'urgent'];
@@ -755,22 +789,10 @@ async function handleApi(request, response, url) {
         };
 
         try {
-            const aiResp = await fetch(`${AI_GATEWAY_URL}/chat/completions`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${AI_GATEWAY_KEY}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    model: AI_MODEL,
-                    stream: false,
-                    max_tokens: 300,
-                    temperature: 0.3,
-                    messages: [{
-                        role: 'user',
-                        content: `Anda adalah analis data publik Indonesia. Buat insight singkat (maks 3 kalimat) dari statistik pengaduan warga berikut. Gunakan Bahasa Indonesia, tone profesional tapi mudah dipahami warga.\n\nStatistik:\n- Total laporan: ${stats.total}\n- Kategori terbanyak: ${stats.topCategories.map(([k, v]) => `${k} (${v})`).join(', ')}\n- Provinsi terbanyak: ${stats.topProvinces.map(([k, v]) => `${k} (${v})`).join(', ')}\n- Status: ${Object.entries(stats.byStatus).map(([k, v]) => `${k}=${v}`).join(', ')}\n\nBeri 2-3 insight actionable: tren, area prioritas, atau rekomendasi singkat. JANGAN gunakan markdown atau bullet points. Tulis sebagai paragraf biasa.`
-                    }]
-                })
-            });
-            const aiData = await aiResp.json();
-            const insight = aiData.choices?.[0]?.message?.content?.trim() || '';
+            const insight = await callAI([{
+                role: 'user',
+                content: `Anda adalah analis data publik Indonesia. Buat insight singkat (maks 3 kalimat) dari statistik pengaduan warga berikut. Gunakan Bahasa Indonesia, tone profesional tapi mudah dipahami warga.\n\nStatistik:\n- Total laporan: ${stats.total}\n- Kategori terbanyak: ${stats.topCategories.map(([k, v]) => `${k} (${v})`).join(', ')}\n- Provinsi terbanyak: ${stats.topProvinces.map(([k, v]) => `${k} (${v})`).join(', ')}\n- Status: ${Object.entries(stats.byStatus).map(([k, v]) => `${k}=${v}`).join(', ')}\n\nBeri 2-3 insight actionable: tren, area prioritas, atau rekomendasi singkat. JANGAN gunakan markdown atau bullet points. Tulis sebagai paragraf biasa.`
+            }], 300, 0.3);
 
             return sendJson(response, 200, { insight, stats: { total, topCategories: stats.topCategories, topProvinces: stats.topProvinces, byStatus }, aiPowered: true });
         } catch (err) {
@@ -812,16 +834,7 @@ Pertanyaan: "${question}"
 Jawab MAX 3 kalimat, ramah, faktual. Jika di luar topik pengaduan/AksiWarga, arahkan kembali. Jangan minta maaf berlebihan.`;
 
         try {
-            const aiResp = await fetch(`${AI_GATEWAY_URL}/chat/completions`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${AI_GATEWAY_KEY}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    model: AI_MODEL, stream: false, max_tokens: 200, temperature: 0.3,
-                    messages: [{ role: 'user', content: context }]
-                })
-            });
-            const aiData = await aiResp.json();
-            const answer = aiData.choices?.[0]?.message?.content?.trim() || 'Maaf, saya tidak bisa menjawab saat ini.';
+            const answer = await callAI([{ role: 'user', content: context }], 200, 0.3);
             return sendJson(response, 200, { answer, aiPowered: true });
         } catch (err) {
             return sendJson(response, 500, { error: 'AI tidak merespons.' });
@@ -859,16 +872,7 @@ ${recentTitles}
 Beri ringkasan aktivitas + 1 saran atau semangat. Jangan pakai markdown.`;
 
         try {
-            const aiResp = await fetch(`${AI_GATEWAY_URL}/chat/completions`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${AI_GATEWAY_KEY}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    model: AI_MODEL, stream: false, max_tokens: 200, temperature: 0.5,
-                    messages: [{ role: 'user', content: context }]
-                })
-            });
-            const aiData = await aiResp.json();
-            const summary = aiData.choices?.[0]?.message?.content?.trim() || '';
+            const summary = await callAI([{ role: 'user', content: context }], 200, 0.5);
             return sendJson(response, 200, { summary, aiPowered: true });
         } catch (err) {
             return sendJson(response, 500, { error: 'AI gagal membuat ringkasan.' });
@@ -905,18 +909,9 @@ ${candidates}
 Jawab JSON: {"isDuplicate": true/false, "similarId": "ID atau null", "reason": "alasan singkat"}`;
 
         try {
-            const aiResp = await fetch(`${AI_GATEWAY_URL}/chat/completions`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${AI_GATEWAY_KEY}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    model: AI_MODEL, stream: false, max_tokens: 100, temperature: 0.1,
-                    messages: [{ role: 'user', content: context }]
-                })
-            });
-            const aiData = await aiResp.json();
-            let content = aiData.choices?.[0]?.message?.content || '{}';
-            content = content.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
-            const parsed = JSON.parse(content);
+            const content = await callAI([{ role: 'user', content: context }], 100, 0.1);
+            const cleanContent = content.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+            const parsed = JSON.parse(cleanContent);
             return sendJson(response, 200, {
                 duplicate: !!parsed.isDuplicate,
                 similarId: parsed.similarId || null,

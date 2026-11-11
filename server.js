@@ -792,7 +792,7 @@ async function handleApi(request, response, url) {
             const insight = await callAI([{
                 role: 'user',
                 content: `Anda adalah analis data publik Indonesia. Buat insight singkat (maks 3 kalimat) dari statistik pengaduan warga berikut. Gunakan Bahasa Indonesia, tone profesional tapi mudah dipahami warga.\n\nStatistik:\n- Total laporan: ${stats.total}\n- Kategori terbanyak: ${stats.topCategories.map(([k, v]) => `${k} (${v})`).join(', ')}\n- Provinsi terbanyak: ${stats.topProvinces.map(([k, v]) => `${k} (${v})`).join(', ')}\n- Status: ${Object.entries(stats.byStatus).map(([k, v]) => `${k}=${v}`).join(', ')}\n\nBeri 2-3 insight actionable: tren, area prioritas, atau rekomendasi singkat. JANGAN gunakan markdown atau bullet points. Tulis sebagai paragraf biasa.`
-            }], 300, 0.3);
+            }], 500, 0.3, 80);
 
             return sendJson(response, 200, { insight, stats: { total, topCategories: stats.topCategories, topProvinces: stats.topProvinces, byStatus }, aiPowered: true });
         } catch (err) {

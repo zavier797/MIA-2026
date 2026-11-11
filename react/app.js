@@ -838,9 +838,9 @@ function AIInsights() {
     const stats = data.stats || {};
     const topCats = stats.topCategories || [];
 
-    return h('section', { 'data-light': '', className: 'px-6 py-12 bg-paper' },
+    return h('section', { 'data-light': '', className: 'px-6 py-6 bg-paper -mt-8' },
         h('div', { className: 'mx-auto max-w-4xl' },
-            h('div', { className: 'rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-white p-6 md:p-8' },
+            h('div', { className: 'rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-white p-5 md:p-6' },
                 h('div', { className: 'flex items-center gap-2 mb-4' },
                     h('span', { className: 'inline-flex items-center gap-1.5 text-xs font-bold text-violet-700 bg-violet-100 rounded-full px-3 py-1' },
                         '✦ AI Insights'),

@@ -804,6 +804,7 @@ async function handleApi(request, response, url) {
     if (request.method === 'POST' && url.pathname === '/api/ai/chat') {
         const body = await readJsonBody(request);
         const question = typeof body.question === 'string' ? body.question.trim().slice(0, 500) : '';
+        const email = typeof body.email === 'string' ? body.email.trim() : '';
         if (!question) return sendJson(response, 400, { error: 'Pertanyaan harus diisi.' });
         if (!AI_GATEWAY_URL) return sendJson(response, 503, { error: 'AI tidak tersedia.' });
 
@@ -818,20 +819,37 @@ async function handleApi(request, response, url) {
         const recent = reports.slice(-5).reverse().map(r =>
             `- ${r.title} (${r.category}, ${r.status}, ${r.province})`).join('\n');
 
-        const context = `Anda adalah Asisten AksiWarga, bot virtual platform pengaduan warga Indonesia. Jawab pertanyaan warga dengan ramah, singkat, dan akurat dalam Bahasa Indonesia.
+        // If user is logged in, include their personal report data
+        let userContext = '';
+        let userName = 'Warga';
+        if (email) {
+            const userReports = reports.filter(r =>
+                r.reporterEmail && r.reporterEmail.toLowerCase() === email.toLowerCase());
+            if (userReports.length > 0) {
+                const userByStatus = {};
+                userReports.forEach(r => { userByStatus[r.status] = (userByStatus[r.status] || 0) + 1; });
+                const userRecent = userReports.slice(-3).reverse().map(r =>
+                    `- ${r.title} (${r.category}, ${r.status})`).join('\n');
+                userContext = `\n\nData laporan user ini (${email}):\n- Total: ${userReports.length}\n- Status: ${Object.entries(userByStatus).map(([k,v]) => `${k}=${v}`).join(', ')}\n- Laporan terbaru:\n${userRecent}`;
+            } else {
+                userContext = `\n\nUser ini (${email}) belum punya laporan sama sekali.`;
+            }
+        }
 
-Data laporan saat ini:
+        const context = `Anda adalah Asisten AksiWarga, bot virtual platform pengaduan warga Indonesia. Jawab pertanyaan ${email ? 'warga yang sudah login' : 'pengunjung'} dengan ramah, singkat, dan akurat dalam Bahasa Indonesia.${email ? ' Panggil dengan ramah.' : ''}
+
+Data laporan platform saat ini:
 - Total: ${reports.length} laporan
 - Status: ${Object.entries(byStatus).map(([k,v]) => `${k}=${v}`).join(', ')}
 - Kategori: ${Object.entries(byCategory).map(([k,v]) => `${k}=${v}`).join(', ')}
 - Provinsi: ${Object.entries(byProvince).map(([k,v]) => `${k}=${v}`).join(', ')}
 
 Laporan terbaru:
-${recent}
+${recent}${userContext}
 
 Pertanyaan: "${question}"
 
-Jawab MAX 3 kalimat, ramah, faktual. Jika di luar topik pengaduan/AksiWarga, arahkan kembali. Jangan minta maaf berlebihan.`;
+Jawab MAX 3 kalimat, ramah, faktual. Jika user belum login dan bertanya soal laporan pribadi, sarankan login dulu. Jika di luar topik pengaduan/AksiWarga, arahkan kembali.`;
 
         try {
             const answer = await callAI([{ role: 'user', content: context }], 200, 0.3);

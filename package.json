@@ -9,7 +9,7 @@
     "dev": "node server.js"
   },
   "engines": {
-    "node": "20.x"
+    "node": "22.x"
   },
   "keywords": [
     "civic-tech",
@@ -18,5 +18,7 @@
   ],
   "author": "Muhammad Zavier Rizkayanto",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "better-sqlite3": "^13.0.3"
+  }
 }

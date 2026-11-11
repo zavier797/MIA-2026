@@ -2,14 +2,72 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 const http = require('node:http');
 const path = require('node:path');
+const Database = require('better-sqlite3');
 
 const ROOT = __dirname;
 const STATIC_ROOT = path.join(ROOT, 'react');
 const MAP_ROOT = path.join(ROOT, 'map aksiwarga');
-const ACCOUNTS_FILE = path.join(ROOT, 'data', 'accounts.json');
-const REPORTS_FILE = path.join(ROOT, 'data', 'reports.json');
-const BUDGET_FILE = path.join(ROOT, 'data', 'budget.json');
+const DATA_DIR = process.env.DATA_DIR || path.join(ROOT, 'data');
+const DATABASE_FILE = path.join(DATA_DIR, 'aksiwarga.sqlite');
 const PORT = Number(process.env.PORT) || 3000;
+fs.mkdirSync(DATA_DIR, { recursive: true, mode: 0o700 });
+const db = new Database(DATABASE_FILE);
+db.pragma('journal_mode = WAL');
+db.pragma('busy_timeout = 5000');
+db.exec(fs.readFileSync(path.join(ROOT, 'scripts', 'migrate-json-to-sqlite.sql'), 'utf8'));
+const getData = db.prepare('SELECT json FROM app_data WHERE key = ?');
+const saveData = db.prepare('INSERT INTO app_data (key, json) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET json = excluded.json');
+const getMeta = db.prepare('SELECT value_json AS json FROM app_meta WHERE key = ?');
+const saveMeta = db.prepare('INSERT INTO app_meta (key, value_json) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value_json = excluded.value_json');
+const importLegacy = db.transaction(() => {
+    const count = db.prepare('SELECT count(*) AS count FROM app_data').get().count;
+    if (count) return;
+    for (const [key, file] of [['accounts', 'accounts.json'], ['reports', 'reports.json'], ['budget', 'budget.json']]) {
+        const legacyFile = path.join(DATA_DIR, file);
+        if (!fs.existsSync(legacyFile)) throw new Error(`Dataset ${key} tidak ditemukan.`);
+        saveData.run(key, fs.readFileSync(legacyFile, 'utf8'));
+    }
+});
+importLegacy();
+const saveAccount = db.prepare('INSERT INTO accounts (email, name, password_salt, password_hash, oauth_provider, oauth_id, extra_json) VALUES (?, ?, ?, ?, ?, ?, ?)');
+const saveAccountsTransaction = db.transaction((users) => {
+    db.exec('DELETE FROM accounts');
+    for (const user of users) {
+        const { name, email, passwordSalt, passwordHash, oauthProvider = null, oauthId = null, ...extra } = user;
+        saveAccount.run(email, name, passwordSalt, passwordHash, oauthProvider, oauthId, JSON.stringify(extra));
+    }
+});
+const saveReport = db.prepare('INSERT INTO reports (id, status, category, province, created_at, payload_json) VALUES (?, ?, ?, ?, ?, ?)');
+const saveReportsTransaction = db.transaction((reports) => {
+    db.exec('DELETE FROM reports');
+    for (const report of reports) saveReport.run(report.id, report.status || null, report.category || null, report.province || null, report.createdAt || null, JSON.stringify(report));
+});
+const saveProvince = db.prepare('INSERT INTO provinces (id, name, year, payload_json) VALUES (?, ?, ?, ?)');
+const saveProvincesTransaction = db.transaction((provinces) => {
+    db.exec('DELETE FROM provinces');
+    for (const province of provinces) saveProvince.run(province.id, province.name, province.year || null, JSON.stringify(province));
+});
+const importTables = db.transaction(() => {
+    if (db.prepare('SELECT count(*) AS count FROM accounts').get().count) return;
+    for (const row of db.prepare('SELECT key, json FROM app_data').all()) {
+        if (row.key.endsWith('_meta')) {
+            saveMeta.run(row.key.slice(0, -5), row.json);
+        }
+    }
+    const accounts = JSON.parse(getData.get('accounts').json).users;
+    const reportData = JSON.parse(getData.get('reports').json);
+    const budget = JSON.parse(getData.get('budget').json);
+    saveAccountsTransaction(accounts);
+    saveReportsTransaction(reportData.reports);
+    saveProvincesTransaction(budget.provinces);
+    saveMeta.run('reports', JSON.stringify({ nextId: reportData.nextId, total: reportData.total, stats: reportData.stats }));
+    saveMeta.run('budget', JSON.stringify(Object.fromEntries(Object.entries(budget).filter(([key]) => key !== 'provinces'))));
+});
+importTables();
+for (const [key, table, file] of [['accounts', 'accounts', 'accounts.json'], ['reports', 'reports', 'reports.json'], ['budget', 'provinces', 'budget.json']]) {
+    if (!db.prepare(`SELECT count(*) AS count FROM ${table}`).get().count) throw new Error(`Data ${key} belum termigrasi.`);
+}
+db.exec('DROP TABLE app_data');
 const SESSION_COOKIE = 'aksiwarga_session';
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const sessions = new Map();
@@ -66,31 +124,31 @@ function readJsonBody(request) {
 }
 
 function readAccounts() {
-    const data = JSON.parse(fs.readFileSync(ACCOUNTS_FILE, 'utf8'));
-    if (!data || !Array.isArray(data.users)) throw new Error('Berkas akun memiliki format yang tidak valid.');
-    return data.users;
+    return db.prepare('SELECT name, email, password_salt AS passwordSalt, password_hash AS passwordHash, oauth_provider AS oauthProvider, oauth_id AS oauthId, extra_json AS extraJson FROM accounts')
+        .all().map(({ extraJson, ...account }) => ({ ...JSON.parse(extraJson), ...Object.fromEntries(Object.entries(account).filter(([, value]) => value !== null)) }));
 }
 
 function writeAccounts(users) {
-    const tempFile = `${ACCOUNTS_FILE}.${process.pid}.tmp`;
-    fs.writeFileSync(tempFile, `${JSON.stringify({ users }, null, 2)}\n`, { mode: 0o600 });
-    fs.renameSync(tempFile, ACCOUNTS_FILE);
+    saveAccountsTransaction(users);
 }
 
 function readReports() {
-    const data = JSON.parse(fs.readFileSync(REPORTS_FILE, 'utf8'));
-    if (!data || !Array.isArray(data.reports)) throw new Error('Berkas laporan memiliki format yang tidak valid.');
-    return data;
+    const meta = JSON.parse(getMeta.get('reports').json);
+    const reports = db.prepare('SELECT payload_json FROM reports').all().map((row) => JSON.parse(row.payload_json));
+    const maxId = reports.reduce((max, report) => Math.max(max, Number(report.id.match(/(\d+)$/)?.[1]) || 0), 0);
+    return { ...meta, reports, nextId: Math.max(Number(meta.nextId) || 1, maxId + 1) };
 }
 
 function writeReports(data) {
-    const tempFile = `${REPORTS_FILE}.${process.pid}.tmp`;
-    fs.writeFileSync(tempFile, `${JSON.stringify(data, null, 2)}\n`, { mode: 0o600 });
-    fs.renameSync(tempFile, REPORTS_FILE);
+    db.transaction(() => {
+        saveReportsTransaction(data.reports);
+        saveMeta.run('reports', JSON.stringify({ nextId: data.nextId, total: data.total, stats: data.stats }));
+    })();
 }
 
 function readBudget() {
-    return JSON.parse(fs.readFileSync(BUDGET_FILE, 'utf8'));
+    const meta = JSON.parse(getMeta.get('budget').json);
+    return { ...meta, provinces: db.prepare('SELECT payload_json FROM provinces').all().map((row) => JSON.parse(row.payload_json)) };
 }
 
 function publicUser(account) {

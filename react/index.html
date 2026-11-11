@@ -23,6 +23,15 @@
                             400: '#bf9e7f', 500: '#a7805b', 600: '#8c6547', 700: '#704f3a',
                             800: '#3a2d24', 900: '#231d19', 950: '#161210'
                         }
+                    },
+                    animation: {
+                        'slide-down': 'slideDown 0.2s ease-out'
+                    },
+                    keyframes: {
+                        slideDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-8px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        }
                     }
                 }
             }

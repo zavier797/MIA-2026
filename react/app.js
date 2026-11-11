@@ -845,7 +845,6 @@ function BeforeAfterPage() {
         openedItem && h(BeforeAfterModal, { item: openedItem, onClose: () => setOpenedItem(null) }));
 }
 
-}
 
 function HomePage({ theme, setTheme }) {const [menuOpen, setMenuOpen] = useState(false);
     const onLight = useOnLight();

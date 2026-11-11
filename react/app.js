@@ -845,47 +845,9 @@ function BeforeAfterPage() {
         openedItem && h(BeforeAfterModal, { item: openedItem, onClose: () => setOpenedItem(null) }));
 }
 
-/* ===== BERANDA ===== */
-/* ===== AI INSIGHTS: analisis cerdas dari data laporan ===== */
-function AIInsights() {
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetch('/api/ai/insights')
-            .then(r => r.json())
-            .then(d => { setData(d); setLoading(false); })
-            .catch(() => setLoading(false));
-    }, []);
-
-    if (loading) return h('section', { 'data-light': '', className: 'px-6 py-12 bg-paper' },
-        h('div', { className: 'mx-auto max-w-4xl' },
-            h('div', { className: 'rounded-2xl border border-violet-200 bg-violet-50 p-6 animate-pulse' },
-                h('div', { className: 'h-4 w-32 bg-violet-200 rounded mb-3' }),
-                h('div', { className: 'h-3 w-full bg-violet-100 rounded mb-2' }),
-                h('div', { className: 'h-3 w-3/4 bg-violet-100 rounded' }))));
-
-    if (!data || !data.insight) return null;
-
-    const stats = data.stats || {};
-    const topCats = stats.topCategories || [];
-
-    return h('section', { 'data-light': '', className: 'px-6 py-6 bg-paper -mt-8' },
-        h('div', { className: 'mx-auto max-w-4xl' },
-            h('div', { className: 'rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-white p-5 md:p-6' },
-                h('div', { className: 'flex items-center gap-2 mb-4' },
-                    h('span', { className: 'inline-flex items-center gap-1.5 text-xs font-bold text-violet-700 bg-violet-100 rounded-full px-3 py-1' },
-                        '✦ AI Insights'),
-                    h('span', { className: 'text-xs text-muted' }, 'Dianalisis otomatis dari ' + (stats.total || 0).toLocaleString('id-ID') + ' laporan')),
-                h('p', { className: 'text-sm md:text-base text-warm-800 leading-relaxed' }, data.insight),
-                topCats.length > 0 && h('div', { className: 'mt-5 flex flex-wrap gap-2' },
-                    topCats.map(([cat, count]) =>
-                        h('span', { key: cat, className: 'text-xs bg-white border border-warm-200 rounded-lg px-3 py-1.5 text-warm-700' },
-                            cat + ' · ' + count))))));
 }
 
-function HomePage({ theme, setTheme }) {
-    const [menuOpen, setMenuOpen] = useState(false);
+function HomePage({ theme, setTheme }) {const [menuOpen, setMenuOpen] = useState(false);
     const onLight = useOnLight();
     const afterHero = useAfterHero();
 

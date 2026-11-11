@@ -371,8 +371,6 @@ function Stat({ label, value, strong, note, corner, valueColor }) {
 
 function Stats() {
     const [stats, setStats] = useState(STATS);
-    const [insight, setInsight] = useState(null);
-    const [loadingInsight, setLoadingInsight] = useState(true);
     
     useEffect(() => {
         fetch('/api/reports')
@@ -405,43 +403,15 @@ function Stats() {
             })
             .catch(err => console.error('Failed to load stats:', err));
     }, []);
-    
-    useEffect(() => {
-            fetch('/api/ai/insights')
-                .then(r => r.json())
-                .then(d => { setInsight(d.insight); setLoadingInsight(false); })
-                .catch(() => setLoadingInsight(false));
-        }, []);
-    
-        const [showInsight, setShowInsight] = useState(false);
-    
-            return h('section', { id: 'laporan', 'data-light': '', className: 'bg-paper px-6 py-20' },
-                h('div', { className: 'mx-auto w-full max-w-4xl' },
-                    h('div', { className: 'stats-heading mb-10 text-left' },
-                        h('h2', { className: 'text-4xl font-semibold tracking-[-0.035em] md:text-5xl' }, 'Rekam Jejak Pengaduan'),
-                        h('p', { className: 'mt-4 max-w-2xl text-muted' }, 'Sejauh mana suara warga didengar dan ditindaklanjuti oleh pihak berwenang.')),
-                    h('div', { className: 'grid grid-cols-2' }, stats.map((s) => h(Stat, { key: s.label, ...s }))),
-                    h(Actions),
-                    h('div', { className: 'mt-6' },
-                        h('button', {
-                            onClick: () => setShowInsight(!showInsight),
-                            className: 'inline-flex items-center gap-1.5 text-xs font-semibold text-violet-700 bg-violet-50 hover:bg-violet-100 border border-violet-200 rounded-lg px-3 py-1.5 transition'
-                        },
-                            h('i', { className: 'fa-solid fa-wand-magic-sparkles text-[10px]' }),
-                            h('span', null, showInsight ? 'Sembunyikan AI Insights' : 'Tampilkan AI Insights')
-                        ),
-                        showInsight && h('div', { className: 'mt-4 rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-white p-5 md:p-6 animate-slide-down' },
-                            h('div', { className: 'flex items-center gap-2 mb-3' },
-                                h('span', { className: 'inline-flex items-center gap-1.5 text-xs font-bold text-violet-700 bg-violet-100 rounded-full px-3 py-1' }, '✦ AI Insights'),
-                                h('span', { className: 'text-xs text-muted' }, 'Dianalisis otomatis dari ' + (stats[0]?.value || '0').replace(/\./g, '') + ' laporan')),
-                            loadingInsight
-                                ? h('div', { className: 'animate-pulse space-y-2' },
-                                    h('div', { className: 'h-4 bg-violet-100 rounded w-3/4' }),
-                                    h('div', { className: 'h-4 bg-violet-100 rounded w-1/2' }))
-                                : h('p', { className: 'text-sm md:text-base text-warm-800 leading-relaxed' }, insight)
-                        )
-                    )
-                ));
+
+    return h('section', { id: 'laporan', 'data-light': '', className: 'bg-paper px-6 py-20' },
+        h('div', { className: 'mx-auto w-full max-w-4xl' },
+            h('div', { className: 'stats-heading mb-10 text-left' },
+                h('h2', { className: 'text-4xl font-semibold tracking-[-0.035em] md:text-5xl' }, 'Rekam Jejak Pengaduan'),
+                h('p', { className: 'mt-4 max-w-2xl text-muted' }, 'Sejauh mana suara warga didengar dan ditindaklanjuti oleh pihak berwenang.')),
+            h('div', { className: 'grid grid-cols-2' }, stats.map((s) => h(Stat, { key: s.label, ...s }))),
+            h(Actions)
+        ));
 }
 
 /* ===== IKON (inline SVG, ikut warna teks) ===== */

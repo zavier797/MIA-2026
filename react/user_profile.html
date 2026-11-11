@@ -152,10 +152,10 @@
                 </a>
 
                 <div class="flex items-center gap-3 pl-4 border-l border-cream-200">
-                    <div class="w-9 h-9 rounded-full bg-cream-200 text-cocoa-600 font-semibold flex items-center justify-center text-sm">
-                        AW
+                    <div id="navAvatar" class="w-9 h-9 rounded-full bg-cream-200 text-cocoa-600 font-semibold flex items-center justify-center text-sm">
+                        —
                     </div>
-                    <span class="hidden md:inline-block text-sm font-semibold text-ink">Ahmad Warga</span>
+                    <span id="navName" class="hidden md:inline-block text-sm font-semibold text-ink">Memuat…</span>
                 </div>
             </div>
         </div>
@@ -168,9 +168,9 @@
         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-10">
             <!-- Avatar -->
             <div class="shrink-0 flex flex-col items-center gap-3">
-                <div class="w-24 h-24 rounded-full bg-cream-200 text-cocoa-600 font-serif font-semibold text-3xl flex items-center justify-center">
-                    AW
-                </div>
+                <div id="profileAvatar" class="w-24 h-24 rounded-full bg-cream-200 text-cocoa-600 font-serif font-semibold text-3xl flex items-center justify-center">
+                        —
+                    </div>
                 <button class="text-sm font-semibold text-ochre hover:text-cocoa-800 underline underline-offset-4 decoration-ochre/40 transition" title="Ubah Foto Profil">
                     Ubah foto
                 </button>
@@ -180,10 +180,10 @@
             <div class="w-full flex-1 sm:pt-2 flex flex-col lg:flex-row lg:items-start lg:gap-8">
                 <div class="text-center sm:text-left space-y-2 flex-1">
                     <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">
-                        <h1 class="font-serif font-semibold text-3xl text-ink tracking-tight">Ahmad Warga</h1>
+                        <h1 id="profileName" class="font-serif font-semibold text-3xl text-ink tracking-tight">Memuat…</h1>
                     </div>
 
-                    <p class="text-ink text-sm sm:text-base">ahmad@warga.id</p>
+                    <p id="profileEmail" class="text-ink text-sm sm:text-base">memuat@aksiwarga.com</p>
 
                     <p class="text-ink-soft text-sm">Anggota sejak 12 Januari 2026</p>
                 </div>
@@ -219,13 +219,13 @@
                     <!-- Nama Lengkap -->
                     <div>
                         <label for="profNama" class="block text-sm font-semibold text-ink mb-1.5">Nama Lengkap</label>
-                        <input type="text" id="profNama" value="Ahmad Warga" required class="w-full bg-cream-50 border border-cream-300 text-ink text-base rounded-xl px-4 py-3 focus:border-ochre focus:ring-1 focus:ring-ochre focus:outline-none transition">
+                        <input type="text" id="profNama" value="" placeholder="Nama lengkap" required class="w-full bg-cream-50 border border-cream-300 text-ink text-base rounded-xl px-4 py-3 focus:border-ochre focus:ring-1 focus:ring-ochre focus:outline-none transition">
                     </div>
 
                     <!-- Email -->
                     <div>
                         <label for="profEmail" class="block text-sm font-semibold text-ink mb-1.5">Alamat Email</label>
-                        <input type="email" id="profEmail" value="ahmad@warga.id" required class="w-full bg-cream-50 border border-cream-300 text-ink text-base rounded-xl px-4 py-3 focus:border-ochre focus:ring-1 focus:ring-ochre focus:outline-none transition">
+                        <input type="email" id="profEmail" value="" placeholder="email@contoh.com" required class="w-full bg-cream-50 border border-cream-300 text-ink text-base rounded-xl px-4 py-3 focus:border-ochre focus:ring-1 focus:ring-ochre focus:outline-none transition">
                     </div>
 
                     <!-- WhatsApp -->
@@ -370,6 +370,29 @@
 
     <!-- JAVASCRIPT CONTROLLER -->
     <script>
+        // Load real user identity from session
+        (async function loadProfile() {
+            try {
+                const resp = await fetch('/api/auth/me');
+                if (!resp.ok) throw new Error('Sesi tidak ditemukan');
+                const { user } = await resp.json();
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                const initials = user.name.split(/\s+/).map(p => p[0]).join('').slice(0, 2).toUpperCase();
+                document.getElementById('navAvatar').textContent = initials;
+                document.getElementById('navName').textContent = user.name;
+                document.getElementById('profileAvatar').textContent = initials;
+                document.getElementById('profileName').textContent = user.name;
+                document.getElementById('profileEmail').textContent = user.email;
+                document.getElementById('profNama').value = user.name;
+                document.getElementById('profEmail').value = user.email;
+            } catch (err) {
+                window.location.href = 'login.html';
+            }
+        })();
+
         const TAB_ACTIVE = "tab-btn active px-1 pb-3 -mb-px text-sm sm:text-base font-semibold text-ink border-b-2 border-ochre transition";
         const TAB_INACTIVE = "tab-btn px-1 pb-3 -mb-px text-sm sm:text-base font-medium text-ink-soft hover:text-ink border-b-2 border-transparent transition";
 
@@ -405,17 +428,43 @@
             btnElement.className = TAB_ACTIVE;
         }
 
-        function handleSaveProfile(e) {
+        async function handleSaveProfile(e) {
             e.preventDefault();
             const btn = document.getElementById('btnSave');
             btn.disabled = true;
             btn.textContent = "Menyimpan...";
 
-            setTimeout(() => {
+            const payload = {
+                name: document.getElementById('profNama').value,
+                phone: document.getElementById('profWA').value
+            };
+            const newPass = document.getElementById('passBaru').value;
+            if (newPass) payload.password = newPass;
+
+            try {
+                const resp = await fetch('/api/auth/update-profile', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!resp.ok) throw new Error('Gagal menyimpan perubahan.');
+                const data = await resp.json();
+                // Update tampilan dengan data baru dari server
+                if (data.user) {
+                    const initials = data.user.name.split(/\s+/).map(p => p[0]).join('').slice(0, 2).toUpperCase();
+                    document.getElementById('navName').textContent = data.user.name;
+                    document.getElementById('navAvatar').textContent = initials;
+                    document.getElementById('profileAvatar').textContent = initials;
+                    document.getElementById('profileName').textContent = data.user.name;
+                    document.getElementById('profileEmail').textContent = data.user.email;
+                }
                 showToast("Profil Diperbarui!", "Informasi akun berhasil disimpan.", "success");
+            } catch (err) {
+                showToast("Gagal", err.message || "Tidak dapat menyimpan perubahan.", "info");
+            } finally {
                 btn.disabled = false;
                 btn.textContent = "Simpan Perubahan";
-            }, 900);
+            }
         }
 
         async function handleLogout() {

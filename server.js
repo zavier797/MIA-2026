@@ -238,6 +238,30 @@ async function handleApi(request, response, url) {
         return sendJson(response, 200, { ok: true });
     }
 
+    // Update profile (name, phone, password)
+    if (request.method === 'POST' && url.pathname === '/api/auth/update-profile') {
+        const session = sessionUser(request);
+        if (!session) return sendJson(response, 401, { error: 'Tidak ada sesi aktif.' });
+        let body;
+        try { body = await readJsonBody(request); }
+        catch (err) { return sendJson(response, err.status || 400, { error: err.message || 'Format JSON tidak valid.' }); }
+
+        const users = readAccounts();
+        const idx = users.findIndex(u => u.email === session.account.email);
+        if (idx === -1) return sendJson(response, 404, { error: 'Akun tidak ditemukan.' });
+
+        if (body.name && body.name.trim()) users[idx].name = body.name.trim();
+        if (body.phone) users[idx].phone = body.phone.trim();
+        if (body.password && body.password.length >= 6) {
+            const salt = users[idx].passwordSalt || crypto.randomBytes(16).toString('hex');
+            users[idx].passwordSalt = salt;
+            users[idx].passwordHash = crypto.pbkdf2Sync(body.password, salt, 120000, 32, 'sha256').toString('hex');
+        }
+
+        writeAccounts(users);
+        return sendJson(response, 200, { ok: true, user: publicUser(users[idx]) });
+    }
+
     // OAuth: GitHub Login
     if (request.method === 'GET' && url.pathname === '/api/auth/github') {
         if (OAUTH_DEMO_MODE) {

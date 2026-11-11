@@ -287,6 +287,14 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
+        // Pre-fill reporter name from session
+        fetch('/api/auth/me').then(r => r.json()).then(({ user }) => {
+            if (user) {
+                const nameField = document.getElementById('namaLengkap');
+                if (nameField && !nameField.value) nameField.value = user.name;
+            }
+        }).catch(() => {});
+
         // File Upload Handler
         function handleFileSelect(event) {
             const file = event.target.files[0];

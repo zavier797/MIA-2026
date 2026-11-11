@@ -269,19 +269,19 @@
                 <!-- 3 METRIK STATISTIK -->
                 <div class="bg-white/60 border border-cream-200 rounded-2xl grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-cream-200">
                     <div class="p-6">
-                        <span class="font-serif font-semibold text-4xl text-ink block leading-none">5</span>
+                        <span id="statTotal" class="font-serif font-semibold text-4xl text-ink block leading-none">—</span>
                         <span class="text-sm text-ink-soft block mt-3">Total Laporan</span>
                         <span class="text-sm font-semibold text-ink block">Dibuat</span>
                     </div>
 
                     <div class="p-6">
-                        <span class="font-serif font-semibold text-4xl text-ochre block leading-none">2</span>
+                        <span id="statProses" class="font-serif font-semibold text-4xl text-ochre block leading-none">—</span>
                         <span class="text-sm text-ink-soft block mt-3">Dalam Proses</span>
                         <span class="text-sm font-semibold text-ochre block">Sedang Ditangani</span>
                     </div>
 
                     <div class="p-6">
-                        <span class="font-serif font-semibold text-4xl text-[#3f6b2e] block leading-none">3</span>
+                        <span id="statSelesai" class="font-serif font-semibold text-4xl text-[#3f6b2e] block leading-none">—</span>
                         <span class="text-sm text-ink-soft block mt-3">Selesai</span>
                         <span class="text-sm font-semibold text-[#3f6b2e] block">Tuntas Ditangani</span>
                     </div>
@@ -299,7 +299,7 @@
                         </a>
                     </div>
 
-                    <div class="overflow-x-auto">
+                    <div id="reportList" class="overflow-x-auto">
                         <table class="w-full min-w-[640px] text-left text-sm text-ink">
                             <thead class="text-ink-soft font-medium border-b border-cream-200">
                                 <tr>
@@ -310,45 +310,16 @@
                                     <th class="px-4 py-3 font-medium">Status</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-cream-200">
-                                <tr class="hover:bg-cream-100/70 transition">
-                                    <td class="px-4 py-4 text-ochre font-semibold tabular-nums">#TRW-2026-991</td>
-                                    <td class="px-4 py-4 text-ink font-medium">Jalan Berlubang Parah di Fatmawati</td>
-                                    <td class="px-4 py-4">Infrastruktur</td>
-                                    <td class="px-4 py-4 text-ink-soft">06 Mar 2026</td>
-                                    <td class="px-4 py-4">
-                                        <span class="bg-[#fbefd5] text-[#8a5a0b] font-semibold px-3 py-1 rounded-full text-xs">Diproses</span>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-cream-100/70 transition">
-                                    <td class="px-4 py-4 text-ochre font-semibold tabular-nums">#TRW-2026-842</td>
-                                    <td class="px-4 py-4 text-ink font-medium">PJU Mati di Area Taman Kota</td>
-                                    <td class="px-4 py-4">Fasilitas Umum</td>
-                                    <td class="px-4 py-4 text-ink-soft">02 Mar 2026</td>
-                                    <td class="px-4 py-4">
-                                        <span class="bg-[#fbefd5] text-[#8a5a0b] font-semibold px-3 py-1 rounded-full text-xs">Diproses</span>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-cream-100/70 transition">
-                                    <td class="px-4 py-4 text-ochre font-semibold tabular-nums">#TRW-2026-701</td>
-                                    <td class="px-4 py-4 text-ink font-medium">Penumpukan Sampah liar RT 05</td>
-                                    <td class="px-4 py-4">Kebersihan</td>
-                                    <td class="px-4 py-4 text-ink-soft">20 Feb 2026</td>
-                                    <td class="px-4 py-4">
-                                        <span class="bg-[#e3eedc] text-[#3f6b2e] font-semibold px-3 py-1 rounded-full text-xs">Selesai</span>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-cream-100/70 transition">
-                                    <td class="px-4 py-4 text-ochre font-semibold tabular-nums">#TRW-2026-610</td>
-                                    <td class="px-4 py-4 text-ink font-medium">Genangan Air akibat Saluran Tersumbat</td>
-                                    <td class="px-4 py-4">Infrastruktur</td>
-                                    <td class="px-4 py-4 text-ink-soft">14 Feb 2026</td>
-                                    <td class="px-4 py-4">
-                                        <span class="bg-[#e3eedc] text-[#3f6b2e] font-semibold px-3 py-1 rounded-full text-xs">Selesai</span>
-                                    </td>
-                                </tr>
-                            </tbody>
+                            <tbody id="reportTableBody" class="divide-y divide-cream-200"></tbody>
                         </table>
+                        <div id="reportEmpty" class="hidden text-center py-12 space-y-3">
+                            <div class="w-14 h-14 mx-auto rounded-full bg-cream-100 flex items-center justify-center">
+                                <svg class="w-7 h-7 text-ink-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            </div>
+                            <p class="text-ink font-semibold">Belum ada laporan</p>
+                            <p class="text-ink-soft text-sm">Anda belum pernah mengirim pengaduan. Buat laporan pertama Anda sekarang.</p>
+                            <a href="form_pengaduan.html" class="inline-block bg-cocoa-700 hover:bg-cocoa-800 text-cream-50 font-semibold py-2.5 px-6 rounded-xl text-sm transition">Buat Pengaduan</a>
+                        </div>
                     </div>
                 </div>
 
@@ -388,10 +359,61 @@
                 document.getElementById('profileEmail').textContent = user.email;
                 document.getElementById('profNama').value = user.name;
                 document.getElementById('profEmail').value = user.email;
+
+                // Load user's reports for Aktivitas tab
+                try {
+                    const reportsResp = await fetch('/api/reports?reporterEmail=' + encodeURIComponent(user.email));
+                    if (reportsResp.ok) {
+                        const reportsData = await reportsResp.json();
+                        populateAktivitas(reportsData.reports || []);
+                    }
+                } catch (e) { /* reports load optional */ }
             } catch (err) {
                 window.location.href = 'login.html';
             }
         })();
+
+        function populateAktivitas(reports) {
+            const total = reports.length;
+            const proses = reports.filter(r => r.status && r.status !== 'resolved' && r.status !== 'selesai').length;
+            const selesai = reports.filter(r => r.status === 'resolved' || r.status === 'selesai').length;
+
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statProses').textContent = proses;
+            document.getElementById('statSelesai').textContent = selesai;
+
+            const tbody = document.getElementById('reportTableBody');
+            const emptyDiv = document.getElementById('reportEmpty');
+            const table = tbody.closest('table');
+
+            if (total === 0) {
+                table.classList.add('hidden');
+                emptyDiv.classList.remove('hidden');
+                return;
+            }
+
+            table.classList.remove('hidden');
+            emptyDiv.classList.add('hidden');
+
+            const statusMap = {
+                pending:    { label: 'Menunggu',  cls: 'bg-[#f0e8d8] text-[#7a5a0b]' },
+                in_progress:{ label: 'Diproses',  cls: 'bg-[#fbefd5] text-[#8a5a0b]' },
+                resolved:   { label: 'Selesai',   cls: 'bg-[#e3eedc] text-[#3f6b2e]' },
+                rejected:   { label: 'Ditolak',   cls: 'bg-[#f8e0dc] text-[#9b3b2e]' }
+            };
+
+            tbody.innerHTML = reports.map(r => {
+                const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-';
+                const st = statusMap[r.status] || { label: r.status || '—', cls: 'bg-cream-100 text-ink-soft' };
+                return `<tr class="hover:bg-cream-100/70 transition">
+                    <td class="px-4 py-4 text-ochre font-semibold tabular-nums">${r.id}</td>
+                    <td class="px-4 py-4 text-ink font-medium">${r.title || '—'}</td>
+                    <td class="px-4 py-4">${r.category || '—'}</td>
+                    <td class="px-4 py-4 text-ink-soft">${date}</td>
+                    <td class="px-4 py-4"><span class="${st.cls} font-semibold px-3 py-1 rounded-full text-xs">${st.label}</span></td>
+                </tr>`;
+            }).join('');
+        }
 
         const TAB_ACTIVE = "tab-btn active px-1 pb-3 -mb-px text-sm sm:text-base font-semibold text-ink border-b-2 border-ochre transition";
         const TAB_INACTIVE = "tab-btn px-1 pb-3 -mb-px text-sm sm:text-base font-medium text-ink-soft hover:text-ink border-b-2 border-transparent transition";

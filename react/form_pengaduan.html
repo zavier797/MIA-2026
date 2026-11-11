@@ -274,26 +274,31 @@
 
     <!-- TOAST NOTIFICATION CONTAINER -->
     <div id="toast" class="fixed bottom-6 right-6 z-50 hidden transition-all duration-300 transform translate-y-4">
-        <div class="bg-white border border-emerald-200 text-warm-900 px-5 py-4 rounded-2xl shadow-lg flex items-center gap-3.5 text-xs max-w-md">
-            <div class="w-8 h-8 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700 shrink-0">
-                <i class="fa-solid fa-circle-check text-sm"></i>
+        <div id="toastBody" class="bg-white border px-5 py-4 rounded-2xl shadow-lg flex items-center gap-3.5 text-xs max-w-md">
+            <div id="toastIcon" class="w-8 h-8 rounded-full flex items-center justify-center shrink-0">
             </div>
             <div>
-                <span class="font-bold text-warm-900 block">Laporan Berhasil Terkirim!</span>
-                <span class="text-warm-700 text-[11px]" id="toastMsg">Nomor Resi Unik Anda: #TRW-2026-991</span>
+                <span class="font-bold block" id="toastTitle">Laporan Berhasil Terkirim!</span>
+                <span class="text-[11px]" id="toastMsg">Nomor Resi Unik Anda: #TRW-2026-991</span>
             </div>
         </div>
     </div>
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Pre-fill reporter name from session
+        // Pre-fill reporter name & email from session, redirect if not logged in
         fetch('/api/auth/me').then(r => r.json()).then(({ user }) => {
-            if (user) {
-                const nameField = document.getElementById('namaLengkap');
-                if (nameField && !nameField.value) nameField.value = user.name;
+            if (!user) {
+                window.location.href = 'login.html?redirect=form_pengaduan.html';
+                return;
             }
-        }).catch(() => {});
+            const nameField = document.getElementById('namaLengkap');
+            const emailField = document.getElementById('emailPelapor');
+            if (nameField && !nameField.value) nameField.value = user.name;
+            if (emailField && !emailField.value) emailField.value = user.email;
+        }).catch(() => {
+            window.location.href = 'login.html?redirect=form_pengaduan.html';
+        });
 
         // File Upload Handler
         function handleFileSelect(event) {
@@ -339,32 +344,47 @@
                 const result = await response.json();
                 
                 if (response.ok) {
-                    showToast(`Nomor Resi Unik Anda: ${result.report.id}`);
+                    showToast('success', 'Laporan Berhasil Dibuat!', `Nomor Resi: ${result.report.id}`);
                     btn.innerHTML = `<span>Laporan Terkirim!</span>`;
                     setTimeout(() => {
                         window.location.href = `lacak_progress.html?id=${result.report.id}`;
-                    }, 1800);
+                    }, 2000);
                 } else {
-                    alert(result.error || 'Gagal mengirim laporan. Coba lagi.');
+                    showToast('error', 'Gagal Mengirim Laporan', result.error || 'Terjadi kesalahan. Coba lagi.');
                     btn.disabled = false;
                     btn.innerHTML = `<span>Kirim Pengaduan Warga</span>`;
                 }
             } catch (err) {
-                alert('Koneksi gagal. Pastikan server berjalan.');
+                showToast('error', 'Gagal Mengirim Laporan', 'Koneksi gagal. Pastikan server berjalan.');
                 btn.disabled = false;
                 btn.innerHTML = `<span>Kirim Pengaduan Warga</span>`;
             }
         }
 
-        function showToast(message) {
+        function showToast(type, title, message) {
             const toast = document.getElementById('toast');
+            const body = document.getElementById('toastBody');
+            const icon = document.getElementById('toastIcon');
+            
+            document.getElementById('toastTitle').textContent = title;
             document.getElementById('toastMsg').textContent = message;
+
+            if (type === 'success') {
+                body.className = 'bg-white border-emerald-200 text-warm-900 px-5 py-4 rounded-2xl shadow-lg flex items-center gap-3.5 text-xs max-w-md';
+                icon.className = 'w-8 h-8 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700 shrink-0';
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-sm"></i>';
+            } else {
+                body.className = 'bg-white border-red-300 text-warm-900 px-5 py-4 rounded-2xl shadow-lg flex items-center gap-3.5 text-xs max-w-md';
+                icon.className = 'w-8 h-8 rounded-full bg-red-50 border border-red-300 flex items-center justify-center text-red-600 shrink-0';
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-sm"></i>';
+            }
+
             toast.classList.remove('hidden', 'translate-y-4');
             toast.classList.add('translate-y-0');
 
             setTimeout(() => {
                 toast.classList.add('translate-y-4', 'hidden');
-            }, 3500);
+            }, 4000);
         }
     </script>
 </body>

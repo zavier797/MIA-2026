@@ -323,7 +323,9 @@ function MenuPanel({ open, setOpen }) {
 
 /* ===== HERO (background tidak diubah) ===== */
 function Hero() {
+    const { isLoggedIn } = useAuth();
     const btn = 'w-full rounded-full px-7 py-3.5 text-center text-sm font-medium transition sm:w-auto';
+    const reportHref = isLoggedIn ? REPORT_FORM_URL : (LOGIN_URL + '?redirect=form_pengaduan.html');
     return h('section', { id: 'beranda', className: 'relative flex min-h-screen items-center justify-center overflow-hidden' },
         h('div', { className: 'absolute inset-0 z-0 bg-cover bg-center', style: { backgroundImage: "url('../asset/all%20in%20one.jpg')" } }),
         h('div', { className: 'absolute inset-0 z-0 bg-slate-950/60' }),
@@ -334,7 +336,7 @@ function Hero() {
                 'Mulai dari tumpukan sampah hingga antrean bansos—kini warga bisa mengawasi kinerja pelayanan publik tanpa batasan birokrasi.'),
             h('div', { className: 'mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row' },
                 h('a', { href: '#peta', className: btn + ' hero-map-link' }, 'Lihat Peta'),
-                h('a', { href: 'form_pengaduan.html', className: btn + ' border border-white/50 text-white hover:bg-white/10' }, 'Laporkan Masalah'))));
+                h('a', { href: reportHref, className: btn + ' border border-white/50 text-white hover:bg-white/10' }, 'Laporkan Masalah'))));
 }
 
 /* ===== KOTAK DATA: outline dihitung dari ukuran kotak ===== */
@@ -432,13 +434,17 @@ function Heading({ title, sub }) {
 
 /* ===== REKAM JEJAK: tombol Pengaduan Baru & Status Laporan ===== */
 const ACTIONS = [
-    { icon: 'plus', title: 'Pengaduan Baru', desc: 'Laporkan masalah atau keluhan Anda untuk ditindaklanjuti.', href: REPORT_FORM_URL },
-    { icon: 'clock', title: 'Status Laporan', desc: 'Pantau perkembangan laporan Anda dari masuk hingga selesai.', href: USER_PROFILE_URL },
+    { icon: 'plus', title: 'Pengaduan Baru', desc: 'Laporkan masalah atau keluhan Anda untuk ditindaklanjuti.', href: REPORT_FORM_URL, requiresLogin: true },
+    { icon: 'clock', title: 'Status Laporan', desc: 'Pantau perkembangan laporan Anda dari masuk hingga selesai.', href: USER_PROFILE_URL, requiresLogin: true },
 ];
 function Actions() {
-    return h('div', { className: 'actions bleed' }, ACTIONS.map((a) => h('a', { key: a.title, href: a.href, className: 'action' },
-        h('span', { className: 'action-head' }, h('span', { className: 'action-ico' }, h(Icon, { name: a.icon })), h('strong', null, a.title)),
-        h('span', { className: 'action-desc' }, a.desc))));
+    const { isLoggedIn } = useAuth();
+    return h('div', { className: 'actions bleed' }, ACTIONS.map((a) => {
+        const href = a.requiresLogin && !isLoggedIn ? (LOGIN_URL + '?redirect=' + a.href.split('/').pop()) : a.href;
+        return h('a', { key: a.title, href, className: 'action' },
+            h('span', { className: 'action-head' }, h('span', { className: 'action-ico' }, h(Icon, { name: a.icon })), h('strong', null, a.title)),
+            h('span', { className: 'action-desc' }, a.desc));
+    }));
 }
 
 /* ===== PETA INTERAKTIF ===== */

@@ -207,18 +207,25 @@ function App() {
     try {
       const r = await loginRequest({ ...f, email: f.email.trim() });
       if (!r || !r.ok) throw new Error();
-      window.location.href = ROUTES.dashboard;
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect');
+      window.location.href = redirect || ROUTES.dashboard;
     } catch (ex) {
       setErr({ form: ex.message || 'Email atau kata sandi salah. Periksa kembali lalu coba lagi.' });
       setBusy(false);
     }
   };
 
-  const social = (provider, Logo, label) => (
-    <button type="button" className="soc" onClick={() => window.location.href = `/api/auth/${provider}`}>
+  const social = (provider, Logo, label) => {
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get('redirect');
+    const href = redirect ? `/api/auth/${provider}?redirect=${encodeURIComponent(redirect)}` : `/api/auth/${provider}`;
+    return (
+    <button type="button" className="soc" onClick={() => window.location.href = href}>
       <Logo /> {label}
     </button>
-  );
+    );
+  };
 
   return (
     <div className="page">

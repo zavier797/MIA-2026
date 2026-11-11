@@ -281,12 +281,13 @@ async function handleApi(request, response, url) {
             };
             writeAccounts([...users, account]);
             setSession(response, account);
-            response.writeHead(302, { Location: '/?oauth=success&provider=github' });
+            const redirectTo = url.searchParams.get('redirect') || '/';
+            response.writeHead(302, { Location: redirectTo + (redirectTo.includes('?') ? '&' : '?') + 'oauth=success&provider=github' });
             return response.end();
         }
         
         const state = crypto.randomBytes(16).toString('hex');
-        oauthState.set(state, { createdAt: Date.now(), provider: 'github' });
+        oauthState.set(state, { createdAt: Date.now(), provider: 'github', redirect: url.searchParams.get('redirect') });
         const redirectUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(OAUTH_CALLBACK_URL + '/api/auth/github/callback')}&state=${state}&scope=user:email`;
         response.writeHead(302, { Location: redirectUrl });
         return response.end();
@@ -301,6 +302,7 @@ async function handleApi(request, response, url) {
             response.writeHead(302, { Location: '/login.html?error=invalid_state' });
             return response.end();
         }
+        const stateData = oauthState.get(state);
         oauthState.delete(state);
 
         try {
@@ -361,7 +363,8 @@ async function handleApi(request, response, url) {
             }
 
             setSession(response, account);
-            response.writeHead(302, { Location: '/' });
+            const redirectTo = stateData?.redirect || '/';
+            response.writeHead(302, { Location: redirectTo });
             return response.end();
         } catch (error) {
             response.writeHead(302, { Location: '/login.html?error=oauth_failed' });
@@ -388,12 +391,13 @@ async function handleApi(request, response, url) {
             };
             writeAccounts([...users, account]);
             setSession(response, account);
-            response.writeHead(302, { Location: '/?oauth=success&provider=google' });
+            const redirectTo = url.searchParams.get('redirect') || '/';
+            response.writeHead(302, { Location: redirectTo + (redirectTo.includes('?') ? '&' : '?') + 'oauth=success&provider=google' });
             return response.end();
         }
         
         const state = crypto.randomBytes(16).toString('hex');
-        oauthState.set(state, { createdAt: Date.now(), provider: 'google' });
+        oauthState.set(state, { createdAt: Date.now(), provider: 'google', redirect: url.searchParams.get('redirect') });
         const redirectUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(OAUTH_CALLBACK_URL + '/api/auth/google/callback')}&response_type=code&scope=email%20profile&state=${state}`;
         response.writeHead(302, { Location: redirectUrl });
         return response.end();
@@ -408,6 +412,7 @@ async function handleApi(request, response, url) {
             response.writeHead(302, { Location: '/login.html?error=invalid_state' });
             return response.end();
         }
+        const stateData = oauthState.get(state);
         oauthState.delete(state);
 
         try {
@@ -461,7 +466,8 @@ async function handleApi(request, response, url) {
             }
 
             setSession(response, account);
-            response.writeHead(302, { Location: '/' });
+            const redirectTo = stateData?.redirect || '/';
+            response.writeHead(302, { Location: redirectTo });
             return response.end();
         } catch (error) {
             response.writeHead(302, { Location: '/login.html?error=oauth_failed' });
@@ -575,9 +581,11 @@ async function handleApi(request, response, url) {
         const data = readReports();
         const status = url.searchParams.get('status');
         const category = url.searchParams.get('category');
+        const reporterEmail = url.searchParams.get('reporterEmail');
         let filtered = data.reports;
         if (status) filtered = filtered.filter((r) => r.status === status);
         if (category) filtered = filtered.filter((r) => r.category === category);
+        if (reporterEmail) filtered = filtered.filter((r) => r.reporterEmail && r.reporterEmail.toLowerCase() === reporterEmail.toLowerCase());
         return sendJson(response, 200, { reports: filtered, total: filtered.length });
     }
 

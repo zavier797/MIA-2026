@@ -778,6 +778,156 @@ async function handleApi(request, response, url) {
         }
     }
 
+    // AI: Chatbot asisten virtual
+    if (request.method === 'POST' && url.pathname === '/api/ai/chat') {
+        const body = await readJsonBody(request);
+        const question = typeof body.question === 'string' ? body.question.trim().slice(0, 500) : '';
+        if (!question) return sendJson(response, 400, { error: 'Pertanyaan harus diisi.' });
+        if (!AI_GATEWAY_URL) return sendJson(response, 503, { error: 'AI tidak tersedia.' });
+
+        const data = readReports();
+        const reports = data.reports;
+        const byCategory = {}, byStatus = {}, byProvince = {};
+        for (const r of reports) {
+            byCategory[r.category] = (byCategory[r.category] || 0) + 1;
+            byStatus[r.status] = (byStatus[r.status] || 0) + 1;
+            byProvince[r.province] = (byProvince[r.province] || 0) + 1;
+        }
+        const recent = reports.slice(-5).reverse().map(r =>
+            `- ${r.title} (${r.category}, ${r.status}, ${r.province})`).join('\n');
+
+        const context = `Anda adalah Asisten AksiWarga, bot virtual platform pengaduan warga Indonesia. Jawab pertanyaan warga dengan ramah, singkat, dan akurat dalam Bahasa Indonesia.
+
+Data laporan saat ini:
+- Total: ${reports.length} laporan
+- Status: ${Object.entries(byStatus).map(([k,v]) => `${k}=${v}`).join(', ')}
+- Kategori: ${Object.entries(byCategory).map(([k,v]) => `${k}=${v}`).join(', ')}
+- Provinsi: ${Object.entries(byProvince).map(([k,v]) => `${k}=${v}`).join(', ')}
+
+Laporan terbaru:
+${recent}
+
+Pertanyaan: "${question}"
+
+Jawab MAX 3 kalimat, ramah, faktual. Jika di luar topik pengaduan/AksiWarga, arahkan kembali. Jangan minta maaf berlebihan.`;
+
+        try {
+            const aiResp = await fetch(`${AI_GATEWAY_URL}/chat/completions`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${AI_GATEWAY_KEY}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: AI_MODEL, stream: false, max_tokens: 200, temperature: 0.3,
+                    messages: [{ role: 'user', content: context }]
+                })
+            });
+            const aiData = await aiResp.json();
+            const answer = aiData.choices?.[0]?.message?.content?.trim() || 'Maaf, saya tidak bisa menjawab saat ini.';
+            return sendJson(response, 200, { answer, aiPowered: true });
+        } catch (err) {
+            return sendJson(response, 500, { error: 'AI tidak merespons.' });
+        }
+    }
+
+    // AI: Personalized user summary
+    if (request.method === 'GET' && url.pathname === '/api/ai/user-summary') {
+        const email = url.searchParams.get('email');
+        if (!email) return sendJson(response, 400, { error: 'Email diperlukan.' });
+        if (!AI_GATEWAY_URL) return sendJson(response, 503, { error: 'AI tidak tersedia.' });
+
+        const data = readReports();
+        const userReports = data.reports.filter(r =>
+            r.reporterEmail && r.reporterEmail.toLowerCase() === email.toLowerCase());
+
+        if (userReports.length === 0) return sendJson(response, 200, { summary: 'Belum ada laporan. Mulai buat pengaduan pertama Anda!', aiPowered: false });
+
+        const byCat = {}, byStatus = {};
+        for (const r of userReports) {
+            byCat[r.category] = (byCat[r.category] || 0) + 1;
+            byStatus[r.status] = (byStatus[r.status] || 0) + 1;
+        }
+        const recentTitles = userReports.slice(-3).reverse().map(r => `- ${r.title} (${r.status})`).join('\n');
+
+        const context = `Anda adalah asisten AksiWarga. Buat ringkasan aktivitas pengaduan warga dalam Bahasa Indonesia, ramah dan personal (maks 3 kalimat).
+
+Data laporan warga ini:
+- Total laporan: ${userReports.length}
+- Kategori: ${Object.entries(byCat).map(([k,v]) => `${k}=${v}`).join(', ')}
+- Status: ${Object.entries(byStatus).map(([k,v]) => `${k}=${v}`).join(', ')}
+- Laporan terbaru:
+${recentTitles}
+
+Beri ringkasan aktivitas + 1 saran atau semangat. Jangan pakai markdown.`;
+
+        try {
+            const aiResp = await fetch(`${AI_GATEWAY_URL}/chat/completions`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${AI_GATEWAY_KEY}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: AI_MODEL, stream: false, max_tokens: 200, temperature: 0.5,
+                    messages: [{ role: 'user', content: context }]
+                })
+            });
+            const aiData = await aiResp.json();
+            const summary = aiData.choices?.[0]?.message?.content?.trim() || '';
+            return sendJson(response, 200, { summary, aiPowered: true });
+        } catch (err) {
+            return sendJson(response, 500, { error: 'AI gagal membuat ringkasan.' });
+        }
+    }
+
+    // AI: Duplicate detection
+    if (request.method === 'POST' && url.pathname === '/api/ai/duplicate-check') {
+        const body = await readJsonBody(request);
+        const description = typeof body.description === 'string' ? body.description.trim().slice(0, 500) : '';
+        const location = typeof body.location === 'string' ? body.location.trim().slice(0, 200) : '';
+        if (!description) return sendJson(response, 400, { error: 'Deskripsi diperlukan.' });
+        if (!AI_GATEWAY_URL) return sendJson(response, 200, { duplicate: false, aiPowered: false });
+
+        const data = readReports();
+        // Get recent reports with same location or similar category
+        const candidates = data.reports
+            .filter(r => r.location && location &&
+                r.location.toLowerCase().includes(location.toLowerCase().split(',')[0]) ||
+                (r.province && location.toLowerCase().includes(r.province.toLowerCase())))
+            .slice(-10)
+            .map(r => `ID ${r.id}: ${r.title} — ${r.description?.slice(0, 100)} (${r.status})`)
+            .join('\n');
+
+        if (!candidates) return sendJson(response, 200, { duplicate: false, aiPowered: true, message: 'Tidak ada laporan serupa.' });
+
+        const context = `Bandingkan pengaduan baru dengan laporan yang sudah ada. Apakah ada yang sangat mirip (duplikat)?
+
+Pengaduan baru: "${description}" (lokasi: ${location || 'tidak disebutkan'})
+
+Laporan yang sudah ada:
+${candidates}
+
+Jawab JSON: {"isDuplicate": true/false, "similarId": "ID atau null", "reason": "alasan singkat"}`;
+
+        try {
+            const aiResp = await fetch(`${AI_GATEWAY_URL}/chat/completions`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${AI_GATEWAY_KEY}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: AI_MODEL, stream: false, max_tokens: 100, temperature: 0.1,
+                    messages: [{ role: 'user', content: context }]
+                })
+            });
+            const aiData = await aiResp.json();
+            let content = aiData.choices?.[0]?.message?.content || '{}';
+            content = content.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+            const parsed = JSON.parse(content);
+            return sendJson(response, 200, {
+                duplicate: !!parsed.isDuplicate,
+                similarId: parsed.similarId || null,
+                reason: parsed.reason || '',
+                aiPowered: true
+            });
+        } catch (err) {
+            return sendJson(response, 200, { duplicate: false, aiPowered: true, message: 'Cek duplikat dilewati.' });
+        }
+    }
+
     return sendJson(response, 404, { error: 'Endpoint tidak ditemukan.' });
 }
 

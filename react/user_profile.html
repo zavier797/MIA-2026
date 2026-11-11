@@ -214,6 +214,15 @@
                     <p class="text-ink-soft text-sm mt-1">Kelola data profil dan kontak Anda di bawah ini.</p>
                 </div>
 
+                <!-- AI Summary Card -->
+                <div id="aiSummaryCard" class="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-white p-5">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="inline-flex items-center gap-1 text-xs font-bold text-violet-700 bg-violet-100 rounded-full px-2.5 py-0.5">✦ Ringkasan AI</span>
+                        <span id="aiSummaryLoading" class="text-xs text-violet-400 animate-pulse">Menganalisis aktivitas Anda...</span>
+                    </div>
+                    <p id="aiSummaryText" class="text-sm text-ink leading-relaxed"></p>
+                </div>
+
                 <form onsubmit="handleSaveProfile(event)" class="space-y-5 max-w-xl">
 
                     <!-- Nama Lengkap -->
@@ -368,6 +377,16 @@
                         populateAktivitas(reportsData.reports || []);
                     }
                 } catch (e) { /* reports load optional */ }
+
+                // Load AI summary
+                try {
+                    const aiResp = await fetch('/api/ai/user-summary?email=' + encodeURIComponent(user.email));
+                    const aiData = await aiResp.json();
+                    document.getElementById('aiSummaryLoading').classList.add('hidden');
+                    document.getElementById('aiSummaryText').textContent = aiData.summary || 'Ringkasan belum tersedia.';
+                } catch (e) {
+                    document.getElementById('aiSummaryLoading').textContent = 'Ringkasan AI tidak tersedia saat ini.';
+                }
             } catch (err) {
                 window.location.href = 'login.html';
             }
@@ -522,5 +541,6 @@
             }, 3000);
         }
     </script>
+<script src="/chatbot.js"></script>
 </body>
 </html>

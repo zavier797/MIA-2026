@@ -402,6 +402,31 @@
                     document.getElementById('aiSuggestReason').textContent = result.reason;
                     document.getElementById('aiSuggestResult').classList.remove('hidden');
                     showToast('success', 'AI Selesai Menganalisis', 'Kategori & prioritas terisi otomatis.');
+
+                    // Duplicate check
+                    const loc = document.getElementById('lokasi').value.trim();
+                    if (loc.length > 3) {
+                        try {
+                            const dupResp = await fetch('/api/ai/duplicate-check', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ description: desc, location: loc })
+                            });
+                            const dupData = await dupResp.json();
+                            let dupWarn = document.getElementById('aiDupWarn');
+                            if (dupData.duplicate) {
+                                if (!dupWarn) {
+                                    dupWarn = document.createElement('div');
+                                    dupWarn.id = 'aiDupWarn';
+                                    dupWarn.className = 'mt-2 bg-amber-50 border border-amber-300 rounded-xl p-3 text-xs flex items-start gap-2';
+                                    document.getElementById('aiSuggestResult').appendChild(dupWarn);
+                                }
+                                dupWarn.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-600 mt-0.5"></i><div><strong class="text-amber-800">Kemungkinan Duplikat</strong><p class="text-amber-700 mt-0.5">' + dupData.reason + '</p></div>';
+                            } else if (dupWarn) {
+                                dupWarn.remove();
+                            }
+                        } catch (e) { /* duplicate check optional */ }
+                    }
                 } else {
                     showToast('error', 'AI Gagal', result.error || 'Coba lagi.');
                 }
@@ -438,5 +463,6 @@
             }, 4000);
         }
     </script>
+<script src="/chatbot.js"></script>
 </body>
 </html>

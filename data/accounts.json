@@ -63,6 +63,14 @@
       "passwordHash": "7dd807b89da66ba8cb774dc173f63594ba877ea98ab13c76e4e1b4473d3f0ead",
       "oauthProvider": "google-demo",
       "oauthId": "demo-1794349365939"
+    },
+    {
+      "name": "MUHAMMAD ZAVIER RIZKAYANTO",
+      "email": "muhammadzavierrizkayanto@gmail.com",
+      "passwordSalt": "a9f1c01079f99c672249eb5b2aaccb74",
+      "passwordHash": "63fc0dd6fb65ff3f5744a9636e13ad84601fa7d33931d9a0a8f3a081bb2ee627",
+      "oauthProvider": "google",
+      "oauthId": "103431214254114114439"
     }
   ]
 }

@@ -80,6 +80,11 @@ const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET || 'demo';
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || 'demo';
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || 'demo';
 const OAUTH_DEMO_MODE = !process.env.GITHUB_CLIENT_SECRET || process.env.GITHUB_CLIENT_SECRET === 'demo';
+
+// AI Gateway config
+const AI_GATEWAY_URL = process.env.AI_GATEWAY_URL || '';
+const AI_GATEWAY_KEY = process.env.AI_GATEWAY_KEY || '';
+const AI_MODEL = process.env.AI_MODEL || 'ag/gemini-3.8-flash';
 const oauthState = new Map(); // CSRF protection
 const MIME_TYPES = {
     '.css': 'text/css; charset=utf-8',
@@ -668,6 +673,109 @@ async function handleApi(request, response, url) {
             return sendJson(response, 200, { province: prov });
         }
         return sendJson(response, 200, budget);
+    }
+
+    // ─── AI Endpoints ───
+
+    // AI: Auto-categorize complaint
+    if (request.method === 'POST' && url.pathname === '/api/ai/categorize') {
+        const body = await readJsonBody(request);
+        const description = typeof body.description === 'string' ? body.description.trim().slice(0, 2000) : '';
+        if (!description) return sendJson(response, 400, { error: 'Deskripsi harus diisi.' });
+        if (!AI_GATEWAY_URL) return sendJson(response, 503, { error: 'AI gateway tidak dikonfigurasi.' });
+
+        const categories = ['Infrastruktur Jalan', 'Kebersihan & Sanitasi', 'Penerangan Jalan', 'Keamanan Lingkungan', 'Drainase & Banjir'];
+        const agencyMap = {
+            'Infrastruktur Jalan': 'Dinas Bina Marga',
+            'Kebersihan & Sanitasi': 'Dinas Lingkungan Hidup',
+            'Penerangan Jalan': 'Dinas Perumahan dan Permukiman',
+            'Keamanan Lingkungan': 'Dinas Ketenteraman dan Ketertiban',
+            'Drainase & Banjir': 'Dinas Sumber Daya Air'
+        };
+
+        try {
+            const aiResp = await fetch(`${AI_GATEWAY_URL}/chat/completions`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${AI_GATEWAY_KEY}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: AI_MODEL,
+                    stream: false,
+                    max_tokens: 150,
+                    temperature: 0.1,
+                    messages: [{
+                        role: 'user',
+                        content: `Anda adalah sistem klasifikasi pengaduan warga Indonesia. Analisis pengaduan berikut dan berikan response JSON ONLY (tanpa markdown).\n\nPilihan kategori: ${categories.join(', ')}\n\nPilihan prioritas: low, medium, high, urgent\n\nAturan prioritas:\n- urgent: mengancam nyawa/keselamatan (gas bocor, struktur bangunan rapuh, kebakaran)\n- high: dampak luas atau bahaya signifikan (jalan rusak parah, banjir bandang)\n- medium: dampak sedang (lampu mati, sampah menumpuk)\n- low: gangguan minor (trotoar retak rambut pudar)\n\nPengaduan: "${description}"\n\nJawab dengan format JSON: {"category": "nama kategori", "priority": "level", "reason": "alasan singkat dalam Bahasa Indonesia"}`
+                    }]
+                })
+            });
+            const aiData = await aiResp.json();
+            let content = aiData.choices?.[0]?.message?.content || '';
+            // Strip markdown code fences if present
+            content = content.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+            const parsed = JSON.parse(content);
+
+            const category = categories.includes(parsed.category) ? parsed.category : categories[0];
+            const validPriorities = ['low', 'medium', 'high', 'urgent'];
+            const priority = validPriorities.includes(parsed.priority) ? parsed.priority : 'medium';
+
+            return sendJson(response, 200, {
+                category,
+                priority,
+                agency: agencyMap[category] || 'Dinas Terkait',
+                reason: parsed.reason || '',
+                aiPowered: true
+            });
+        } catch (err) {
+            return sendJson(response, 500, { error: 'AI gagal memproses. Coba lagi.', detail: err.message });
+        }
+    }
+
+    // AI: Generate dashboard insights from report statistics
+    if (request.method === 'GET' && url.pathname === '/api/ai/insights') {
+        if (!AI_GATEWAY_URL) return sendJson(response, 503, { error: 'AI gateway tidak dikonfigurasi.' });
+
+        const data = readReports();
+        const reports = data.reports;
+        const total = reports.length;
+        const byCategory = {};
+        const byStatus = {};
+        const byProvince = {};
+        for (const r of reports) {
+            byCategory[r.category] = (byCategory[r.category] || 0) + 1;
+            byStatus[r.status] = (byStatus[r.status] || 0) + 1;
+            byProvince[r.province] = (byProvince[r.province] || 0) + 1;
+        }
+        const stats = {
+            total,
+            byCategory,
+            byStatus,
+            byProvince,
+            topCategories: Object.entries(byCategory).sort((a, b) => b[1] - a[1]).slice(0, 5),
+            topProvinces: Object.entries(byProvince).sort((a, b) => b[1] - a[1]).slice(0, 3)
+        };
+
+        try {
+            const aiResp = await fetch(`${AI_GATEWAY_URL}/chat/completions`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${AI_GATEWAY_KEY}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: AI_MODEL,
+                    stream: false,
+                    max_tokens: 300,
+                    temperature: 0.3,
+                    messages: [{
+                        role: 'user',
+                        content: `Anda adalah analis data publik Indonesia. Buat insight singkat (maks 3 kalimat) dari statistik pengaduan warga berikut. Gunakan Bahasa Indonesia, tone profesional tapi mudah dipahami warga.\n\nStatistik:\n- Total laporan: ${stats.total}\n- Kategori terbanyak: ${stats.topCategories.map(([k, v]) => `${k} (${v})`).join(', ')}\n- Provinsi terbanyak: ${stats.topProvinces.map(([k, v]) => `${k} (${v})`).join(', ')}\n- Status: ${Object.entries(stats.byStatus).map(([k, v]) => `${k}=${v}`).join(', ')}\n\nBeri 2-3 insight actionable: tren, area prioritas, atau rekomendasi singkat. JANGAN gunakan markdown atau bullet points. Tulis sebagai paragraf biasa.`
+                    }]
+                })
+            });
+            const aiData = await aiResp.json();
+            const insight = aiData.choices?.[0]?.message?.content?.trim() || '';
+
+            return sendJson(response, 200, { insight, stats: { total, topCategories: stats.topCategories, topProvinces: stats.topProvinces, byStatus }, aiPowered: true });
+        } catch (err) {
+            return sendJson(response, 500, { error: 'AI gagal membuat insight.', detail: err.message });
+        }
     }
 
     return sendJson(response, 404, { error: 'Endpoint tidak ditemukan.' });
